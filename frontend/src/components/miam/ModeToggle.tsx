@@ -16,8 +16,8 @@ export function ModeToggle({ mode, onToggle }: ModeToggleProps) {
         onClick={onToggle}
         className="relative flex items-center rounded-full overflow-hidden"
         style={{
-          width: 220,
-          height: 48,
+          width: 260,
+          height: 56,
           background: '#1E1E1E',
           border: '1px solid #333333',
         }}
@@ -28,20 +28,20 @@ export function ModeToggle({ mode, onToggle }: ModeToggleProps) {
         <motion.div
           className="absolute top-[2px] rounded-full"
           style={{
-            width: 106,
-            height: 42,
+            width: 126,
+            height: 50,
             background: 'rgba(212, 168, 85, 0.15)',
             border: '1px solid rgba(212, 168, 85, 0.35)',
             boxShadow: '0 0 16px rgba(212, 168, 85, 0.12), inset 0 0 8px rgba(212, 168, 85, 0.06)',
           }}
-          animate={{ left: isEatIn ? 2 : 110 }}
+          animate={{ left: isEatIn ? 2 : 130 }}
           transition={{ type: 'spring', stiffness: 400, damping: 28 }}
         />
 
         {/* eat in: label then cook icon */}
         <div className="relative z-10 flex items-center justify-center gap-1.5 flex-1">
           <motion.span
-            className="text-xs font-medium"
+            className="text-sm font-medium"
             animate={{
               color: isEatIn ? '#D4A855' : '#807D75',
               opacity: isEatIn ? 1 : 0.6,
@@ -53,7 +53,7 @@ export function ModeToggle({ mode, onToggle }: ModeToggleProps) {
           <motion.img
             src={cookIconUrl}
             alt="Cook"
-            style={{ width: 32, height: 32 }}
+            style={{ width: 36, height: 36 }}
             animate={{
               opacity: isEatIn ? 1 : 0.5,
               scale: isEatIn ? 1 : 0.88,
@@ -70,7 +70,7 @@ export function ModeToggle({ mode, onToggle }: ModeToggleProps) {
           <motion.img
             src={dinerIconUrl}
             alt="Dine"
-            style={{ width: 32, height: 32 }}
+            style={{ width: 36, height: 36 }}
             animate={{
               opacity: !isEatIn ? 1 : 0.5,
               scale: !isEatIn ? 1 : 0.88,
@@ -81,7 +81,7 @@ export function ModeToggle({ mode, onToggle }: ModeToggleProps) {
             transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
           />
           <motion.span
-            className="text-xs font-medium"
+            className="text-sm font-medium"
             animate={{
               color: !isEatIn ? '#D4A855' : '#807D75',
               opacity: !isEatIn ? 1 : 0.6,
