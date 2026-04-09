@@ -1,6 +1,4 @@
-import logoUrl from '@assets/miam-logo-icon.png';
-
-/* Center logo with pure-CSS amber backlight glow — no Three.js */
+/* Center ambient glow — pure-CSS amber backlight, no icon */
 export default function CenterGlow() {
   return (
     <div
@@ -14,7 +12,7 @@ export default function CenterGlow() {
         userSelect: 'none',
       }}
     >
-      {/* Outer ambient glow rings — pure CSS */}
+      {/* Outer ambient glow ring */}
       <div
         style={{
           position: 'absolute',
@@ -29,6 +27,7 @@ export default function CenterGlow() {
           animation: 'glowBreathe 3.2s ease-in-out infinite',
         }}
       />
+      {/* Inner ambient glow ring */}
       <div
         style={{
           position: 'absolute',
@@ -43,32 +42,6 @@ export default function CenterGlow() {
           animation: 'glowBreathe 3.2s ease-in-out infinite 0.4s',
         }}
       />
-
-      {/* Logo circle */}
-      <div
-        style={{
-          width: 56,
-          height: 56,
-          borderRadius: '50%',
-          background: 'rgba(14, 14, 14, 0.92)',
-          border: '1.5px solid rgba(212, 168, 85, 0.25)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow:
-            '0 0 24px rgba(212,168,85,0.15), 0 0 48px rgba(212,168,85,0.06)',
-          position: 'relative',
-          zIndex: 3,
-          animation: 'glowBreathe 3.2s ease-in-out infinite 0.8s',
-        }}
-      >
-        <img
-          src={logoUrl}
-          alt="miam"
-          style={{ width: 38, height: 38, objectFit: 'contain' }}
-          draggable={false}
-        />
-      </div>
 
       <style>{`
         @keyframes glowBreathe {
