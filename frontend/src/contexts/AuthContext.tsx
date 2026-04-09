@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase, SUPABASE_URL, SUPABASE_KEY } from '../lib/supabase';
 import type { User, Session } from '@supabase/supabase-js';
 
 interface AuthState {
@@ -22,24 +22,18 @@ const AuthContext = createContext<AuthState>({
 
 export const useAuth = () => useContext(AuthContext);
 
-const SUPABASE_URL = 'https://rscviujiflpsujukwgts.supabase.co';
-const SERVICE_KEY =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzY3ZpdWppZmxwc3VqdWt3Z3RzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NTU5MjUyMiwiZXhwIjoyMDkxMTY4NTIyfQ.m0TMXbnlJP5rKz0M-s6kLzIAWo8fUh9U3doQFLgqM08';
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -51,41 +45,52 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signUp = useCallback(async (email: string, password: string, displayName?: string) => {
     try {
-      // 1. Create user via Supabase Auth
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { display_name: displayName || email.split('@')[0] },
-        },
-      });
-      if (error) return { error: error.message };
-      if (!data.user) return { error: 'Signup failed' };
-
-      // 2. Auto-confirm via admin API (since we use service role key, 10 testers only)
-      await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${data.user.id}`, {
-        method: 'PUT',
+      // Create user via admin API to bypass email rate limits entirely.
+      // This skips the confirmation email flow — suitable for early-access testing.
+      const adminRes = await fetch(`${SUPABASE_URL}/auth/v1/admin/users`, {
+        method: 'POST',
         headers: {
-          'apikey': SERVICE_KEY,
-          'Authorization': `Bearer ${SERVICE_KEY}`,
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email_confirm: true }),
+        body: JSON.stringify({
+          email,
+          password,
+          email_confirm: true,
+          user_metadata: { display_name: displayName || email.split('@')[0] },
+        }),
       });
 
-      // 3. Immediately sign in
+      if (!adminRes.ok) {
+        const err = await adminRes.json().catch(() => null);
+        const msg = err?.msg || err?.message || err?.error_description || 'Could not create account';
+        // Friendly messages for common errors
+        if (msg.toLowerCase().includes('already been registered') || msg.toLowerCase().includes('already exists')) {
+          return { error: 'An account with this email already exists. Try signing in instead.' };
+        }
+        return { error: msg };
+      }
+
+      // Immediately sign in with the new credentials
       const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
       if (signInError) return { error: signInError.message };
 
       return { error: null };
     } catch (err: any) {
-      return { error: err.message || 'Signup failed' };
+      return { error: err.message || 'Something went wrong. Please try again.' };
     }
   }, []);
 
   const signIn = useCallback(async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) return { error: error.message };
+    if (error) {
+      // Friendlier error messages
+      if (error.message.toLowerCase().includes('invalid login')) {
+        return { error: 'Incorrect email or password.' };
+      }
+      return { error: error.message };
+    }
     return { error: null };
   }, []);
 
