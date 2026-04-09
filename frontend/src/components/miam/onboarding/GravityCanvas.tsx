@@ -1,5 +1,4 @@
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
 import CenterGlow from './CenterGlow';
 import ParticleField, { type PendingBurst } from './ParticleField';
 import OrbitLabels, { type OrbitEntity } from './OrbitLabels';
@@ -29,9 +28,10 @@ export default function GravityCanvas({
         position: 'absolute',
         inset: 0,
         zIndex: 1,
-        pointerEvents: interactive ? 'auto' : 'none',
+        // Canvas itself never captures pointer events — the Html elements inside do
+        pointerEvents: 'none',
       }}
-      camera={{ position: [0, 0.3, 6], fov: 45 }}
+      camera={{ position: [0, 0, 6], fov: 45 }}
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
       dpr={1}
     >
@@ -44,16 +44,6 @@ export default function GravityCanvas({
         onSelect={onSelect}
         interactive={interactive}
       />
-      {interactive && (
-        <OrbitControls
-          enableZoom={false}
-          enablePan={false}
-          minPolarAngle={Math.PI / 2 - 0.26}
-          maxPolarAngle={Math.PI / 2 + 0.26}
-          enableDamping={true}
-          dampingFactor={0.05}
-        />
-      )}
     </Canvas>
   );
 }

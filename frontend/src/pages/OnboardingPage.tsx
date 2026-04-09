@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { useLocation } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, Sparkles, Loader2 } from 'lucide-react';
+import { ChevronRight, Loader2 } from 'lucide-react';
 import { MiamLogo } from '../components/miam/MiamLogo';
 import GravityCanvas from '../components/miam/onboarding/GravityCanvas';
 import type { OrbitEntity, PendingBurst } from '../components/miam/onboarding/GravityCanvas';
@@ -16,7 +16,7 @@ const TOTAL_STEPS = onboardingQuestions.length; // 17
 
 export default function OnboardingPage({ onComplete }: { onComplete?: () => void } = {}) {
   const { user } = useAuth();
-  const [currentStep, setCurrentStep] = useState(0); // 0=intro, 1-17=questions, 18=completion, 19=review
+  const [currentStep, setCurrentStep] = useState(0); // 0=intro, 1-17=questions, 18=completion
   const [entities, setEntities] = useState<OrbitEntity[]>([]);
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [pendingBurst, setPendingBurst] = useState<PendingBurst | null>(null);
@@ -30,7 +30,8 @@ export default function OnboardingPage({ onComplete }: { onComplete?: () => void
 
   const progressPct = currentStep === 0 ? 0 : Math.min((currentStep / TOTAL_STEPS) * 100, 100);
 
-  const isInteractive = currentStep === TOTAL_STEPS + 1 || currentStep === TOTAL_STEPS + 2;
+  // Entities become interactive on the single completion screen
+  const isInteractive = currentStep === TOTAL_STEPS + 1;
 
   const handleContinue = useCallback(
     (answerAreaRect: DOMRect | null) => {
@@ -60,7 +61,7 @@ export default function OnboardingPage({ onComplete }: { onComplete?: () => void
         };
         setPendingBurst(burst);
 
-        // Build answer summary for tooltip
+        // Build answer summary for the detail panel
         const answer = answers[question.id];
         let answerSummary = '';
         if (answer) {
@@ -234,7 +235,7 @@ export default function OnboardingPage({ onComplete }: { onComplete?: () => void
                 style={{ color: '#9A8E78' }}
               >
                 A few quick questions so miam can learn your taste.
-                Your answers become your flavor constellation.
+                Your answers become your flavour constellation.
               </motion.p>
 
               <motion.button
@@ -317,203 +318,124 @@ export default function OnboardingPage({ onComplete }: { onComplete?: () => void
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
               className="flex flex-col h-full"
+              // Tapping empty space deselects entity
+              onClick={() => setSelectedEntityId(null)}
             >
-              <div className="flex-1 relative" />
-
-              <div
-                className="px-8 pb-8 pt-12"
+              {/* ── Top stats bar ── */}
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+                className="flex items-center justify-center gap-2 flex-shrink-0"
                 style={{
-                  background: 'linear-gradient(to bottom, transparent, rgba(10,10,10,0.85) 30%)',
+                  paddingTop: 'max(env(safe-area-inset-top, 14px), 14px)',
+                  paddingBottom: 8,
                 }}
               >
-                <div className="flex flex-col items-center text-center">
-                  <motion.div
-                    initial={{ scale: 0.5, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: 0.2, type: 'spring', stiffness: 200, damping: 20 }}
-                    className="mb-4"
-                  >
-                    <div
-                      className="w-14 h-14 rounded-full flex items-center justify-center"
-                      style={{ background: 'rgba(212, 168, 85, 0.15)', border: '1px solid rgba(212, 168, 85, 0.3)' }}
-                    >
-                      <Sparkles size={24} style={{ color: '#D4A855' }} />
-                    </div>
-                  </motion.div>
+                <MiamLogo size={22} />
+                <span
+                  className="text-xs"
+                  style={{ color: '#706D65', letterSpacing: '0.02em' }}
+                >
+                  {TOTAL_STEPS} questions · {TOTAL_STEPS} dimensions · 100% you
+                </span>
+              </motion.div>
 
-                  <motion.h1
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4, duration: 0.5 }}
-                    className="text-xl font-semibold mb-2"
-                    style={{ color: '#F0EDE8' }}
-                  >
-                    Your constellation is ready.
-                  </motion.h1>
+              {/* ── Physics cluster fills available space ── */}
+              <div className="flex-1" />
 
-                  <motion.p
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6, duration: 0.5 }}
-                    className="text-[15px] leading-relaxed max-w-[260px] mb-3"
-                    style={{ color: '#9A8E78' }}
-                  >
-                    Drag to explore your taste identity.
-                    Tap any icon to see what you told us.
-                  </motion.p>
-
-                  {/* Tooltip for selected entity */}
-                  <AnimatePresence>
-                    {selectedEntity && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 8 }}
-                        className="mb-3 px-4 py-2.5 rounded-xl max-w-[280px]"
-                        style={{
-                          background: 'rgba(30, 30, 30, 0.95)',
-                          border: `1px solid ${selectedEntity.color}40`,
-                        }}
-                      >
-                        <div className="text-xs font-semibold mb-0.5" style={{ color: selectedEntity.color }}>
-                          {selectedEntity.label}
-                        </div>
-                        <div className="text-xs" style={{ color: '#A5A29A' }}>
-                          {selectedEntity.answerSummary || 'No answer given'}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  <motion.button
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1.0 }}
-                    onClick={() => {
-                      setSelectedEntityId(null);
-                      setCurrentStep(TOTAL_STEPS + 2);
-                    }}
-                    className="h-12 px-8 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.97] transition-transform"
-                    style={{ background: '#D4A855', color: '#141414' }}
-                    data-testid="onboarding-review"
-                  >
-                    See my profile
-                    <ChevronRight size={16} />
-                  </motion.button>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* -------- PROFILE REVIEW SCREEN -------- */}
-          {currentStep === TOTAL_STEPS + 2 && (
-            <motion.div
-              key="review"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-              className="flex flex-col h-full"
-            >
-              <div className="flex-1 relative" />
-
-              <div className="px-5 pb-6">
+              {/* ── Bottom panel ── */}
+              <div
+                className="px-6 pb-6 flex flex-col items-center"
+                style={{
+                  paddingBottom: 'max(env(safe-area-inset-bottom, 24px), 24px)',
+                  background: 'linear-gradient(to bottom, transparent, rgba(10,10,10,0.88) 28%)',
+                }}
+                // Stop click propagation so tapping panel doesn't deselect
+                onClick={(e) => e.stopPropagation()}
+              >
                 <motion.div
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3, duration: 0.6 }}
-                  className="rounded-2xl p-5"
-                  style={{
-                    background: 'rgba(20, 20, 20, 0.92)',
-                    backdropFilter: 'blur(20px)',
-                    WebkitBackdropFilter: 'blur(20px)',
-                    border: '1px solid rgba(42, 42, 42, 0.5)',
-                  }}
+                  transition={{ delay: 0.5, duration: 0.5 }}
+                  className="text-center mb-3"
                 >
                   <h2 className="text-lg font-semibold mb-1" style={{ color: '#F0EDE8' }}>
-                    Here's how we see you
+                    Your taste profile
                   </h2>
-                  <p className="text-[15px] mb-4" style={{ color: '#9A8E78' }}>
-                    Your flavor constellation — {entities.length} dimensions mapped
+                  <p className="text-[13px]" style={{ color: '#706D65' }}>
+                    Tap any dimension to explore
                   </p>
-
-                  <div className="flex flex-wrap gap-1.5 mb-5">
-                    {entities.map((entity) => (
-                      <span
-                        key={entity.id}
-                        className="px-3 py-1.5 rounded-lg text-[13px] font-medium"
-                        style={{
-                          background: `${entity.color}15`,
-                          border: `1px solid ${entity.color}30`,
-                          color: entity.color,
-                        }}
-                      >
-                        {entity.label}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Tooltip for selected entity on review */}
-                  <AnimatePresence>
-                    {selectedEntity && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="mb-4 px-3 py-2.5 rounded-xl overflow-hidden"
-                        style={{
-                          background: 'rgba(40, 40, 40, 0.8)',
-                          border: `1px solid ${selectedEntity.color}40`,
-                        }}
-                      >
-                        <div className="text-xs font-semibold mb-0.5" style={{ color: selectedEntity.color }}>
-                          {selectedEntity.label}
-                        </div>
-                        <div className="text-xs" style={{ color: '#A5A29A' }}>
-                          {selectedEntity.answerSummary || 'No answer given'}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* Quick stats */}
-                  <div className="grid grid-cols-3 gap-3 mb-5">
-                    {[
-                      { label: 'Questions', value: TOTAL_STEPS },
-                      { label: 'Dimensions', value: entities.length },
-                      { label: 'Unique to you', value: '100%' },
-                    ].map((stat) => (
-                      <div key={stat.label} className="text-center">
-                        <div className="text-lg font-semibold" style={{ color: '#D4A855' }}>
-                          {stat.value}
-                        </div>
-                        <div className="text-xs" style={{ color: '#706D65' }}>
-                          {stat.label}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <button
-                    onClick={handleFinish}
-                    disabled={saving}
-                    className="w-full h-12 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.97] transition-transform"
-                    style={{ background: '#D4A855', color: '#141414', opacity: saving ? 0.7 : 1 }}
-                    data-testid="onboarding-finish"
-                  >
-                    {saving ? (
-                      <>
-                        <Loader2 size={16} className="animate-spin" />
-                        {savePhase || 'Saving your taste profile...'}
-                      </>
-                    ) : (
-                      <>
-                        Looks good — let's eat
-                        <ChevronRight size={16} />
-                      </>
-                    )}
-                  </button>
                 </motion.div>
+
+                {/* Entity detail panel — slides up when an entity is tapped */}
+                <AnimatePresence>
+                  {selectedEntity && (
+                    <motion.div
+                      key={selectedEntity.id}
+                      initial={{ opacity: 0, y: 16, scale: 0.97 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 12, scale: 0.97 }}
+                      transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }}
+                      className="w-full mb-4 px-4 py-3 rounded-2xl"
+                      style={{
+                        background: 'rgba(22, 22, 22, 0.96)',
+                        border: `1px solid ${selectedEntity.color}35`,
+                        backdropFilter: 'blur(12px)',
+                        WebkitBackdropFilter: 'blur(12px)',
+                        maxWidth: 340,
+                      }}
+                    >
+                      <div className="flex items-center gap-2 mb-1.5">
+                        {selectedEntity.iconUrl && (
+                          <img
+                            src={selectedEntity.iconUrl}
+                            alt=""
+                            style={{ width: 18, height: 18, objectFit: 'contain', opacity: 0.85 }}
+                          />
+                        )}
+                        <span
+                          className="text-sm font-semibold"
+                          style={{ color: selectedEntity.color }}
+                        >
+                          {selectedEntity.label}
+                        </span>
+                      </div>
+                      <p className="text-[13px] leading-snug" style={{ color: '#A5A29A' }}>
+                        {selectedEntity.answerSummary || 'No answer given'}
+                      </p>
+                      <p
+                        className="text-[11px] mt-1.5"
+                        style={{ color: '#4A4845', letterSpacing: '0.02em' }}
+                      >
+                        This shapes your recommendations
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <motion.button
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.9 }}
+                  onClick={handleFinish}
+                  disabled={saving}
+                  className="w-full max-w-[340px] h-12 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.97] transition-transform"
+                  style={{ background: '#D4A855', color: '#141414', opacity: saving ? 0.7 : 1 }}
+                  data-testid="onboarding-finish"
+                >
+                  {saving ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" />
+                      {savePhase || 'Saving your taste profile...'}
+                    </>
+                  ) : (
+                    <>
+                      Looks good — let's eat
+                      <ChevronRight size={16} />
+                    </>
+                  )}
+                </motion.button>
               </div>
             </motion.div>
           )}
