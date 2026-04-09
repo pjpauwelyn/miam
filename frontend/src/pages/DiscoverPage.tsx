@@ -1,10 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ChevronRight, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { RecipeCard } from '../components/miam/RecipeCard';
 import { useRecipeDetail } from '../App';
-import { fetchForYouRecipes, fetchSeasonalRecipes, fetchRecipesByCuisine, recipeToUiFormat } from '../lib/api';
-import type { UiRecipe } from '../lib/api';
+import {
+  fetchForYouRecipes,
+  fetchSeasonalRecipes,
+  fetchRecipesByCuisine,
+  fetchUserProfile,
+  getCurrentUserId,
+  recipeToUiFormat,
+} from '../lib/api';
+import type { UiRecipe, UserProfile } from '../lib/api';
+import { scoreAndEnrich } from '../lib/scoring';
 
 const discoverCategories = [
   'Japanese', 'Italian', 'Thai', 'Mexican', 'Indian', 'French', 'Korean', 'Mediterranean',
@@ -20,17 +28,24 @@ export default function DiscoverPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [categoryLoading, setCategoryLoading] = useState(false);
 
+  // Cache the user profile so we don't re-fetch on every category click
+  const profileRef = useRef<UserProfile | null>(null);
+
   useEffect(() => {
     let cancelled = false;
     async function load() {
       try {
-        const [forYouData, seasonalData] = await Promise.all([
+        const [forYouData, seasonalData, profile] = await Promise.all([
           fetchForYouRecipes(8),
           fetchSeasonalRecipes(8),
+          fetchUserProfile(getCurrentUserId()),
         ]);
         if (!cancelled) {
-          setForYou(forYouData.map(recipeToUiFormat));
-          setSeasonal(seasonalData.map(recipeToUiFormat));
+          profileRef.current = profile;
+          const scoredForYou = scoreAndEnrich(forYouData, profile);
+          const scoredSeasonal = scoreAndEnrich(seasonalData, profile);
+          setForYou(scoredForYou.map(r => recipeToUiFormat(r, r._matchScore)));
+          setSeasonal(scoredSeasonal.map(r => recipeToUiFormat(r, r._matchScore)));
         }
       } catch (err) {
         console.error('Failed to load discover data:', err);
@@ -52,7 +67,9 @@ export default function DiscoverPage() {
     setCategoryLoading(true);
     try {
       const results = await fetchRecipesByCuisine(category, 8);
-      setCategoryResults(results.map(recipeToUiFormat));
+      const profile = profileRef.current;
+      const scored = scoreAndEnrich(results, profile);
+      setCategoryResults(scored.map(r => recipeToUiFormat(r, r._matchScore)));
     } catch (err) {
       console.error('Failed to fetch category:', err);
       setCategoryResults([]);

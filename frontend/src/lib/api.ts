@@ -190,14 +190,7 @@ export interface SessionSummary {
 // Supabase direct reads — Recipes
 // ---------------------------------------------------------------------------
 
-/**
- * Fetch up to `limit` recipes ordered deterministically by recipe_id.
- * Supabase REST caps a single request at 1000 rows; callers that previously
- * passed 500 are safe since 500 < 1000. The default is raised to 1000 so
- * helpers like fetchSeasonalRecipes and fetchRecipesByCuisine see the full
- * table without a separate pagination loop.
- */
-export async function fetchRecipes(limit = 1000): Promise<RecipeDocument[]> {
+export async function fetchRecipes(limit = 50): Promise<RecipeDocument[]> {
   const url = `${SUPABASE_REST}/recipes_open?select=recipe_id,data&limit=${limit}&order=recipe_id`;
   const resp = await fetch(url, { headers: supaHeaders() });
   if (!resp.ok) throw new Error(`Failed to fetch recipes: ${resp.status}`);
@@ -207,7 +200,7 @@ export async function fetchRecipes(limit = 1000): Promise<RecipeDocument[]> {
 
 export async function fetchRecipesByCuisine(cuisine: string, limit = 10): Promise<RecipeDocument[]> {
   try {
-    const all = await fetchRecipes(1000);
+    const all = await fetchRecipes(500);
     return all.filter(r => r.cuisine_tags.some(c => c.toLowerCase().includes(cuisine.toLowerCase()))).slice(0, limit);
   } catch {
     return [];
@@ -230,48 +223,11 @@ export async function fetchRecipeById(recipeId: string): Promise<RecipeDocument 
   return normaliseRecipe(rows[0]);
 }
 
-/**
- * Fetch a randomised selection of recipes for the "For You" feed.
- *
- * Strategy:
- *  1. Query the table count so we know the true population size.
- *  2. Pick a random offset capped so we always get at least (limit * 10) rows
- *     back (or fall back to offset 0 for small tables).
- *  3. Fetch limit * 10 rows starting at that offset, ordered by recipe_id for
- *     deterministic paging.
- *  4. Shuffle client-side and return the first `limit` results.
- *
- * This gives every recipe in the table a fair chance of appearing over time
- * without fetching the entire table on every load.
- */
 export async function fetchForYouRecipes(limit = 8): Promise<RecipeDocument[]> {
-  const sampleSize = limit * 10;
-
-  // Step 1: get total count via Prefer: count=exact
-  let totalCount = sampleSize; // safe fallback
-  try {
-    const countResp = await fetch(
-      `${SUPABASE_REST}/recipes_open?select=count`,
-      { headers: supaHeaders({ Prefer: 'count=exact' }) },
-    );
-    if (countResp.ok) {
-      const contentRange = countResp.headers.get('content-range'); // e.g. "0-0/342"
-      const match = contentRange?.match(/\/(\d+)$/);
-      if (match) totalCount = parseInt(match[1], 10);
-    }
-  } catch { /* use fallback */ }
-
-  // Step 2: random offset — ensure we can still retrieve sampleSize rows
-  const maxOffset = Math.max(0, totalCount - sampleSize);
-  const offset = Math.floor(Math.random() * (maxOffset + 1));
-
-  // Step 3: fetch the window
-  const url = `${SUPABASE_REST}/recipes_open?select=recipe_id,data&order=recipe_id&limit=${sampleSize}&offset=${offset}`;
+  const url = `${SUPABASE_REST}/recipes_open?select=recipe_id,data&limit=${limit * 3}`;
   const resp = await fetch(url, { headers: supaHeaders() });
   if (!resp.ok) return [];
   const rows: { recipe_id: string; data: any }[] = await resp.json();
-
-  // Step 4: client-side shuffle, then slice
   const recipes = rows.map(normaliseRecipe);
   const shuffled = recipes.sort(() => Math.random() - 0.5);
   return shuffled.slice(0, limit);
@@ -280,7 +236,7 @@ export async function fetchForYouRecipes(limit = 8): Promise<RecipeDocument[]> {
 export async function fetchSeasonalRecipes(limit = 8): Promise<RecipeDocument[]> {
   const month = new Date().getMonth();
   const season = month >= 2 && month <= 4 ? 'spring' : month >= 5 && month <= 7 ? 'summer' : month >= 8 && month <= 10 ? 'autumn' : 'winter';
-  const all = await fetchRecipes(1000);
+  const all = await fetchRecipes(500);
   const seasonal = all.filter(r =>
     r.season_tags?.some(t => t.toLowerCase().includes(season))
   );
@@ -499,49 +455,6 @@ export async function queryPipeline(
 // Helpers
 // ---------------------------------------------------------------------------
 
-/**
- * Parse a plain ingredient string such as "200g flour", "1 tbsp olive oil",
- * "1/2 cup sugar", "1 1/2 tsp vanilla", or "salt to taste" into a structured
- * RecipeIngredient object.
- *
- * Regex groups:
- *  [1] quantity  — digits, fractions, mixed numbers   (optional)
- *  [2] unit      — g | kg | ml | l | tsp | tbsp | … (optional)
- *  [3] name      — everything that follows
- *
- * Fractions ("1/2", "1 1/2") are kept as-is in the amount string so the UI
- * can display them verbatim; no decimal conversion is applied.
- */
-function parseIngredientString(raw: string): RecipeIngredient {
-  const trimmed = raw.trim();
-
-  const INGREDIENT_RE =
-    /^(\d[\d./\s]*)?\s*(g|kg|ml|l|tsp|tbsp|cups?|oz|lb|cloves?|slices?|handful|pinch|bunch|sprigs?|pieces?)?\s+(.+)$/i;
-
-  const match = trimmed.match(INGREDIENT_RE);
-
-  if (!match) {
-    // No quantity or unit detected — treat the whole string as the name
-    return { name: trimmed, amount: '', unit: '' };
-  }
-
-  const rawAmount = (match[1] ?? '').trim();
-  const rawUnit   = (match[2] ?? '').trim();
-  const name      = (match[3] ?? '').trim();
-
-  // If neither quantity nor unit was captured, the regex matched only because
-  // of the trailing name group — fall back to name-only.
-  if (!rawAmount && !rawUnit) {
-    return { name: trimmed, amount: '', unit: '' };
-  }
-
-  return {
-    name,
-    amount: rawAmount || '',
-    unit:   rawUnit   || '',
-  };
-}
-
 function normaliseRecipe(row: { recipe_id: string; data: any }): RecipeDocument {
   const d = typeof row.data === 'string' ? JSON.parse(row.data) : row.data;
   return {
@@ -552,7 +465,7 @@ function normaliseRecipe(row: { recipe_id: string; data: any }): RecipeDocument 
     region_tag: d.region_tag,
     description: d.description || '',
     ingredients: (d.ingredients || []).map((i: any) =>
-      typeof i === 'string' ? parseIngredientString(i) : i
+      typeof i === 'string' ? { name: i } : i
     ),
     steps: (d.steps || []).map((s: any, idx: number) =>
       typeof s === 'string'
@@ -580,7 +493,8 @@ function normaliseRecipe(row: { recipe_id: string; data: any }): RecipeDocument 
 }
 
 // Helper: convert RecipeDocument to the shape the existing UI components expect
-export function recipeToUiFormat(r: RecipeDocument) {
+// matchScore defaults to 0 for backwards compatibility with all existing callers.
+export function recipeToUiFormat(r: RecipeDocument, matchScore = 0) {
   return {
     id: r.recipe_id,
     title: r.title,
@@ -588,12 +502,12 @@ export function recipeToUiFormat(r: RecipeDocument) {
     dietary: r.dietary_tags,
     time: r.time_total_min || 0,
     difficulty: r.difficulty || 1,
-    matchScore: 0,
+    matchScore: matchScore,
     description: r.description,
     servings: r.serves || 2,
     ingredients: r.ingredients.map(i => ({
       name: i.name,
-      amount: i.amount ?? '',
+      amount: i.amount || '',
       unit: i.unit || '',
       substitution: i.substitutions?.[0],
     })),
