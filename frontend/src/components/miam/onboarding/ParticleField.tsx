@@ -1,61 +1,24 @@
-import { useRef, useEffect, useCallback, useMemo } from 'react';
-import { useFrame, useThree } from '@react-three/fiber';
-import * as THREE from 'three';
+import { useRef, useEffect } from 'react';
 
 export interface PendingBurst {
   id: string;
-  fromX: number;
+  fromX: number; // 0-1 normalised screen coords
   fromY: number;
   targetOrbitRadius: number;
   color: string;
   label: string;
 }
 
-// Reduced particle count — just subtle entrance dust
 const MAX_PARTICLES = 200;
 const PARTICLES_PER_BURST = 12;
 
-const vertexShader = `
-  attribute float aLife;
-  attribute float aSize;
-  
-  varying float vLife;
-  
-  void main() {
-    vLife = aLife;
-    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-    gl_PointSize = aSize * (150.0 / -mvPosition.z);
-    gl_Position = projectionMatrix * mvPosition;
-  }
-`;
-
-const fragmentShader = `
-  varying float vLife;
-  
-  void main() {
-    vec2 center = gl_PointCoord - vec2(0.5);
-    float dist = length(center);
-    if (dist > 0.5) discard;
-    
-    float alpha = smoothstep(0.5, 0.1, dist);
-    
-    // Amber color, fading based on life
-    vec3 amber = vec3(0.831, 0.659, 0.333);
-    alpha *= vLife * 0.18;
-    
-    gl_FragColor = vec4(amber, alpha);
-  }
-`;
-
 interface Particle {
   active: boolean;
-  posX: number;
-  posY: number;
-  posZ: number;
-  velX: number;
-  velY: number;
-  velZ: number;
-  life: number;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  life: number; // 1 → 0
   size: number;
 }
 
@@ -66,146 +29,112 @@ export default function ParticleField({
   pendingBurst: PendingBurst | null;
   onBurstComplete?: () => void;
 }) {
-  const pointsRef = useRef<THREE.Points>(null!);
-  const { camera } = useThree();
-  
-  const particles = useRef<Particle[]>(
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const particlesRef = useRef<Particle[]>(
     Array.from({ length: MAX_PARTICLES }, () => ({
       active: false,
-      posX: 0, posY: 0, posZ: 0,
-      velX: 0, velY: 0, velZ: 0,
-      life: 0,
-      size: 2,
+      x: 0, y: 0, vx: 0, vy: 0,
+      life: 0, size: 2,
     }))
   );
-
   const processedBursts = useRef(new Set<string>());
+  const rafRef = useRef<number>(0);
 
-  const { positions, lifes, sizes } = useMemo(() => {
-    return {
-      positions: new Float32Array(MAX_PARTICLES * 3),
-      lifes: new Float32Array(MAX_PARTICLES),
-      sizes: new Float32Array(MAX_PARTICLES),
-    };
-  }, []);
+  // Spawn burst on pending change
+  useEffect(() => {
+    if (!pendingBurst || processedBursts.current.has(pendingBurst.id)) return;
+    processedBursts.current.add(pendingBurst.id);
 
-  const spawnBurst = useCallback((burst: PendingBurst) => {
-    const ndcX = burst.fromX * 2 - 1;
-    const ndcY = -(burst.fromY * 2 - 1);
-    
-    const vec = new THREE.Vector3(ndcX, ndcY, 0.5);
-    vec.unproject(camera);
-    vec.sub(camera.position).normalize();
-    const distance = -camera.position.z / vec.z;
-    const worldPos = camera.position.clone().add(vec.multiplyScalar(distance));
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const cx = pendingBurst.fromX * canvas.offsetWidth;
+    const cy = pendingBurst.fromY * canvas.offsetHeight;
+    const centerX = canvas.offsetWidth / 2;
+    const centerY = canvas.offsetHeight / 2;
 
     let spawned = 0;
     for (let i = 0; i < MAX_PARTICLES && spawned < PARTICLES_PER_BURST; i++) {
-      if (!particles.current[i].active) {
-        const p = particles.current[i];
-        p.active = true;
-        p.posX = worldPos.x + (Math.random() - 0.5) * 0.2;
-        p.posY = worldPos.y + (Math.random() - 0.5) * 0.2;
-        p.posZ = (Math.random() - 0.5) * 0.05;
-        
-        // Aim at center
-        const toCenter = new THREE.Vector2(-p.posX, -p.posY).normalize();
-        const speed = 0.8 + Math.random() * 1.2;
-        p.velX = toCenter.x * speed + (Math.random() - 0.5) * 0.5;
-        p.velY = toCenter.y * speed + (Math.random() - 0.5) * 0.5;
-        p.velZ = (Math.random() - 0.5) * 0.1;
-        
-        p.life = 1.0;
-        p.size = 2 + Math.random() * 2;
-        spawned++;
-      }
+      const p = particlesRef.current[i];
+      if (p.active) continue;
+      p.active = true;
+      p.x = cx + (Math.random() - 0.5) * 20;
+      p.y = cy + (Math.random() - 0.5) * 20;
+      const dx = centerX - p.x;
+      const dy = centerY - p.y;
+      const len = Math.sqrt(dx * dx + dy * dy) || 1;
+      const speed = 60 + Math.random() * 80;
+      p.vx = (dx / len) * speed + (Math.random() - 0.5) * 40;
+      p.vy = (dy / len) * speed + (Math.random() - 0.5) * 40;
+      p.life = 1.0;
+      p.size = 2 + Math.random() * 2;
+      spawned++;
     }
-  }, [camera]);
 
+    if (onBurstComplete) setTimeout(onBurstComplete, 600);
+  }, [pendingBurst, onBurstComplete]);
+
+  // Single RAF loop — draw particles on 2D canvas
   useEffect(() => {
-    if (pendingBurst && !processedBursts.current.has(pendingBurst.id)) {
-      processedBursts.current.add(pendingBurst.id);
-      spawnBurst(pendingBurst);
-      if (onBurstComplete) {
-        setTimeout(onBurstComplete, 600);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d')!;
+    let last = performance.now();
+
+    const resize = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    resize();
+    const ro = new ResizeObserver(resize);
+    ro.observe(canvas);
+
+    const loop = (now: number) => {
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const damping = Math.pow(0.96, dt * 60);
+
+      for (const p of particlesRef.current) {
+        if (!p.active) continue;
+        p.life -= dt * 1.2;
+        if (p.life <= 0) { p.active = false; continue; }
+        p.vx *= damping;
+        p.vy *= damping;
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+
+        const alpha = p.life * 0.35;
+        ctx.beginPath();
+        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 2);
+        grad.addColorStop(0, `rgba(212,168,85,${alpha})`);
+        grad.addColorStop(1, 'rgba(212,168,85,0)');
+        ctx.fillStyle = grad;
+        ctx.arc(p.x, p.y, p.size * 2, 0, Math.PI * 2);
+        ctx.fill();
       }
-    }
-  }, [pendingBurst, spawnBurst, onBurstComplete]);
 
-  useFrame((_, delta) => {
-    const dt = Math.min(delta, 0.05);
-    const damping = Math.pow(0.96, dt * 60);
-    
-    for (let i = 0; i < MAX_PARTICLES; i++) {
-      const p = particles.current[i];
-      if (!p.active) {
-        positions[i * 3] = 0;
-        positions[i * 3 + 1] = 0;
-        positions[i * 3 + 2] = -100;
-        lifes[i] = 0;
-        sizes[i] = 0;
-        continue;
-      }
+      rafRef.current = requestAnimationFrame(loop);
+    };
 
-      // Quick fade and settle
-      p.life -= dt * 1.2;
-      if (p.life <= 0) {
-        p.active = false;
-        continue;
-      }
-
-      p.velX *= damping;
-      p.velY *= damping;
-      p.velZ *= damping;
-      
-      p.posX += p.velX * dt;
-      p.posY += p.velY * dt;
-      p.posZ += p.velZ * dt;
-
-      positions[i * 3] = p.posX;
-      positions[i * 3 + 1] = p.posY;
-      positions[i * 3 + 2] = p.posZ;
-      lifes[i] = p.life;
-      sizes[i] = p.size;
-    }
-
-    if (pointsRef.current) {
-      const geom = pointsRef.current.geometry;
-      geom.attributes.position.needsUpdate = true;
-      geom.attributes.aLife.needsUpdate = true;
-      geom.attributes.aSize.needsUpdate = true;
-    }
-  });
+    rafRef.current = requestAnimationFrame(loop);
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      ro.disconnect();
+    };
+  }, []);
 
   return (
-    <points ref={pointsRef}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={MAX_PARTICLES}
-          array={positions}
-          itemSize={3}
-        />
-        <bufferAttribute
-          attach="attributes-aLife"
-          count={MAX_PARTICLES}
-          array={lifes}
-          itemSize={1}
-        />
-        <bufferAttribute
-          attach="attributes-aSize"
-          count={MAX_PARTICLES}
-          array={sizes}
-          itemSize={1}
-        />
-      </bufferGeometry>
-      <shaderMaterial
-        vertexShader={vertexShader}
-        fragmentShader={fragmentShader}
-        transparent
-        blending={THREE.AdditiveBlending}
-        depthWrite={false}
-      />
-    </points>
+    <canvas
+      ref={canvasRef}
+      style={{
+        position: 'absolute',
+        inset: 0,
+        width: '100%',
+        height: '100%',
+        pointerEvents: 'none',
+        zIndex: 1,
+      }}
+    />
   );
 }

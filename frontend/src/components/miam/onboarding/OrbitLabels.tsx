@@ -1,7 +1,4 @@
 import { useRef, useEffect } from 'react';
-import { useFrame } from '@react-three/fiber';
-import { Html } from '@react-three/drei';
-import * as THREE from 'three';
 
 export interface OrbitEntity {
   id: string;
@@ -56,194 +53,20 @@ export function getIconUrl(iconFile: string): string {
   return iconMap[iconFile] || iconDiet;
 }
 
-// Physics constants
-const GRAVITY = 0.18;        // attraction force toward centre
-const DAMPING = 0.97;        // velocity damping per frame
-const RESTITUTION = 0.5;     // bounce restitution coefficient
-const ENTITY_RADIUS = 0.52;  // collision radius in world units (~30px at fov 45 z=6)
-const NOISE_FORCE = 0.003;   // subtle random drift to keep cluster alive
-const REPULSE_CENTRE = 0.30; // radius around centre where entities are gently repelled
+// ─── Physics constants ────────────────────────────────────────────────────────
+const GRAVITY       = 0.0004;  // px/frame² attraction toward centre
+const DAMPING       = 0.985;   // velocity multiplier per frame — high = lazy float
+const RESTITUTION   = 0.4;     // bounce coefficient
+const ENTITY_RADIUS = 48;      // px — collision circle
+const REPULSE_RADIUS = 60;     // px — soft repulsion around centre
+const NOISE         = 0.00015; // tiny random nudge per frame
 
-interface PhysicsBody {
+interface Body {
   id: string;
-  x: number;
+  x: number;  // px offset from container centre
   y: number;
   vx: number;
   vy: number;
-}
-
-// Shared mutable physics state — lives outside React to avoid re-render overhead
-const physicsMap: Map<string, PhysicsBody> = new Map();
-
-interface OrbitIconProps {
-  entity: OrbitEntity;
-  isNew?: boolean;
-  isSelected?: boolean;
-  onSelect?: (id: string) => void;
-  interactive?: boolean;
-  allEntities: OrbitEntity[];
-}
-
-function OrbitIcon({ entity, isNew, isSelected, onSelect, interactive, allEntities }: OrbitIconProps) {
-  const groupRef = useRef<THREE.Group>(null!);
-
-  // Initialise or re-use physics body
-  useEffect(() => {
-    if (!physicsMap.has(entity.id)) {
-      // New entities enter from a random edge
-      const angle = Math.random() * Math.PI * 2;
-      const edgeDist = 3.5;
-      physicsMap.set(entity.id, {
-        id: entity.id,
-        x: isNew ? Math.cos(angle) * edgeDist : (Math.random() - 0.5) * 2,
-        y: isNew ? Math.sin(angle) * edgeDist : (Math.random() - 0.5) * 2,
-        vx: 0,
-        vy: 0,
-      });
-    }
-    return () => {
-      // Leave body in map — it may be re-used if component remounts
-    };
-  }, [entity.id, isNew]);
-
-  useFrame((_, delta) => {
-    const body = physicsMap.get(entity.id);
-    if (!body || !groupRef.current) return;
-
-    const dt = Math.min(delta, 0.05); // clamp delta to avoid large jumps
-
-    // 1. Gravity toward centre (with soft repulsion near centre)
-    const dist = Math.sqrt(body.x * body.x + body.y * body.y);
-    if (dist > 0.01) {
-      const dirX = -body.x / dist;
-      const dirY = -body.y / dist;
-      if (dist > REPULSE_CENTRE) {
-        body.vx += dirX * GRAVITY * dt;
-        body.vy += dirY * GRAVITY * dt;
-      } else {
-        // gentle push away from very centre so entities ring it rather than stack
-        body.vx -= dirX * GRAVITY * 0.5 * dt;
-        body.vy -= dirY * GRAVITY * 0.5 * dt;
-      }
-    }
-
-    // 2. Circle-circle collision resolution against all other entities
-    for (const other of allEntities) {
-      if (other.id === entity.id) continue;
-      const ob = physicsMap.get(other.id);
-      if (!ob) continue;
-      const dx = body.x - ob.x;
-      const dy = body.y - ob.y;
-      const d = Math.sqrt(dx * dx + dy * dy);
-      const minDist = ENTITY_RADIUS * 2;
-      if (d < minDist && d > 0.001) {
-        // Separate
-        const overlap = minDist - d;
-        const nx = dx / d;
-        const ny = dy / d;
-        body.x += nx * overlap * 0.5;
-        body.y += ny * overlap * 0.5;
-        ob.x  -= nx * overlap * 0.5;
-        ob.y  -= ny * overlap * 0.5;
-        // Exchange velocity along collision normal with restitution
-        const relVx = body.vx - ob.vx;
-        const relVy = body.vy - ob.vy;
-        const dot = relVx * nx + relVy * ny;
-        if (dot < 0) {
-          const impulse = dot * (1 + RESTITUTION);
-          body.vx -= impulse * nx * 0.5;
-          body.vy -= impulse * ny * 0.5;
-          ob.vx   += impulse * nx * 0.5;
-          ob.vy   += impulse * ny * 0.5;
-        }
-      }
-    }
-
-    // 3. Damping
-    body.vx *= DAMPING;
-    body.vy *= DAMPING;
-
-    // 4. Tiny random perturbation (keeps cluster alive)
-    body.vx += (Math.random() - 0.5) * NOISE_FORCE;
-    body.vy += (Math.random() - 0.5) * NOISE_FORCE;
-
-    // 5. Integrate position
-    body.x += body.vx;
-    body.y += body.vy;
-
-    // 6. Apply to Three.js group (flat 2D at Z=0)
-    groupRef.current.position.set(body.x, body.y, 0);
-  });
-
-  const iconSrc = entity.iconUrl || iconDiet;
-
-  return (
-    <group ref={groupRef}>
-      <Html
-        center
-        style={{
-          pointerEvents: interactive ? 'auto' : 'none',
-          userSelect: 'none',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        <div
-          onClick={() => interactive && onSelect?.(entity.id)}
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            cursor: interactive ? 'pointer' : 'default',
-            transition: 'transform 0.25s ease',
-            transform: isSelected ? 'scale(1.25)' : 'scale(1)',
-          }}
-        >
-          {/* Icon circle */}
-          <div
-            style={{
-              width: 52,
-              height: 52,
-              borderRadius: '50%',
-              background: 'rgba(20, 20, 20, 0.9)',
-              border: `2px solid ${isSelected ? entity.color : `${entity.color}70`}`,
-              boxShadow: isSelected
-                ? `0 0 20px ${entity.color}70, 0 0 40px ${entity.color}40`
-                : `0 0 10px ${entity.color}30`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              overflow: 'hidden',
-              transition: 'border-color 0.25s, box-shadow 0.25s',
-            }}
-          >
-            <img
-              src={iconSrc}
-              alt={entity.label}
-              style={{ width: 32, height: 32, objectFit: 'contain' }}
-              draggable={false}
-              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-            />
-          </div>
-          {/* Label */}
-          <div
-            style={{
-              marginTop: 5,
-              fontSize: '11px',
-              fontWeight: 600,
-              fontFamily: 'Inter, sans-serif',
-              color: entity.color,
-              textShadow: `0 0 6px ${entity.color}44`,
-              opacity: 0.9,
-              letterSpacing: '0.03em',
-              textAlign: 'center',
-            }}
-          >
-            {entity.label}
-          </div>
-        </div>
-      </Html>
-    </group>
-  );
 }
 
 interface OrbitLabelsProps {
@@ -254,20 +77,229 @@ interface OrbitLabelsProps {
   interactive?: boolean;
 }
 
-export default function OrbitLabels({ entities, newEntityId, selectedId, onSelect, interactive }: OrbitLabelsProps) {
+export default function OrbitLabels({
+  entities,
+  newEntityId,
+  selectedId,
+  onSelect,
+  interactive,
+}: OrbitLabelsProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  // Map entity id → its DOM div ref
+  const divRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  // Physics bodies — keyed by id, stable across renders
+  const bodiesRef = useRef<Map<string, Body>>(new Map());
+  const rafRef = useRef<number>(0);
+  const entitiesRef = useRef(entities);
+  entitiesRef.current = entities;
+
+  // Initialise new bodies when entities list changes
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const hw = container.offsetWidth / 2;
+    const hh = container.offsetHeight / 2;
+    const maxR = Math.min(hw, hh) * 0.72;
+
+    for (const e of entities) {
+      if (!bodiesRef.current.has(e.id)) {
+        const isNew = e.id === newEntityId;
+        const angle = Math.random() * Math.PI * 2;
+        const r = isNew ? maxR * 1.1 : maxR * (0.3 + Math.random() * 0.5);
+        bodiesRef.current.set(e.id, {
+          id: e.id,
+          x: Math.cos(angle) * r,
+          y: Math.sin(angle) * r,
+          vx: 0,
+          vy: 0,
+        });
+      }
+    }
+    // Remove stale bodies
+    const ids = new Set(entities.map(e => e.id));
+    for (const id of bodiesRef.current.keys()) {
+      if (!ids.has(id)) bodiesRef.current.delete(id);
+    }
+  }, [entities, newEntityId]);
+
+  // Single RAF physics + render loop
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const loop = () => {
+      const bodies = Array.from(bodiesRef.current.values());
+      const n = bodies.length;
+
+      // 1. Gravity toward centre + centre repulsion
+      for (const b of bodies) {
+        const dist = Math.sqrt(b.x * b.x + b.y * b.y);
+        if (dist > 0.5) {
+          const nx = b.x / dist;
+          const ny = b.y / dist;
+          if (dist > REPULSE_RADIUS) {
+            b.vx -= nx * GRAVITY * dist;
+            b.vy -= ny * GRAVITY * dist;
+          } else {
+            b.vx += nx * GRAVITY * REPULSE_RADIUS * 0.5;
+            b.vy += ny * GRAVITY * REPULSE_RADIUS * 0.5;
+          }
+        }
+      }
+
+      // 2. Pairwise collision resolution — sequential, one pass
+      for (let i = 0; i < n; i++) {
+        for (let j = i + 1; j < n; j++) {
+          const a = bodies[i];
+          const b = bodies[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          const minD = ENTITY_RADIUS * 2;
+          if (d < minD && d > 0.1) {
+            const overlap = (minD - d) / 2;
+            const nx = dx / d;
+            const ny = dy / d;
+            a.x += nx * overlap;
+            a.y += ny * overlap;
+            b.x -= nx * overlap;
+            b.y -= ny * overlap;
+            const rvx = a.vx - b.vx;
+            const rvy = a.vy - b.vy;
+            const dot = rvx * nx + rvy * ny;
+            if (dot < 0) {
+              const imp = dot * (1 + RESTITUTION) * 0.5;
+              a.vx -= imp * nx;
+              a.vy -= imp * ny;
+              b.vx += imp * nx;
+              b.vy += imp * ny;
+            }
+          }
+        }
+      }
+
+      // 3. Damping + noise + integrate + clamp
+      const hw = container.offsetWidth / 2;
+      const hh = container.offsetHeight / 2;
+      const maxR = Math.min(hw, hh) - ENTITY_RADIUS - 4;
+      for (const b of bodies) {
+        b.vx = b.vx * DAMPING + (Math.random() - 0.5) * NOISE;
+        b.vy = b.vy * DAMPING + (Math.random() - 0.5) * NOISE;
+        b.x += b.vx;
+        b.y += b.vy;
+        // Soft boundary — push back if outside
+        const r = Math.sqrt(b.x * b.x + b.y * b.y);
+        if (r > maxR) {
+          const scale = maxR / r;
+          b.x *= scale;
+          b.y *= scale;
+          b.vx *= -RESTITUTION;
+          b.vy *= -RESTITUTION;
+        }
+      }
+
+      // 4. Write positions to DOM via CSS transform
+      for (const b of bodies) {
+        const el = divRefs.current.get(b.id);
+        if (el) {
+          el.style.transform = `translate(calc(-50% + ${b.x}px), calc(-50% + ${b.y}px))`;
+        }
+      }
+
+      rafRef.current = requestAnimationFrame(loop);
+    };
+
+    rafRef.current = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, []);
+
   return (
-    <group>
-      {entities.map((entity) => (
-        <OrbitIcon
-          key={entity.id}
-          entity={entity}
-          isNew={entity.id === newEntityId}
-          isSelected={entity.id === selectedId}
-          onSelect={onSelect}
-          interactive={interactive}
-          allEntities={entities}
-        />
-      ))}
-    </group>
+    <div
+      ref={containerRef}
+      style={{
+        position: 'absolute',
+        inset: 0,
+        pointerEvents: 'none',
+        zIndex: 3,
+      }}
+    >
+      {entities.map((entity) => {
+        const iconSrc = entity.iconUrl
+          ? iconMap[entity.iconUrl] || entity.iconUrl
+          : iconDiet;
+        const isSelected = entity.id === selectedId;
+        return (
+          <div
+            key={entity.id}
+            ref={(el) => {
+              if (el) divRefs.current.set(entity.id, el);
+              else divRefs.current.delete(entity.id);
+            }}
+            onClick={() => interactive && onSelect?.(entity.id)}
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              cursor: interactive ? 'pointer' : 'default',
+              pointerEvents: interactive ? 'auto' : 'none',
+              transition: 'transform 0.25s ease',
+              willChange: 'transform',
+              userSelect: 'none',
+            }}
+          >
+            <div
+              style={{
+                width: 52,
+                height: 52,
+                borderRadius: '50%',
+                background: 'rgba(20,20,20,0.9)',
+                border: `2px solid ${
+                  isSelected ? entity.color : `${entity.color}70`
+                }`,
+                boxShadow: isSelected
+                  ? `0 0 20px ${entity.color}70, 0 0 40px ${entity.color}40`
+                  : `0 0 10px ${entity.color}30`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden',
+                transition: 'border-color 0.25s, box-shadow 0.25s, transform 0.25s',
+                transform: isSelected ? 'scale(1.25)' : 'scale(1)',
+              }}
+            >
+              <img
+                src={iconSrc}
+                alt={entity.label}
+                style={{ width: 32, height: 32, objectFit: 'contain' }}
+                draggable={false}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+            </div>
+            <div
+              style={{
+                marginTop: 5,
+                fontSize: '11px',
+                fontWeight: 600,
+                fontFamily: 'Inter, sans-serif',
+                color: entity.color,
+                textShadow: `0 0 6px ${entity.color}44`,
+                opacity: 0.9,
+                letterSpacing: '0.03em',
+                textAlign: 'center',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {entity.label}
+            </div>
+          </div>
+        );
+      })}
+    </div>
   );
 }

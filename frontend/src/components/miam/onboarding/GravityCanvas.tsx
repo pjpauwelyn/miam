@@ -1,4 +1,3 @@
-import { Canvas } from '@react-three/fiber';
 import CenterGlow from './CenterGlow';
 import ParticleField, { type PendingBurst } from './ParticleField';
 import OrbitLabels, { type OrbitEntity } from './OrbitLabels';
@@ -23,17 +22,14 @@ export default function GravityCanvas({
   onSelect,
 }: GravityCanvasProps) {
   return (
-    <Canvas
+    <div
       style={{
         position: 'absolute',
         inset: 0,
         zIndex: 1,
-        // Canvas itself never captures pointer events — the Html elements inside do
         pointerEvents: 'none',
+        overflow: 'hidden',
       }}
-      camera={{ position: [0, 0, 6], fov: 45 }}
-      gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
-      dpr={1}
     >
       <CenterGlow />
       <ParticleField pendingBurst={pendingBurst} onBurstComplete={onBurstComplete} />
@@ -44,7 +40,7 @@ export default function GravityCanvas({
         onSelect={onSelect}
         interactive={interactive}
       />
-    </Canvas>
+    </div>
   );
 }
 
