@@ -53,7 +53,7 @@ export function getIconUrl(iconFile: string): string {
   return iconMap[iconFile] || iconDiet;
 }
 
-// ─── Physics constants ────────────────────────────────────────────────────────
+// ─── Physics constants ──────────────────────────────────────────────────────────────────────────────────
 const GRAVITY       = 0.0004;  // px/frame² attraction toward centre
 const DAMPING       = 0.985;   // velocity multiplier per frame — high = lazy float
 const RESTITUTION   = 0.4;     // bounce coefficient
@@ -92,6 +92,12 @@ export default function OrbitLabels({
   const rafRef = useRef<number>(0);
   const entitiesRef = useRef(entities);
   entitiesRef.current = entities;
+  const interactiveRef = useRef<boolean>(!!interactive);
+
+  // Keep interactiveRef in sync with the prop so the RAF loop sees updates
+  useEffect(() => {
+    interactiveRef.current = !!interactive;
+  }, [interactive]);
 
   // Initialise new bodies when entities list changes
   useEffect(() => {
@@ -132,17 +138,26 @@ export default function OrbitLabels({
       const n = bodies.length;
 
       // 1. Gravity toward centre + centre repulsion
-      for (const b of bodies) {
-        const dist = Math.sqrt(b.x * b.x + b.y * b.y);
+      for (const body of bodies) {
+        const dist = Math.sqrt(body.x * body.x + body.y * body.y);
         if (dist > 0.5) {
-          const nx = b.x / dist;
-          const ny = b.y / dist;
-          if (dist > REPULSE_RADIUS) {
-            b.vx -= nx * GRAVITY * dist;
-            b.vy -= ny * GRAVITY * dist;
+          const nx = -body.x / dist;
+          const ny = -body.y / dist;
+
+          if (interactiveRef.current) {
+            // Gather mode: strong pull toward center for completion screen
+            const GATHER_GRAVITY = 0.006;
+            body.vx += nx * GATHER_GRAVITY * dist;
+            body.vy += ny * GATHER_GRAVITY * dist;
           } else {
-            b.vx += nx * GRAVITY * REPULSE_RADIUS * 0.5;
-            b.vy += ny * GRAVITY * REPULSE_RADIUS * 0.5;
+            // Normal float mode
+            if (dist > REPULSE_RADIUS) {
+              body.vx += nx * GRAVITY * dist;
+              body.vy += ny * GRAVITY * dist;
+            } else {
+              body.vx -= nx * GRAVITY * REPULSE_RADIUS * 0.5;
+              body.vy -= ny * GRAVITY * REPULSE_RADIUS * 0.5;
+            }
           }
         }
       }
