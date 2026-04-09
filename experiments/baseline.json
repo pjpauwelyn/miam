@@ -1,0 +1,7 @@
+{
+  "_status": "PENDING — run experiments/run_baseline.py to populate",
+  "meta": {
+    "variant": "baseline",
+    "branch": "experiment/baseline-capture"
+  }
+}
