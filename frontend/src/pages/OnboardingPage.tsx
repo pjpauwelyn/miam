@@ -259,14 +259,7 @@ export default function OnboardingPage({ onComplete }: { onComplete?: () => void
               className="flex flex-col"
               style={{ height: '100%' }}
             >
-              <div
-                className="flex items-center justify-center flex-shrink-0"
-                style={{ paddingTop: 'max(env(safe-area-inset-top, 12px), 12px)', paddingBottom: 4 }}
-              >
-                <MiamLogo size={28} />
-              </div>
-
-              <div className="flex-shrink-0" style={{ height: 60 }} />
+              <div className="flex-shrink-0" style={{ height: 'max(env(safe-area-inset-top, 12px), 24px)' }} />
 
               <div
                 className="flex-1 flex flex-col px-5 min-h-0"
