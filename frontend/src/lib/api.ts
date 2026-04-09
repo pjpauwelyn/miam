@@ -493,8 +493,7 @@ function normaliseRecipe(row: { recipe_id: string; data: any }): RecipeDocument 
 }
 
 // Helper: convert RecipeDocument to the shape the existing UI components expect
-// matchScore defaults to 0 for backwards compatibility with all existing callers.
-export function recipeToUiFormat(r: RecipeDocument, matchScore = 0) {
+export function recipeToUiFormat(r: RecipeDocument) {
   return {
     id: r.recipe_id,
     title: r.title,
@@ -502,7 +501,7 @@ export function recipeToUiFormat(r: RecipeDocument, matchScore = 0) {
     dietary: r.dietary_tags,
     time: r.time_total_min || 0,
     difficulty: r.difficulty || 1,
-    matchScore: matchScore,
+    matchScore: 0,
     description: r.description,
     servings: r.serves || 2,
     ingredients: r.ingredients.map(i => ({
@@ -536,6 +535,7 @@ export function recipeToUiFormat(r: RecipeDocument, matchScore = 0) {
     occasionTags: r.occasion_tags,
     courseTags: r.course_tags,
     sourceType: r.source_type,
+    imageUrl: r.image_placeholder || null,
   };
 }
 

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Clock, Flame } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { UiRecipe } from '../../lib/api';
@@ -27,6 +28,8 @@ function DifficultyDots({ level }: { level: number }) {
 }
 
 export function RecipeCard({ recipe, compact = false, onClick, index = 0 }: RecipeCardProps) {
+  const [imgError, setImgError] = useState(false);
+
   if (compact) {
     return (
       <motion.button
@@ -97,6 +100,8 @@ export function RecipeCard({ recipe, compact = false, onClick, index = 0 }: Reci
     );
   }
 
+  const showImage = !!recipe.imageUrl && !imgError;
+
   // Full card for Discover screen
   return (
     <motion.button
@@ -113,30 +118,59 @@ export function RecipeCard({ recipe, compact = false, onClick, index = 0 }: Reci
       whileHover={{ y: -2 }}
       data-testid={`recipe-card-full-${recipe.id}`}
     >
-      <div
-        className="h-24 relative flex items-end p-2"
-        style={{
-          background: `linear-gradient(135deg, #262626 0%, #1E1E1E 100%)`,
-        }}
-      >
-        <Flame size={40} style={{ color: 'rgba(212, 168, 85, 0.08)', position: 'absolute', top: 12, right: 12 }} />
-        {recipe.regionTag && (
-          <div
-            className="px-1.5 py-0.5 rounded text-[10px] font-medium absolute top-2 left-2"
-            style={{ background: 'rgba(165,162,154,0.1)', color: '#A5A29A' }}
-          >
-            {recipe.regionTag}
-          </div>
-        )}
-        {recipe.matchScore > 0 && (
-          <div
-            className="px-1.5 py-0.5 rounded text-[10px] font-semibold"
-            style={{ background: 'rgba(212, 168, 85, 0.15)', color: '#D4A855' }}
-          >
-            {recipe.matchScore}% match
-          </div>
-        )}
-      </div>
+      {showImage ? (
+        <div className="h-24 relative overflow-hidden">
+          <img
+            src={recipe.imageUrl!}
+            alt={recipe.title}
+            className="absolute inset-0 w-full h-full"
+            style={{ objectFit: 'cover', borderRadius: 0 }}
+            loading="lazy"
+            onError={() => setImgError(true)}
+          />
+          {recipe.regionTag && (
+            <div
+              className="px-1.5 py-0.5 rounded text-[10px] font-medium absolute top-2 left-2"
+              style={{ background: 'rgba(0,0,0,0.45)', color: '#A5A29A' }}
+            >
+              {recipe.regionTag}
+            </div>
+          )}
+          {recipe.matchScore > 0 && (
+            <div
+              className="px-1.5 py-0.5 rounded text-[10px] font-semibold absolute bottom-2 left-2"
+              style={{ background: 'rgba(212, 168, 85, 0.85)', color: '#141414' }}
+            >
+              {recipe.matchScore}% match
+            </div>
+          )}
+        </div>
+      ) : (
+        <div
+          className="h-24 relative flex items-end p-2"
+          style={{
+            background: `linear-gradient(135deg, #262626 0%, #1E1E1E 100%)`,
+          }}
+        >
+          <Flame size={40} style={{ color: 'rgba(212, 168, 85, 0.08)', position: 'absolute', top: 12, right: 12 }} />
+          {recipe.regionTag && (
+            <div
+              className="px-1.5 py-0.5 rounded text-[10px] font-medium absolute top-2 left-2"
+              style={{ background: 'rgba(165,162,154,0.1)', color: '#A5A29A' }}
+            >
+              {recipe.regionTag}
+            </div>
+          )}
+          {recipe.matchScore > 0 && (
+            <div
+              className="px-1.5 py-0.5 rounded text-[10px] font-semibold"
+              style={{ background: 'rgba(212, 168, 85, 0.15)', color: '#D4A855' }}
+            >
+              {recipe.matchScore}% match
+            </div>
+          )}
+        </div>
+      )}
       <div className="p-3">
         <h4 className="text-[13px] font-medium leading-tight line-clamp-2" style={{ color: '#F0EDE8' }}>
           {recipe.title}

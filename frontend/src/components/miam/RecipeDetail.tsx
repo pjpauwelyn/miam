@@ -49,6 +49,7 @@ export function RecipeDetail({ recipe, onClose }: RecipeDetailProps) {
   const [saved, setSaved] = useState(false);
   const [savingBookmark, setSavingBookmark] = useState(false);
   const [cookingStep, setCookingStep] = useState(0);
+  const [heroImgError, setHeroImgError] = useState(false);
 
   // Check if recipe is already saved on mount
   useEffect(() => {
@@ -62,6 +63,7 @@ export function RecipeDetail({ recipe, onClose }: RecipeDetailProps) {
   useEffect(() => {
     setTab('overview');
     setCookingStep(0);
+    setHeroImgError(false);
   }, [recipe?.id]);
 
   if (!recipe) return null;
@@ -110,6 +112,8 @@ export function RecipeDetail({ recipe, onClose }: RecipeDetailProps) {
 
   const totalSteps = recipe.steps.length;
   const currentStepData = recipe.steps[cookingStep];
+
+  const showHeroImage = !!recipe.imageUrl && !heroImgError;
 
   return (
     <AnimatePresence>
@@ -263,6 +267,39 @@ export function RecipeDetail({ recipe, onClose }: RecipeDetailProps) {
           </div>
         ) : (
           <>
+            {/* Hero image — shown only outside cooking mode */}
+            <div className="h-40 relative overflow-hidden flex-shrink-0">
+              {showHeroImage ? (
+                <img
+                  src={recipe.imageUrl!}
+                  alt={recipe.title}
+                  className="w-full h-full"
+                  style={{ objectFit: 'cover' }}
+                  loading="lazy"
+                  onError={() => setHeroImgError(true)}
+                />
+              ) : (
+                <div
+                  className="w-full h-full flex items-center justify-center"
+                  style={{ background: 'linear-gradient(135deg, #1E1E1E 0%, #262626 100%)' }}
+                >
+                  {recipe.cuisine[0] && (
+                    <span
+                      className="text-4xl font-bold uppercase tracking-widest select-none"
+                      style={{ color: 'rgba(212, 168, 85, 0.08)' }}
+                    >
+                      {recipe.cuisine[0]}
+                    </span>
+                  )}
+                </div>
+              )}
+              {/* Bottom fade overlay so title blends naturally */}
+              <div
+                className="absolute inset-x-0 bottom-0 h-full pointer-events-none"
+                style={{ background: 'linear-gradient(to top, #141414 0%, transparent 60%)' }}
+              />
+            </div>
+
             {/* Title & tags */}
             <div className="px-5 pb-3">
               <h1 className="text-xl font-semibold leading-tight" style={{ color: '#F0EDE8' }}>
