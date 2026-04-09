@@ -62,13 +62,13 @@ export default function LoginPage() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col h-full px-8 pt-16 pb-8">
+      <div className="relative z-10 flex flex-col h-full justify-end px-8 pb-8">
         {/* Top section — Logo & branding */}
         <motion.div
           initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="flex flex-col items-center mb-auto pt-4"
+          className="flex flex-col items-center mb-8"
         >
           <MiamLogo size={56} />
           <h1
@@ -90,7 +90,7 @@ export default function LoginPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          className="w-full max-w-sm mx-auto mb-auto"
+          className="w-full max-w-sm mx-auto"
         >
           <form onSubmit={handleSubmit} className="space-y-3">
             <AnimatePresence mode="popLayout">
