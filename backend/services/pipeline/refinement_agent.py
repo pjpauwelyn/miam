@@ -1,19 +1,29 @@
 """
-Stage 5: Refinement Agent
+Stage 5: Refinement Agent (Experiment C)
 
 THE MOST IMPORTANT PIPELINE RULE:
 The generation agent (Stage 6) NEVER receives raw retrieved documents.
 This agent produces the ONLY input to Stage 6.
 
-This stage:
-1. Serialises the complete user ontology and query ontology into structured text
-2. Formats ALL recipe data with full ingredients, steps, and nutrition — no truncation
-3. Calls the LLM to curate, assess compliance, suggest adaptations, and write directives
-4. Produces a structured context document in the canonical [ONTOLOGY SUMMARY] /
-   [ONTOLOGY DIRECTIVES] / [RECIPES & TECHNIQUES] / [CAVEATS & GAPS] format
-5. Falls back to deterministic construction if the LLM call fails
+EXPERIMENT C CHANGES vs main:
+  - System prompt replaced: produces chain-of-thought <scratchpad> + structured
+    XML document instead of prose sections.
+  - Handoff format: <refinement> XML with sections:
+      <scratchpad>        — visible CoT reasoning chain for Stage 6
+      <ontology_summary>  — structured profile attributes
+      <directives>        — imperative instructions for Stage 6
+      <recipes>           — per-recipe blocks with compliance/skill/time/adaptations
+      <gaps>              — quality flags and generation guidance
+  - Each <recipe> has explicit child elements:
+      <compliance_check status=PASS|WARN|FAIL reason="..." />
+      <skill_fit status=GOOD|STRETCH reason="..." />
+      <time_fit status=FITS|TIGHT|OVER delta_min="+/-x" />
+      <adaptations><adaptation>...</adaptation></adaptations>
+  - Validation: checks for <refinement> instead of [ONTOLOGY SUMMARY].
+  - max_tokens increased from 2048 → 3072.
+  - Fallback deterministic builder emits the same XML schema.
 
-Function signature:
+This is a drop-in replacement. Function signature UNCHANGED:
     async def refine_results(
         ranked_recipes: list[dict],
         query: QueryOntology,
@@ -34,108 +44,120 @@ from services.llm_router import LLMOperation, call_llm
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
-# System prompt
+# System prompt (Experiment C: CoT scratchpad + XML handoff)
 # ---------------------------------------------------------------------------
 
 _REFINEMENT_SYSTEM_PROMPT = """\
 You are the Refinement Agent of the miam food intelligence system.
-Your sole purpose is to transform ranked recipe candidates, a user's personal
-ontology, and their current query into a single structured context document.
-This document is the ONLY input the Response Generator (Stage 6) will receive.
 
-CRITICAL RULES:
-1. You are the information quality gate. Stage 6 sees nothing except what you write.
-2. Actively curate — select the most relevant recipes, assess each against the
-   user's profile, identify gaps, suggest adaptations. Do not passively summarise.
-3. Respect dietary hard stops absolutely. Flag any WARN for dietary concerns immediately.
-4. Assess skill fit: a BEGINNER cannot be expected to execute advanced techniques.
-5. Assess time fit: compare recipe time against the user's weeknight/weekend budget.
-6. Write the [ONTOLOGY DIRECTIVES] section as explicit instructions for Stage 6 —
-   not observations. Use imperative language: "Address:", "Respect:", "Weigh:", "Avoid:".
-7. Write the Generation guidance in [CAVEATS & GAPS] as a concrete brief for Stage 6.
-8. Use EU/British English: aubergine, courgette, coriander, spring onion, hob.
-9. All measurements metric. Temperatures in Celsius.
-10. Output ONLY the structured document below — no preamble, no sign-off.
+Your output is the ONLY input the Response Generator (Stage 6) receives.
 
-OUTPUT FORMAT (reproduce section headers exactly as written):
+PROCESS — think step-by-step, then emit structured XML:
 
-[ONTOLOGY SUMMARY]
-Profile match factors:
-- Dietary: {spectrum_label} | Hard stops: {list or "none"}
-- Skill: {level} | Time budget: weeknight {x} min, weekend {x} min
-- Equipment: {key equipment or "standard kitchen"}
-- Flavour sweet spots: {top preferences with scores, e.g. "umami 8.5, smoky 7.0"}
-- Favourite ingredients: {list or "not specified"}
-- Cuisine affinities: loves {list} | avoids {list}
+Step 1 (SCRATCHPAD): Reason through the query-profile fit internally.
+  - Which recipes actually match the query intent?
+  - Which dietary hard stops apply? Any violations?
+  - Skill fit? Time fit? Cuisine match?
+  - What adaptations would improve each recipe for this user?
+  - What gaps exist in the candidates?
 
-Query-specific factors:
-- Desired cuisine: {value or "not specified"}
-- Desired ingredients: {value or "not specified"}
-- Time constraint: {value or "none"}
-- Mood / occasion: {value or "not specified"}
-- Nutritional goal: {value or "none"}
+Step 2 (XML OUTPUT): Emit ONLY the XML document below. No prose before or after it.
 
-[ONTOLOGY DIRECTIVES]
-Address: {what the user is specifically asking for — concrete and direct}
-Shape: {how to frame the answer — skill-appropriate detail level, tone, length}
-Respect: {absolute constraints — hard dietary stops, time budget limits}
-Weigh: {soft preferences — cuisine affinity, flavour sweet spots, budget range}
-Avoid: {things the profile says to skip or de-emphasise}
+RULES:
+1. Dietary hard stops are absolute. Any recipe with a violation gets compliance status="FAIL".
+2. Skill assessment: BEGINNER cannot execute advanced techniques without simplification.
+3. EU/British English: aubergine, courgette, coriander, spring onion, hob.
+4. All measurements metric. Temperatures in Celsius.
+5. The <scratchpad> is visible to Stage 6 — use it to show your reasoning chain.
+6. Every <recipe> must have <compliance_check>, <skill_fit>, <time_fit>, <adaptations>.
+7. Every <recipe> must have at least one <adaptation> child element.
+8. Output ONLY the XML document — no preamble, no sign-off.
 
-[RECIPES & TECHNIQUES]
-# {Recipe title}
-Source ID: {entity_id}
-Match: {score} ({tier}) | Why: {1 sentence relevance rationale}
+OUTPUT FORMAT (reproduce XML structure exactly):
 
-Ingredients ({count}):
-- {full list with amounts — every ingredient including optional ones, marked (optional)}
+<refinement>
+  <scratchpad>
+    <query_intent>{what the user actually wants — 1 sentence}</query_intent>
+    <profile_constraints>
+      <hard_stops>{comma-separated list or "none"}</hard_stops>
+      <skill_level>{level}</skill_level>
+      <time_budget weeknight="{x}" weekend="{y}" />
+      <flavor_preferences>{top 3 with scores}</flavor_preferences>
+    </profile_constraints>
+    <candidate_assessment>
+      <candidate id="{entity_id}" title="{title}">
+        <relevance>{HIGH|MEDIUM|LOW} — {1 sentence why}</relevance>
+        <concerns>{specific issues or "none"}</concerns>
+      </candidate>
+    </candidate_assessment>
+    <strategy>{1-2 sentences: which recipes to lead with, what to adapt, what to caveat}</strategy>
+  </scratchpad>
 
-Method ({count} steps):
-1. {full instruction text}
-...
+  <ontology_summary>
+    <dietary spectrum="{label}" hard_stops="{list}" />
+    <cooking skill="{level}" weeknight_min="{x}" weekend_min="{y}" equipment="{key items}" />
+    <flavors>{top preferences with scores}</flavors>
+    <cuisine loves="{list}" avoids="{list}" />
+  </ontology_summary>
 
-Key techniques: {technique_tags}
-Flavour profile: {flavor_tags} | Texture: {texture_tags}
-Time: {total} min ({prep} min prep + {cook} min cook) | Difficulty: {x}/5 | Serves: {x}
+  <directives>
+    <address>{what to answer — concrete and direct}</address>
+    <shape>{how to frame — skill-appropriate detail, tone, length}</shape>
+    <respect>{absolute constraints}</respect>
+    <weigh>{soft preferences}</weigh>
+    <avoid>{things to skip}</avoid>
+  </directives>
 
-Nutrition per serving:
-kcal: {value} | protein: {value}g | fat: {value}g | carbs: {value}g | fibre: {value}g | sugar: {value}g | salt: {value}g
-(or: Not available in recipe data)
+  <recipes>
+    <recipe id="{entity_id}" title="{title}" score="{match_score}" tier="{tier}">
+      <why>{1 sentence relevance rationale}</why>
+      <ingredients count="{n}">
+        <ingredient amount="{amount}" unit="{unit}" optional="{true|false}">{name}</ingredient>
+      </ingredients>
+      <method steps="{n}">
+        <step n="{1}" duration_min="{x}" techniques="{tags}">{instruction}</step>
+      </method>
+      <tags>
+        <flavors>{comma-separated}</flavors>
+        <textures>{comma-separated}</textures>
+        <cuisines>{comma-separated}</cuisines>
+      </tags>
+      <timing total="{x}" prep="{y}" cook="{z}" />
+      <difficulty>{1-5}</difficulty>
+      <serves>{n}</serves>
+      <nutrition>
+        <per_serving kcal="{v}" protein="{v}g" fat="{v}g" carbs="{v}g" fibre="{v}g" sugar="{v}g" salt="{v}g" />
+      </nutrition>
+      <compliance_check status="{PASS|WARN|FAIL}" reason="{specific reason}" />
+      <skill_fit status="{GOOD|STRETCH}" reason="{specific reason}" />
+      <time_fit status="{FITS|TIGHT|OVER}" delta_min="{+/- minutes}" />
+      <adaptations>
+        <adaptation>{specific, actionable suggestion for this user}</adaptation>
+      </adaptations>
+    </recipe>
+  </recipes>
 
-Dietary compliance: PASS
-(or: WARN — {specific ingredient or issue}. Adaptation: {concrete suggestion})
-Skill fit: GOOD
-(or: STRETCH — {specific technique that may challenge this user})
-Time fit: FITS
-(or: TIGHT — {x} min over budget | OVER — {x} min over budget)
-Adaptation notes: {specific, actionable suggestions tailored to this user's profile}
-
----
-{next recipe — repeat the # Title block for each}
-
-[CAVEATS & GAPS]
-Ontology coverage:
-- Well matched: {attributes that are well covered by the candidates}
-- Weak or missing: {gaps — e.g. "no recipes match requested season", "nutrition data absent"}
-
-Data quality:
-- {notes on missing or inferred data — flag with [INFERRED] if a value was estimated}
-
-Generation guidance:
-- Emphasise: {2–3 specific things Stage 6 should focus on}
-- Caveat: {1–2 things Stage 6 should qualify or hedge}
-- Approach: {1 sentence framing for the answer — e.g. "Lead with the fastest recipe, mention the dairy-free adaptation upfront"}
+  <gaps>
+    <well_matched>{attributes covered well}</well_matched>
+    <weak_or_missing>{gaps in candidates}</weak_or_missing>
+    <data_quality>{notes on missing/inferred data}</data_quality>
+    <generation_guidance>
+      <emphasise>{2-3 specific focus areas for Stage 6}</emphasise>
+      <caveat>{1-2 things to qualify}</caveat>
+      <approach>{1 sentence framing}</approach>
+    </generation_guidance>
+  </gaps>
+</refinement>
 """
 
 # ---------------------------------------------------------------------------
-# Helper: serialise user profile
+# Helper: serialise user profile (unchanged from main)
 # ---------------------------------------------------------------------------
 
 def _build_profile_summary(profile: UserProfile) -> str:
     """Serialise the complete UserProfile into structured text for the LLM prompt."""
     lines: list[str] = []
 
-    # --- Dietary identity ---
     lines.append("=== DIETARY IDENTITY ===")
     spectrum = profile.dietary.spectrum_label or "not specified"
     lines.append(f"Spectrum label: {spectrum}")
@@ -149,7 +171,6 @@ def _build_profile_summary(profile: UserProfile) -> str:
     if profile.dietary.nuance_notes:
         lines.append(f"Nuance: {profile.dietary.nuance_notes}")
 
-    # --- Cooking context ---
     lines.append("")
     lines.append("=== COOKING CONTEXT ===")
     lines.append(f"Skill level: {profile.cooking.skill.value}")
@@ -174,7 +195,6 @@ def _build_profile_summary(profile: UserProfile) -> str:
     ]
     lines.append(f"Specific equipment: {', '.join(owned_equipment) if owned_equipment else 'none beyond setup'}")
 
-    # --- Flavour preferences ---
     lines.append("")
     lines.append("=== FLAVOUR PREFERENCES (0-10) ===")
     fl = profile.flavor
@@ -187,7 +207,6 @@ def _build_profile_summary(profile: UserProfile) -> str:
         score_str = f"{score:.1f}" if score is not None else "not set"
         lines.append(f"{dim}: {score_str}")
 
-    # --- Texture preferences ---
     lines.append("")
     lines.append("=== TEXTURE PREFERENCES (0-10) ===")
     tx = profile.texture
@@ -200,7 +219,6 @@ def _build_profile_summary(profile: UserProfile) -> str:
         score_str = f"{score:.1f}" if score is not None else "not set"
         lines.append(f"{dim}: {score_str}")
 
-    # --- Cuisine affinities ---
     lines.append("")
     lines.append("=== CUISINE AFFINITIES ===")
     affinity_buckets: dict[str, list[str]] = {
@@ -224,35 +242,30 @@ def _build_profile_summary(profile: UserProfile) -> str:
         if entries:
             lines.append(f"{bucket.capitalize()}: {', '.join(entries)}")
 
-    # --- Budget ---
     lines.append("")
     lines.append("=== BUDGET ===")
-    home_budget = f"€{profile.budget.home_per_meal_eur:.0f}" if profile.budget.home_per_meal_eur is not None else "not set"
-    out_budget = f"€{profile.budget.out_per_meal_eur:.0f}" if profile.budget.out_per_meal_eur is not None else "not set"
+    home_budget = f"\u20ac{profile.budget.home_per_meal_eur:.0f}" if profile.budget.home_per_meal_eur is not None else "not set"
+    out_budget = f"\u20ac{profile.budget.out_per_meal_eur:.0f}" if profile.budget.out_per_meal_eur is not None else "not set"
     lines.append(f"Home per meal: {home_budget}")
     lines.append(f"Dining out per meal: {out_budget}")
 
-    # --- Adventurousness ---
     lines.append("")
     lines.append("=== ADVENTUROUSNESS ===")
     lines.append(f"Cooking: {profile.adventurousness.cooking_score:.1f}/10")
     lines.append(f"Dining: {profile.adventurousness.dining_score:.1f}/10")
 
-    # --- Nutrition awareness ---
     lines.append("")
     lines.append("=== NUTRITION AWARENESS ===")
     lines.append(f"Level: {profile.nutrition.level.value}")
     if profile.nutrition.tracked_dimensions:
         lines.append(f"Tracked: {', '.join(profile.nutrition.tracked_dimensions)}")
 
-    # --- Social context ---
     lines.append("")
     lines.append("=== SOCIAL CONTEXT ===")
     lines.append(f"Default context: {profile.social.default_social_context.value}")
     lines.append(f"Meals out per week: {profile.social.meals_out_per_week}")
     lines.append(f"Home cooked per week: {profile.social.home_cooked_per_week}")
 
-    # --- Lifestyle ---
     lines.append("")
     lines.append("=== LIFESTYLE ===")
     lines.append(f"Seasonal preference: {profile.lifestyle.seasonal_preference_score:.1f}/10")
@@ -261,14 +274,12 @@ def _build_profile_summary(profile: UserProfile) -> str:
         lines.append(f"Special interests: {', '.join(profile.lifestyle.special_interests)}")
     lines.append(f"Inspiration style: {profile.lifestyle.inspiration_style.value}")
 
-    # --- Location ---
     lines.append("")
     lines.append("=== LOCATION ===")
     city = profile.location.city or "not set"
     country = profile.location.country or "not set"
     lines.append(f"City: {city}, Country: {country}")
 
-    # --- Profile summary text (if present) ---
     if profile.profile_summary_text:
         lines.append("")
         lines.append("=== PROFILE SUMMARY ===")
@@ -278,7 +289,7 @@ def _build_profile_summary(profile: UserProfile) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Helper: serialise query ontology
+# Helper: serialise query ontology (unchanged from main)
 # ---------------------------------------------------------------------------
 
 def _build_query_analysis(query: QueryOntology) -> str:
@@ -296,7 +307,6 @@ def _build_query_analysis(query: QueryOntology) -> str:
     if query.inferred_urgency:
         lines.append(f"Inferred urgency: {query.inferred_urgency}")
 
-    # Eat In attributes
     ea = query.eat_in_attributes
     if ea:
         lines.append("")
@@ -311,7 +321,6 @@ def _build_query_analysis(query: QueryOntology) -> str:
         lines.append(f"Nutritional goal: {ea.nutritional_goal or 'none'}")
         lines.append(f"Serving size: {ea.serving_size or 'not specified'}")
 
-    # Conflicts
     if query.conflicts:
         lines.append("")
         lines.append("=== QUERY-PROFILE CONFLICTS ===")
@@ -327,7 +336,7 @@ def _build_query_analysis(query: QueryOntology) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Helper: format full recipe data
+# Helper: format full recipe data (unchanged from main)
 # ---------------------------------------------------------------------------
 
 def _build_recipe_data(ranked_recipes: list[dict], max_recipes: int = 5) -> str:
@@ -352,27 +361,23 @@ def _build_recipe_data(ranked_recipes: list[dict], max_recipes: int = 5) -> str:
             if isinstance(tips, list):
                 block.append(f"tips: {' | '.join(str(t) for t in tips)}")
 
-        # --- Timing and logistics ---
         block.append(f"difficulty: {recipe.get('difficulty', 'unknown')}/5")
         block.append(f"time_total_min: {recipe.get('time_total_min', 'unknown')}")
         block.append(f"time_prep_min: {recipe.get('time_prep_min', 'unknown')}")
         block.append(f"time_cook_min: {recipe.get('time_cook_min', 'unknown')}")
         block.append(f"serves: {recipe.get('serves', 'unknown')}")
 
-        # --- Tags ---
         for tag_key in ("cuisine_tags", "flavor_tags", "texture_tags", "season_tags", "occasion_tags", "dietary_tags"):
             tags = recipe.get(tag_key)
             if tags:
                 block.append(f"{tag_key}: {', '.join(str(t) for t in tags)}")
 
-        # --- Dietary flags ---
         dietary_flags = recipe.get("dietary_flags")
         if isinstance(dietary_flags, dict):
             active = [k for k, v in dietary_flags.items() if v is True]
             if active:
                 block.append(f"dietary_flags: {', '.join(active)}")
 
-        # --- Full ingredient list ---
         ingredients = recipe.get("ingredients") or []
         block.append(f"\nIngredients ({len(ingredients)}):")
         for ing in ingredients:
@@ -394,7 +399,6 @@ def _build_recipe_data(ranked_recipes: list[dict], max_recipes: int = 5) -> str:
             else:
                 block.append(f"- {ing}")
 
-        # --- Full method steps ---
         steps = recipe.get("steps") or []
         block.append(f"\nMethod ({len(steps)} steps):")
         for step in steps:
@@ -412,7 +416,6 @@ def _build_recipe_data(ranked_recipes: list[dict], max_recipes: int = 5) -> str:
             else:
                 block.append(f"- {step}")
 
-        # --- Nutrition ---
         nutr = recipe.get("nutrition_per_serving")
         block.append("\nNutrition per serving:")
         if isinstance(nutr, dict) and nutr:
@@ -423,7 +426,6 @@ def _build_recipe_data(ranked_recipes: list[dict], max_recipes: int = 5) -> str:
         else:
             block.append("  Not available in recipe data")
 
-        # --- Factor scores ---
         factor_scores = recipe.get("_factor_scores")
         if isinstance(factor_scores, dict) and factor_scores:
             block.append("\nRanking factor scores:")
@@ -436,7 +438,7 @@ def _build_recipe_data(ranked_recipes: list[dict], max_recipes: int = 5) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Deterministic fallback context builder
+# Deterministic fallback (Experiment C: emits XML schema)
 # ---------------------------------------------------------------------------
 
 def _build_fallback_context(
@@ -445,7 +447,7 @@ def _build_fallback_context(
     profile: UserProfile,
     retrieval_context: RetrievalContext,
 ) -> str:
-    """Build a structured context deterministically when the LLM call fails."""
+    """Build a structured XML context deterministically when the LLM call fails."""
     hard_stops = [r.label for r in profile.dietary.hard_stops if r.is_hard_stop]
     hard_stops_str = ", ".join(hard_stops) if hard_stops else "none"
     spectrum = profile.dietary.spectrum_label or "not specified"
@@ -459,55 +461,75 @@ def _build_fallback_context(
     nutr_goal = ea.nutritional_goal if ea else "none"
     desired_ings = ", ".join(ea.desired_ingredients) if (ea and ea.desired_ingredients) else "not specified"
 
-    recipe_data = _build_recipe_data(ranked_recipes)
-    warnings_text = "\n".join(retrieval_context.warnings) if retrieval_context.warnings else "None"
+    warnings_text = "; ".join(retrieval_context.warnings) if retrieval_context.warnings else "none"
 
-    lines = [
-        "[ONTOLOGY SUMMARY]",
-        "Profile match factors:",
-        f"- Dietary: {spectrum} | Hard stops: {hard_stops_str}",
-        f"- Skill: {skill} | Time budget: weeknight {weeknight} min, weekend {profile.cooking.weekend_minutes} min",
-        f"- Equipment: {profile.cooking.kitchen_setup.value}",
-        "- Flavour sweet spots: not assessed (deterministic fallback)",
-        "- Favourite ingredients: not assessed (deterministic fallback)",
-        "- Cuisine affinities: not assessed (deterministic fallback)",
-        "",
-        "Query-specific factors:",
-        f"- Desired cuisine: {cuisine_req}",
-        f"- Desired ingredients: {desired_ings}",
-        f"- Time constraint: {time_req}",
-        f"- Mood / occasion: {mood_req}",
-        f"- Nutritional goal: {nutr_goal}",
-        "",
-        "[ONTOLOGY DIRECTIVES]",
-        f"Address: {query.raw_query}",
-        f"Shape: Answer at {skill} level with practical detail",
-        f"Respect: Hard dietary stops ({hard_stops_str}); time budget {weeknight} min on weeknights",
-        "Weigh: Cuisine affinities, flavour preferences as available",
-        "Avoid: Anything matching hard stops listed above",
-        "",
-        "[RECIPES & TECHNIQUES]",
-        recipe_data,
-        "",
-        "[CAVEATS & GAPS]",
-        "Ontology coverage:",
-        "- Well matched: basic dietary and time constraints applied",
-        "- Weak or missing: full profile analysis unavailable (deterministic fallback)",
-        "",
-        "Data quality:",
-        f"- Retrieval warnings: {warnings_text}",
-        "- [INFERRED] Full LLM-based curation unavailable due to service error",
-        "",
-        "Generation guidance:",
-        "- Emphasise: dietary safety, time fit, practical cooking instructions",
-        "- Caveat: profile analysis was limited; recommendations may not be fully personalised",
-        "- Approach: Present recipes factually; note the limited personalisation",
-    ]
-    return "\n".join(lines)
+    # Build recipe XML blocks
+    recipe_xml_parts = []
+    for recipe in ranked_recipes[:5]:
+        title = recipe.get("title_en") or recipe.get("title") or "Untitled"
+        eid = recipe.get("_entity_id", "unknown")
+        score = recipe.get("_match_score", 0.0)
+        tier = recipe.get("_match_tier", "stretch_pick")
+        recipe_xml_parts.append(
+            f'    <recipe id="{eid}" title="{title}" score="{score:.4f}" tier="{tier}">\n'
+            f'      <why>Deterministic fallback — no LLM curation available</why>\n'
+            f'      <compliance_check status="UNKNOWN" reason="LLM unavailable" />\n'
+            f'      <skill_fit status="UNKNOWN" reason="LLM unavailable" />\n'
+            f'      <time_fit status="UNKNOWN" delta_min="0" />\n'
+            f'      <adaptations>\n'
+            f'        <adaptation>No adaptations available (fallback mode)</adaptation>\n'
+            f'      </adaptations>\n'
+            f'    </recipe>'
+        )
+    recipes_xml = "\n".join(recipe_xml_parts)
+
+    return f"""<refinement>
+  <scratchpad>
+    <query_intent>{query.raw_query}</query_intent>
+    <profile_constraints>
+      <hard_stops>{hard_stops_str}</hard_stops>
+      <skill_level>{skill}</skill_level>
+      <time_budget weeknight="{weeknight}" weekend="{profile.cooking.weekend_minutes}" />
+      <flavor_preferences>not assessed (deterministic fallback)</flavor_preferences>
+    </profile_constraints>
+    <candidate_assessment>No LLM assessment available (service error).</candidate_assessment>
+    <strategy>Present recipes factually; note limited personalisation due to fallback mode.</strategy>
+  </scratchpad>
+
+  <ontology_summary>
+    <dietary spectrum="{spectrum}" hard_stops="{hard_stops_str}" />
+    <cooking skill="{skill}" weeknight_min="{weeknight}" weekend_min="{profile.cooking.weekend_minutes}" equipment="{profile.cooking.kitchen_setup.value}" />
+    <flavors>not assessed</flavors>
+    <cuisine loves="not assessed" avoids="not assessed" />
+  </ontology_summary>
+
+  <directives>
+    <address>{query.raw_query}</address>
+    <shape>Answer at {skill} level with practical detail</shape>
+    <respect>Hard dietary stops ({hard_stops_str}); time budget {weeknight} min weeknights</respect>
+    <weigh>Cuisine affinities, flavour preferences as available</weigh>
+    <avoid>Anything matching hard stops</avoid>
+  </directives>
+
+  <recipes>
+{recipes_xml}
+  </recipes>
+
+  <gaps>
+    <well_matched>Basic dietary and time constraints applied</well_matched>
+    <weak_or_missing>Full profile analysis unavailable (LLM service error — deterministic fallback)</weak_or_missing>
+    <data_quality>Retrieval warnings: {warnings_text}. LLM-based curation unavailable.</data_quality>
+    <generation_guidance>
+      <emphasise>Dietary safety, time fit, practical cooking instructions</emphasise>
+      <caveat>Profile analysis was limited; recommendations may not be fully personalised</caveat>
+      <approach>Present recipes factually; note the limited personalisation</approach>
+    </generation_guidance>
+  </gaps>
+</refinement>"""
 
 
 # ---------------------------------------------------------------------------
-# Main refinement function
+# Main refinement function (signature unchanged)
 # ---------------------------------------------------------------------------
 
 async def refine_results(
@@ -517,9 +539,10 @@ async def refine_results(
     retrieval_context: RetrievalContext,
 ) -> str:
     """
-    Stage 5: Refinement Agent.
+    Stage 5: Refinement Agent (Experiment C).
 
-    Produces the structured context string that is the ONLY input to Stage 6.
+    Produces the structured XML context string that is the ONLY input to Stage 6.
+    Format: <refinement> XML with CoT <scratchpad> + per-recipe compliance/adaptations.
 
     CRITICAL: This function is the information quality gate.
     Stage 6 (response_generator) sees nothing except what this function produces.
@@ -531,27 +554,35 @@ async def refine_results(
         retrieval_context: RetrievalContext from Stage 2b.
 
     Returns:
-        A structured context string in the canonical section format.
+        A structured <refinement> XML string.
     """
     if not ranked_recipes:
-        logger.warning("Stage 5: No ranked recipes to refine — returning empty context")
+        logger.warning("Stage 5: No ranked recipes to refine — returning empty XML context")
+        hard_stops_str = ", ".join(
+            r.label for r in profile.dietary.hard_stops if r.is_hard_stop
+        ) or "none"
         return (
-            "[ONTOLOGY SUMMARY]\n"
-            f"Profile match factors:\n"
-            f"- Dietary: {profile.dietary.spectrum_label or 'not specified'} | Hard stops: "
-            + ", ".join(r.label for r in profile.dietary.hard_stops if r.is_hard_stop)
-            + "\n\n"
-            "[ONTOLOGY DIRECTIVES]\n"
-            f"Address: {query.raw_query}\n"
-            "Respect: No recipes were retrieved — inform the user and suggest broadening the search.\n\n"
-            "[RECIPES & TECHNIQUES]\n"
-            "No matching recipes were found for this query.\n\n"
-            "[CAVEATS & GAPS]\n"
-            "Ontology coverage:\n"
-            "- Well matched: n/a\n"
-            "- Weak or missing: no candidates retrieved\n\n"
-            "Generation guidance:\n"
-            "- Approach: Acknowledge no strong matches. Suggest the user broaden their search or try a different query."
+            "<refinement>\n"
+            "  <scratchpad>\n"
+            f"    <query_intent>{query.raw_query}</query_intent>\n"
+            "    <strategy>No candidates were retrieved. Inform the user and suggest broadening the search.</strategy>\n"
+            "  </scratchpad>\n"
+            "  <ontology_summary>\n"
+            f"    <dietary spectrum=\"{profile.dietary.spectrum_label or 'not specified'}\" hard_stops=\"{hard_stops_str}\" />\n"
+            "  </ontology_summary>\n"
+            "  <directives>\n"
+            f"    <address>{query.raw_query}</address>\n"
+            "    <respect>No recipes were retrieved — inform the user and suggest broadening the search.</respect>\n"
+            "  </directives>\n"
+            "  <recipes />\n"
+            "  <gaps>\n"
+            "    <well_matched>n/a</well_matched>\n"
+            "    <weak_or_missing>No candidates retrieved</weak_or_missing>\n"
+            "    <generation_guidance>\n"
+            "      <approach>Acknowledge no strong matches. Suggest the user broaden their search or try a different query.</approach>\n"
+            "    </generation_guidance>\n"
+            "  </gaps>\n"
+            "</refinement>"
         )
 
     # Build input sections (deterministic — no LLM involved)
@@ -566,10 +597,11 @@ async def refine_results(
         f"RETRIEVAL WARNINGS:\n{warnings_text}\n\n"
         f"RANKED RECIPE CANDIDATES ({min(len(ranked_recipes), 5)} of {len(ranked_recipes)}):\n"
         f"{recipe_text}\n\n"
-        f"Produce the structured context document for the Response Generator. "
-        f"Follow the output format exactly. Curate actively — assess each recipe "
-        f"against the user profile, flag compliance issues, suggest adaptations, "
-        f"and write actionable generation directives."
+        f"Produce the <refinement> XML document. Follow the output format exactly. "
+        f"Start with the <scratchpad> reasoning chain, then emit the full XML. "
+        f"Curate actively: assess each recipe against the user profile, flag compliance "
+        f"issues with PASS/WARN/FAIL, assess skill and time fit, and write at least one "
+        f"concrete adaptation per recipe."
     )
 
     messages = [
@@ -581,17 +613,17 @@ async def refine_results(
         refined_context = await call_llm(
             LLMOperation.REFINEMENT_AGENT,
             messages,
-            max_tokens=2048,
+            max_tokens=3072,  # increased from 2048 — XML + scratchpad is more verbose
         )
         logger.info(
-            "Stage 5 complete: refined context length=%d chars",
+            "Stage 5 (exp/c) complete: refined context length=%d chars",
             len(refined_context),
         )
 
-        # Validate output has expected structure
-        if "[ONTOLOGY SUMMARY]" not in refined_context:
+        # Validate output has expected XML structure
+        if "<refinement>" not in refined_context:
             logger.warning(
-                "Refinement agent output missing [ONTOLOGY SUMMARY] — falling back to deterministic"
+                "Refinement agent output missing <refinement> root element — falling back to deterministic"
             )
             return _build_fallback_context(ranked_recipes, query, profile, retrieval_context)
 
@@ -599,6 +631,6 @@ async def refine_results(
 
     except Exception as exc:
         logger.error(
-            "Stage 5 LLM call failed (%s) — falling back to deterministic context", exc
+            "Stage 5 LLM call failed (%s) — falling back to deterministic XML context", exc
         )
         return _build_fallback_context(ranked_recipes, query, profile, retrieval_context)
