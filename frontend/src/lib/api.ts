@@ -516,14 +516,16 @@ export function recipeToUiFormat(r: RecipeDocument) {
       techniqueTags: s.technique_tags || [],
     })),
     nutrition: {
-      calories: r.nutrition_per_serving.kcal || 0,
-      protein: r.nutrition_per_serving.protein_g || 0,
-      carbs: r.nutrition_per_serving.carbs_g || 0,
-      fat: r.nutrition_per_serving.fat_g || 0,
-      fibre: r.nutrition_per_serving.fiber_g || 0,
-      saturatedFat: r.nutrition_per_serving.saturated_fat_g || 0,
-      sugar: r.nutrition_per_serving.sugar_g || 0,
-      salt: r.nutrition_per_serving.salt_g || 0,
+      // Use ?? null so that missing/undefined fields remain null (not 0).
+      // Genuine zero values (e.g. 0g sugar) are preserved correctly.
+      calories:     r.nutrition_per_serving.kcal           ?? null,
+      protein:      r.nutrition_per_serving.protein_g      ?? null,
+      carbs:        r.nutrition_per_serving.carbs_g        ?? null,
+      fat:          r.nutrition_per_serving.fat_g          ?? null,
+      fibre:        r.nutrition_per_serving.fiber_g        ?? null,
+      saturatedFat: r.nutrition_per_serving.saturated_fat_g ?? null,
+      sugar:        r.nutrition_per_serving.sugar_g        ?? null,
+      salt:         r.nutrition_per_serving.salt_g         ?? null,
     },
     flavourTags: r.flavor_tags,
     textureTags: r.texture_tags,
@@ -535,7 +537,6 @@ export function recipeToUiFormat(r: RecipeDocument) {
     occasionTags: r.occasion_tags,
     courseTags: r.course_tags,
     sourceType: r.source_type,
-    imageUrl: r.image_placeholder || null,
   };
 }
 
