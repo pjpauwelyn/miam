@@ -8,12 +8,14 @@ import type { OrbitEntity, PendingBurst } from '../components/miam/onboarding/Gr
 import { getIconUrl } from '../components/miam/onboarding/OrbitLabels';
 import QuestionCard from '../components/miam/onboarding/QuestionCard';
 import { onboardingQuestions } from '../data/onboardingQuestions';
-import { saveOnboardingProfile, logActivity, getCurrentUserId } from '../lib/api';
+import { saveOnboardingProfile, logActivity } from '../lib/api';
+import { useAuth } from '../contexts/AuthContext';
 import spaceBg from '@assets/space-bg.png';
 
 const TOTAL_STEPS = onboardingQuestions.length; // 17
 
 export default function OnboardingPage({ onComplete }: { onComplete?: () => void } = {}) {
+  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(0); // 0=intro, 1-17=questions, 18=completion, 19=review
   const [entities, setEntities] = useState<OrbitEntity[]>([]);
   const [answers, setAnswers] = useState<Record<string, any>>({});
@@ -127,8 +129,9 @@ export default function OnboardingPage({ onComplete }: { onComplete?: () => void
     setSaving(true);
     setSavePhase('Compiling your taste profile...');
     try {
-      await saveOnboardingProfile(getCurrentUserId(), answers, (phase) => setSavePhase(phase));
-      await logActivity(getCurrentUserId(), 'onboarding_complete', undefined, `Completed ${Object.keys(answers).length} questions`);
+      const userId = user?.id || '';
+      await saveOnboardingProfile(userId, answers, (phase) => setSavePhase(phase));
+      await logActivity(userId, 'onboarding_complete', undefined, `Completed ${Object.keys(answers).length} questions`);
     } catch {
       // Silent fail — profile save is best-effort
     } finally {

@@ -63,7 +63,7 @@ function AppShell() {
     setCheckingProfile(true);
     fetchUserProfile(user.id)
       .then((profile) => {
-        setHasProfile(profile !== null && profile.onboarding_complete === true);
+        setHasProfile(profile !== null && profile.profile_status === 'complete');
       })
       .catch(() => setHasProfile(false))
       .finally(() => setCheckingProfile(false));
