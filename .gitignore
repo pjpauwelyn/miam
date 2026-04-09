@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Build output
+dist/
+*.egg-info/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test / cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Data progress files (not source data)
+backend/data/_ingest_all_progress.json
+backend/data/recipes/progress/
+
+# Vercel
+.vercel

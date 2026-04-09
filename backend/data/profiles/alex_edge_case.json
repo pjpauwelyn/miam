@@ -1,0 +1,245 @@
+{
+  "profile_id": "e4c8880d-cec4-418f-95cc-5633f4367f70",
+  "user_id": "c5aed613-7924-4f1f-b48f-b821b0ac97ce",
+  "schema_version": "1.0.0",
+  "created_at": "2026-04-08T07:53:54.902763",
+  "last_updated": "2026-04-08T07:53:54.902765",
+  "dietary": {
+    "spectrum_label": "vegan",
+    "hard_stops": [
+      {
+        "label": "no-meat",
+        "is_hard_stop": true,
+        "reason": "Environmental",
+        "confidence": 1.0
+      },
+      {
+        "label": "no-dairy",
+        "is_hard_stop": true,
+        "reason": "Environmental",
+        "confidence": 1.0
+      },
+      {
+        "label": "no-eggs",
+        "is_hard_stop": true,
+        "reason": "Environmental",
+        "confidence": 1.0
+      }
+    ],
+    "soft_stops": [
+      {
+        "label": "fish-ok",
+        "is_hard_stop": false,
+        "reason": "Sustainable fish is acceptable",
+        "confidence": 1.0
+      }
+    ],
+    "nuance_notes": "Self-identifies as vegan but eats sustainably sourced fish. Tree nut allergy.",
+    "meta": {
+      "weight": "core",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.902615",
+      "update_source": "onboarding"
+    }
+  },
+  "cuisine_affinities": {
+    "affinities": [
+      {
+        "cuisine": "Thai",
+        "level": "love",
+        "sub_nuances": [],
+        "confidence": 0.95
+      },
+      {
+        "cuisine": "Japanese",
+        "level": "like",
+        "sub_nuances": [],
+        "confidence": 0.85
+      },
+      {
+        "cuisine": "Vietnamese",
+        "level": "like",
+        "sub_nuances": [],
+        "confidence": 0.8
+      }
+    ],
+    "meta": {
+      "weight": "core",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.902641",
+      "update_source": "onboarding"
+    }
+  },
+  "flavor": {
+    "spicy": 8.5,
+    "sweet": 2.0,
+    "sour": 7.0,
+    "umami": 7.0,
+    "bitter": 3.0,
+    "fatty": 2.0,
+    "fermented": 5.0,
+    "smoky": 3.0,
+    "salty": 5.0,
+    "meta": {
+      "weight": "important",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.902658",
+      "update_source": "onboarding"
+    }
+  },
+  "texture": {
+    "crunchy": 8.0,
+    "creamy": 4.0,
+    "soft": 5.0,
+    "chewy": 3.0,
+    "crispy": 7.0,
+    "silky": 6.0,
+    "chunky": 4.0,
+    "meta": {
+      "weight": "important",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.902668",
+      "update_source": "onboarding"
+    }
+  },
+  "cooking": {
+    "skill": "confident",
+    "kitchen_setup": "well_equipped",
+    "specific_equipment": {
+      "stand_mixer": false,
+      "food_processor": false,
+      "sous_vide": false,
+      "pressure_cooker": false,
+      "air_fryer": false,
+      "wok": true,
+      "cast_iron": false,
+      "outdoor_grill": false,
+      "pasta_machine": false,
+      "dehydrator": false
+    },
+    "weeknight_minutes": 30,
+    "weekend_minutes": 90,
+    "meta": {
+      "weight": "important",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.902677",
+      "update_source": "onboarding"
+    }
+  },
+  "budget": {
+    "home_per_meal_eur": 8.0,
+    "out_per_meal_eur": 25.0,
+    "meta": {
+      "weight": "important",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.902696",
+      "update_source": "onboarding"
+    }
+  },
+  "dining_vibe": {
+    "vibes": [
+      {
+        "vibe": "casual",
+        "score": 9.0,
+        "confidence": 0.4
+      },
+      {
+        "vibe": "hole-in-the-wall",
+        "score": 8.5,
+        "confidence": 0.4
+      }
+    ],
+    "meta": {
+      "weight": "important",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.902703",
+      "update_source": "onboarding"
+    }
+  },
+  "adventurousness": {
+    "cooking_score": 7.5,
+    "dining_score": 7.0,
+    "meta": {
+      "weight": "important",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.902715",
+      "update_source": "onboarding"
+    }
+  },
+  "nutrition": {
+    "level": "light",
+    "tracked_dimensions": [],
+    "meta": {
+      "weight": "optional",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.902722",
+      "update_source": "onboarding"
+    }
+  },
+  "social": {
+    "default_social_context": "couple",
+    "meals_out_per_week": 2.0,
+    "home_cooked_per_week": 5.0,
+    "meta": {
+      "weight": "optional",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.902730",
+      "update_source": "onboarding"
+    }
+  },
+  "lifestyle": {
+    "seasonal_preference_score": 6.0,
+    "sustainability_priority_score": 8.0,
+    "special_interests": [],
+    "inspiration_style": "short_list",
+    "meta": {
+      "weight": "optional",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.902738",
+      "update_source": "onboarding"
+    }
+  },
+  "location": {
+    "city": "Amsterdam",
+    "country": "NL",
+    "radius_km": 4.0,
+    "meta": {
+      "weight": "important",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.902746",
+      "update_source": "onboarding"
+    }
+  },
+  "tensions": [
+    {
+      "dimension_a": "dietary.spectrum_label",
+      "dimension_b": "cuisine_affinities.affinities[cuisine='Thai']",
+      "description": "Profile indicates strict dietary restriction ('vegan') but has 'PreferenceLevel.LOVE' affinity for Thai cuisine, which typically includes restricted ingredients. Consider adding sub_nuances or adjusting the label.",
+      "severity": "medium",
+      "detected_at": "2026-04-08T07:53:54.902794",
+      "resolved": false,
+      "resolution_note": null
+    },
+    {
+      "dimension_a": "dietary.spectrum_label",
+      "dimension_b": "cuisine_affinities.affinities[cuisine='Japanese']",
+      "description": "Profile indicates strict dietary restriction ('vegan') but has 'PreferenceLevel.LIKE' affinity for Japanese cuisine, which typically includes restricted ingredients. Consider adding sub_nuances or adjusting the label.",
+      "severity": "medium",
+      "detected_at": "2026-04-08T07:53:54.902806",
+      "resolved": false,
+      "resolution_note": null
+    },
+    {
+      "dimension_a": "dietary.spectrum_label",
+      "dimension_b": "cuisine_affinities.affinities[cuisine='Vietnamese']",
+      "description": "Profile indicates strict dietary restriction ('vegan') but has 'PreferenceLevel.LIKE' affinity for Vietnamese cuisine, which typically includes restricted ingredients. Consider adding sub_nuances or adjusting the label.",
+      "severity": "medium",
+      "detected_at": "2026-04-08T07:53:54.902813",
+      "resolved": false,
+      "resolution_note": null
+    }
+  ],
+  "profile_summary_text": "Alex self-identifies as vegan but eats sustainably sourced fish \u2014 a contradiction the system should detect. Loves Thai food and casual hole-in-the-wall spots. Tree nut allergy.",
+  "onboarding_complete": true,
+  "onboarding_version": "1.0.0"
+}

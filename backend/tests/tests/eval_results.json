@@ -1,0 +1,949 @@
+[
+  {
+    "id": "q01",
+    "query": "What can I make with chicken and rice?",
+    "category": "ingredient_search",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 4,
+    "checks": {
+      "has_results_or_valid_block": true,
+      "cuisine_match": false,
+      "cuisine_detail": "expected any of ['Japanese', 'Thai', 'Indian'], found in results=set(), text_match=False"
+    },
+    "overall": "FAIL",
+    "time_seconds": 24.85,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.294,
+        "stage1_query_extraction": 5.085,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 2.471,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 9.229,
+        "stage6_generation": 7.767
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q02",
+    "query": "I have sweet potatoes and coconut milk",
+    "category": "ingredient_search",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 1,
+    "checks": {
+      "has_results_or_valid_block": true,
+      "cuisine_match": true,
+      "cuisine_detail": "expected any of ['Thai', 'Indian'], found in results=set(), text_match=True"
+    },
+    "overall": "PASS",
+    "time_seconds": 18.78,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.264,
+        "stage1_query_extraction": 3.978,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 2.6,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 5.752,
+        "stage6_generation": 6.188
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q03",
+    "query": "Recipes using aubergine and mozzarella",
+    "category": "ingredient_search",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 2,
+    "checks": {
+      "has_results_or_valid_block": true,
+      "cuisine_match": true,
+      "cuisine_detail": "expected any of ['Italian'], found in results=set(), text_match=True",
+      "dietary_compliance": false,
+      "dietary_detail": "0/2 recipes are vegetarian, text_mentions=False"
+    },
+    "overall": "FAIL",
+    "time_seconds": 28.32,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.262,
+        "stage1_query_extraction": 6.434,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 2.758,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 9.638,
+        "stage6_generation": 9.224
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q04",
+    "query": "What can I cook with salmon and soy sauce?",
+    "category": "ingredient_search",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 3,
+    "checks": {
+      "has_results_or_valid_block": true,
+      "cuisine_match": true,
+      "cuisine_detail": "expected any of ['Japanese'], found in results=set(), text_match=True"
+    },
+    "overall": "PASS",
+    "time_seconds": 39.2,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.262,
+        "stage1_query_extraction": 11.765,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 2.582,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 14.874,
+        "stage6_generation": 9.716
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q05",
+    "query": "I have courgettes, tomatoes, and feta",
+    "category": "ingredient_search",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 1,
+    "checks": {
+      "has_results_or_valid_block": true,
+      "cuisine_match": true,
+      "cuisine_detail": "expected any of ['Middle Eastern', 'Italian'], found in results=set(), text_match=True",
+      "dietary_compliance": true,
+      "dietary_detail": "0/1 recipes are vegetarian, text_mentions=False"
+    },
+    "overall": "PASS",
+    "time_seconds": 53.23,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.25,
+        "stage1_query_extraction": 19.262,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 4.6,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 13.627,
+        "stage6_generation": 15.489
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q06",
+    "query": "Recipes with lentils and cumin",
+    "category": "ingredient_search",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 5,
+    "checks": {
+      "has_results_or_valid_block": true,
+      "cuisine_match": false,
+      "cuisine_detail": "expected any of ['Indian', 'Middle Eastern'], found in results=set(), text_match=False"
+    },
+    "overall": "FAIL",
+    "time_seconds": 44.99,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.247,
+        "stage1_query_extraction": 10.544,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 4.367,
+        "stage4_ranking": 0.001,
+        "stage5_refinement": 14.505,
+        "stage6_generation": 15.322
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q07",
+    "query": "Something with prawns and garlic",
+    "category": "ingredient_search",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 2,
+    "checks": {
+      "has_results_or_valid_block": true,
+      "cuisine_match": false,
+      "cuisine_detail": "expected any of ['Spanish', 'Thai'], found in results=set(), text_match=False"
+    },
+    "overall": "FAIL",
+    "time_seconds": 39.29,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.262,
+        "stage1_query_extraction": 13.737,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 3.104,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 11.997,
+        "stage6_generation": 10.187
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q08",
+    "query": "I only have eggs, cheese, and bread",
+    "category": "ingredient_search",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 1,
+    "checks": {
+      "has_results_or_valid_block": true,
+      "cuisine_match": false,
+      "cuisine_detail": "expected any of ['French', 'Dutch/Belgian'], found in results=set(), text_match=False",
+      "dietary_compliance": true,
+      "dietary_detail": "0/1 recipes are vegetarian, text_mentions=False"
+    },
+    "overall": "FAIL",
+    "time_seconds": 43.03,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.242,
+        "stage1_query_extraction": 8.551,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 2.594,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 18.581,
+        "stage6_generation": 13.064
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 11,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q09",
+    "query": "Vegan Japanese dinner ideas",
+    "category": "dietary_filter",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 3,
+    "checks": {
+      "tag_is_vegan": true,
+      "tag_is_vegan_detail": "0/3 compliant, text_ok=True"
+    },
+    "overall": "PASS",
+    "time_seconds": 47.12,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.591,
+        "stage1_query_extraction": 10.079,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 2.92,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 16.585,
+        "stage6_generation": 16.943
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q10",
+    "query": "Gluten-free pasta alternatives",
+    "category": "dietary_filter",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 2,
+    "checks": {
+      "tag_is_gluten_free": false,
+      "tag_is_gluten_free_detail": "0/2 compliant, text_ok=False"
+    },
+    "overall": "FAIL",
+    "time_seconds": 55.61,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.261,
+        "stage1_query_extraction": 14.664,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 3.319,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 15.516,
+        "stage6_generation": 21.846
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q11",
+    "query": "Halal Indian curry recipes",
+    "category": "dietary_filter",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 2,
+    "checks": {
+      "tag_is_halal_ok": false,
+      "tag_is_halal_ok_detail": "0/2 compliant, text_ok=False"
+    },
+    "overall": "FAIL",
+    "time_seconds": 45.72,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.264,
+        "stage1_query_extraction": 14.5,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 2.925,
+        "stage4_ranking": 0.001,
+        "stage5_refinement": 15.575,
+        "stage6_generation": 12.451
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q12",
+    "query": "Nut-free Thai dishes for someone with allergies",
+    "category": "dietary_filter",
+    "pipeline_status": "blocked",
+    "has_generated_text": true,
+    "result_count": 0,
+    "checks": {
+      "no_results_acceptable": true
+    },
+    "overall": "PASS",
+    "time_seconds": 11.07,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.26,
+        "stage1_query_extraction": 10.814,
+        "stage2b_fusion": 0.0
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 0,
+      "recipe_count_after_ranking": 0
+    }
+  },
+  {
+    "id": "q13",
+    "query": "Dairy-free Italian desserts",
+    "category": "dietary_filter",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 1,
+    "checks": {
+      "tag_is_dairy_free": false,
+      "tag_is_dairy_free_detail": "0/1 compliant, text_ok=False"
+    },
+    "overall": "FAIL",
+    "time_seconds": 36.86,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.215,
+        "stage1_query_extraction": 8.921,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 2.745,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 13.552,
+        "stage6_generation": 11.426
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q14",
+    "query": "Pescatarian main courses",
+    "category": "dietary_filter",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 3,
+    "checks": {
+      "tag_is_pescatarian_ok": false,
+      "tag_is_pescatarian_ok_detail": "0/3 compliant, text_ok=False"
+    },
+    "overall": "FAIL",
+    "time_seconds": 45.32,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.237,
+        "stage1_query_extraction": 9.589,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 2.932,
+        "stage4_ranking": 0.001,
+        "stage5_refinement": 13.604,
+        "stage6_generation": 18.955
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q15",
+    "query": "Vegetarian recipes that work for a dinner party",
+    "category": "dietary_filter",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 2,
+    "checks": {
+      "tag_is_vegetarian": true,
+      "tag_is_vegetarian_detail": "0/2 compliant, text_ok=True"
+    },
+    "overall": "PASS",
+    "time_seconds": 49.48,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.286,
+        "stage1_query_extraction": 14.939,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 2.965,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 20.699,
+        "stage6_generation": 10.588
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q16",
+    "query": "Quick dinner under 20 minutes",
+    "category": "time_constraint",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 1,
+    "checks": {
+      "time_within_limit": true,
+      "time_detail": "1/1 within 20min"
+    },
+    "overall": "PASS",
+    "time_seconds": 84.07,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.27,
+        "stage1_query_extraction": 44.789,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 2.739,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 23.476,
+        "stage6_generation": 12.799
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 9,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q17",
+    "query": "I have 30 minutes, what can I cook?",
+    "category": "time_constraint",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 2,
+    "checks": {
+      "time_within_limit": true,
+      "time_detail": "2/2 within 30min"
+    },
+    "overall": "PASS",
+    "time_seconds": 42.54,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.239,
+        "stage1_query_extraction": 13.427,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 2.684,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 13.753,
+        "stage6_generation": 12.433
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 15,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q18",
+    "query": "Weekend slow-cook project",
+    "category": "time_constraint",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 1,
+    "checks": {
+      "time_above_min": true,
+      "time_detail": "1/1 above 120min"
+    },
+    "overall": "PASS",
+    "time_seconds": 49.14,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.276,
+        "stage1_query_extraction": 17.281,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 2.873,
+        "stage4_ranking": 0.001,
+        "stage5_refinement": 17.68,
+        "stage6_generation": 11.033
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q19",
+    "query": "Something I can prep in 15 minutes before work",
+    "category": "time_constraint",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 2,
+    "checks": {
+      "time_within_limit": true,
+      "time_detail": "2/2 within 15min"
+    },
+    "overall": "PASS",
+    "time_seconds": 48.46,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.502,
+        "stage1_query_extraction": 11.806,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 4.434,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 16.025,
+        "stage6_generation": 15.688
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 6,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q20",
+    "query": "Easy weeknight meal, max 45 minutes",
+    "category": "time_constraint",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 2,
+    "checks": {
+      "time_within_limit": true,
+      "time_detail": "2/2 within 45min"
+    },
+    "overall": "PASS",
+    "time_seconds": 41.89,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.248,
+        "stage1_query_extraction": 10.335,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 2.91,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 12.53,
+        "stage6_generation": 15.867
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q21",
+    "query": "I want to try North African food, what should I start with?",
+    "category": "cuisine_exploration",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 4,
+    "checks": {
+      "cuisine_match": true,
+      "cuisine_detail": "expected any of ['North African'], found in results=set(), text_match=True"
+    },
+    "overall": "PASS",
+    "time_seconds": 33.3,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.255,
+        "stage1_query_extraction": 10.305,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 2.297,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 10.983,
+        "stage6_generation": 9.456
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q22",
+    "query": "Classic Dutch comfort food",
+    "category": "cuisine_exploration",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 4,
+    "checks": {
+      "cuisine_match": true,
+      "cuisine_detail": "expected any of ['Dutch/Belgian', 'Dutch'], found in results=set(), text_match=True"
+    },
+    "overall": "PASS",
+    "time_seconds": 52.76,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.215,
+        "stage1_query_extraction": 15.242,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 8.2,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 16.303,
+        "stage6_generation": 12.798
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q23",
+    "query": "Authentic Thai street food at home",
+    "category": "cuisine_exploration",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 5,
+    "checks": {
+      "cuisine_match": true,
+      "cuisine_detail": "expected any of ['Thai'], found in results=set(), text_match=True"
+    },
+    "overall": "PASS",
+    "time_seconds": 42.33,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.247,
+        "stage1_query_extraction": 16.048,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 3.032,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 11.35,
+        "stage6_generation": 11.653
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q24",
+    "query": "Scandinavian recipes for summer",
+    "category": "cuisine_exploration",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 3,
+    "checks": {
+      "cuisine_match": true,
+      "cuisine_detail": "expected any of ['Scandinavian'], found in results=set(), text_match=True"
+    },
+    "overall": "PASS",
+    "time_seconds": 50.73,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.23,
+        "stage1_query_extraction": 9.368,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 2.852,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 19.325,
+        "stage6_generation": 18.955
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q25",
+    "query": "Traditional Japanese home cooking",
+    "category": "cuisine_exploration",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 2,
+    "checks": {
+      "cuisine_match": true,
+      "cuisine_detail": "expected any of ['Japanese'], found in results=set(), text_match=True"
+    },
+    "overall": "PASS",
+    "time_seconds": 54.29,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.242,
+        "stage1_query_extraction": 20.125,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 2.925,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 10.709,
+        "stage6_generation": 20.288
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q26",
+    "query": "Something from Latin America I've never tried",
+    "category": "cuisine_exploration",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 2,
+    "checks": {
+      "cuisine_match": true,
+      "cuisine_detail": "expected any of ['Latin American'], found in results=set(), text_match=True"
+    },
+    "overall": "PASS",
+    "time_seconds": 46.31,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.228,
+        "stage1_query_extraction": 16.227,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 3.549,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 16.758,
+        "stage6_generation": 9.547
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q27",
+    "query": "German recipes beyond schnitzel",
+    "category": "cuisine_exploration",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 3,
+    "checks": {
+      "cuisine_match": true,
+      "cuisine_detail": "expected any of ['German'], found in results=set(), text_match=True"
+    },
+    "overall": "PASS",
+    "time_seconds": 67.88,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.246,
+        "stage1_query_extraction": 8.46,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 7.465,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 26.758,
+        "stage6_generation": 24.946
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q28",
+    "query": "Middle Eastern dishes for beginners",
+    "category": "cuisine_exploration",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 5,
+    "checks": {
+      "cuisine_match": true,
+      "cuisine_detail": "expected any of ['Middle Eastern'], found in results=set(), text_match=True"
+    },
+    "overall": "PASS",
+    "time_seconds": 113.12,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.405,
+        "stage1_query_extraction": 60.097,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 4.045,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 24.3,
+        "stage6_generation": 24.273
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q50",
+    "query": "I want sushi but I'm vegan and allergic to soy",
+    "category": "edge_cases",
+    "pipeline_status": "blocked",
+    "has_generated_text": true,
+    "result_count": 0,
+    "checks": {
+      "handled_gracefully": true
+    },
+    "overall": "PASS",
+    "time_seconds": 24.7,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.232,
+        "stage1_query_extraction": 24.47,
+        "stage2b_fusion": 0.0
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 0,
+      "recipe_count_after_ranking": 0
+    }
+  },
+  {
+    "id": "q51",
+    "query": "Quick halal gluten-free nut-free dinner under 20 minutes",
+    "category": "edge_cases",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 3,
+    "checks": {
+      "handled_gracefully": true
+    },
+    "overall": "PASS",
+    "time_seconds": 117.53,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.238,
+        "stage1_query_extraction": 60.087,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 2.592,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 7.316,
+        "stage6_generation": 47.295
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q54",
+    "query": "I want something spicy but not too spicy",
+    "category": "edge_cases",
+    "pipeline_status": "blocked",
+    "has_generated_text": true,
+    "result_count": 0,
+    "checks": {
+      "handled_gracefully": true
+    },
+    "overall": "PASS",
+    "time_seconds": 21.16,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.599,
+        "stage1_query_extraction": 20.561,
+        "stage2b_fusion": 0.0
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 0,
+      "recipe_count_after_ranking": 0
+    }
+  },
+  {
+    "id": "q55",
+    "query": "",
+    "category": "edge_cases",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 3,
+    "checks": {
+      "handled_gracefully": true
+    },
+    "overall": "PASS",
+    "time_seconds": 76.81,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.291,
+        "stage1_query_extraction": 26.48,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 3.45,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 20.509,
+        "stage6_generation": 26.079
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q56",
+    "query": "Tell me a joke",
+    "category": "edge_cases",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 0,
+    "checks": {
+      "handled_gracefully": true
+    },
+    "overall": "PASS",
+    "time_seconds": 54.79,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.219,
+        "stage1_query_extraction": 16.411,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 2.676,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 15.794,
+        "stage6_generation": 19.694
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  },
+  {
+    "id": "q59",
+    "query": "I need a recipe for exactly 7 people with no leftovers",
+    "category": "edge_cases",
+    "pipeline_status": "ok",
+    "has_generated_text": true,
+    "result_count": 2,
+    "checks": {
+      "handled_gracefully": true
+    },
+    "overall": "PASS",
+    "time_seconds": 73.4,
+    "pipeline_debug_summary": {
+      "stage_timings": {
+        "stage0_profile": 0.256,
+        "stage1_query_extraction": 10.739,
+        "stage2b_fusion": 0.0,
+        "stage3_retrieval": 3.212,
+        "stage4_ranking": 0.0,
+        "stage5_refinement": 30.045,
+        "stage6_generation": 29.146
+      },
+      "stage_errors": {},
+      "recipe_count_after_retrieval": 20,
+      "recipe_count_after_ranking": 5
+    }
+  }
+]

@@ -1,0 +1,114 @@
+{
+  "version": "1.0",
+  "description": "60 test questions from mock_data_plan_v2 §5 — 8 categories",
+  "categories": [
+    {
+      "name": "ingredient_search",
+      "description": "Find recipes by ingredient",
+      "questions": [
+        {"id": "q01", "query": "What can I make with chicken and rice?", "mode": "eat_in", "expected_cuisines": ["Japanese", "Thai", "Indian"], "dietary_constraint": null},
+        {"id": "q02", "query": "I have sweet potatoes and coconut milk", "mode": "eat_in", "expected_cuisines": ["Thai", "Indian"], "dietary_constraint": null},
+        {"id": "q03", "query": "Recipes using aubergine and mozzarella", "mode": "eat_in", "expected_cuisines": ["Italian"], "dietary_constraint": "vegetarian"},
+        {"id": "q04", "query": "What can I cook with salmon and soy sauce?", "mode": "eat_in", "expected_cuisines": ["Japanese"], "dietary_constraint": null},
+        {"id": "q05", "query": "I have courgettes, tomatoes, and feta", "mode": "eat_in", "expected_cuisines": ["Middle Eastern", "Italian"], "dietary_constraint": "vegetarian"},
+        {"id": "q06", "query": "Recipes with lentils and cumin", "mode": "eat_in", "expected_cuisines": ["Indian", "Middle Eastern"], "dietary_constraint": null},
+        {"id": "q07", "query": "Something with prawns and garlic", "mode": "eat_in", "expected_cuisines": ["Spanish", "Thai"], "dietary_constraint": null},
+        {"id": "q08", "query": "I only have eggs, cheese, and bread", "mode": "eat_in", "expected_cuisines": ["French", "Dutch/Belgian"], "dietary_constraint": "vegetarian"}
+      ]
+    },
+    {
+      "name": "dietary_filter",
+      "description": "Dietary restriction filtering",
+      "questions": [
+        {"id": "q09", "query": "Vegan Japanese dinner ideas", "mode": "eat_in", "expected_tags": ["is_vegan"], "hard_stop": true},
+        {"id": "q10", "query": "Gluten-free pasta alternatives", "mode": "eat_in", "expected_tags": ["is_gluten_free"], "hard_stop": true},
+        {"id": "q11", "query": "Halal Indian curry recipes", "mode": "eat_in", "expected_tags": ["is_halal_ok"], "hard_stop": true},
+        {"id": "q12", "query": "Nut-free Thai dishes for someone with allergies", "mode": "eat_in", "expected_tags": ["is_nut_free"], "hard_stop": true},
+        {"id": "q13", "query": "Dairy-free Italian desserts", "mode": "eat_in", "expected_tags": ["is_dairy_free"], "hard_stop": true},
+        {"id": "q14", "query": "Pescatarian main courses", "mode": "eat_in", "expected_tags": ["is_pescatarian_ok"], "hard_stop": false},
+        {"id": "q15", "query": "Vegetarian recipes that work for a dinner party", "mode": "eat_in", "expected_tags": ["is_vegetarian"], "hard_stop": false}
+      ]
+    },
+    {
+      "name": "time_constraint",
+      "description": "Time-limited cooking queries",
+      "questions": [
+        {"id": "q16", "query": "Quick dinner under 20 minutes", "mode": "eat_in", "max_time_min": 20},
+        {"id": "q17", "query": "I have 30 minutes, what can I cook?", "mode": "eat_in", "max_time_min": 30},
+        {"id": "q18", "query": "Weekend slow-cook project", "mode": "eat_in", "min_time_min": 120},
+        {"id": "q19", "query": "Something I can prep in 15 minutes before work", "mode": "eat_in", "max_time_min": 15},
+        {"id": "q20", "query": "Easy weeknight meal, max 45 minutes", "mode": "eat_in", "max_time_min": 45}
+      ]
+    },
+    {
+      "name": "cuisine_exploration",
+      "description": "Cuisine-specific discovery",
+      "questions": [
+        {"id": "q21", "query": "I want to try North African food, what should I start with?", "mode": "eat_in", "expected_cuisines": ["North African"]},
+        {"id": "q22", "query": "Classic Dutch comfort food", "mode": "eat_in", "expected_cuisines": ["Dutch/Belgian", "Dutch"]},
+        {"id": "q23", "query": "Authentic Thai street food at home", "mode": "eat_in", "expected_cuisines": ["Thai"]},
+        {"id": "q24", "query": "Scandinavian recipes for summer", "mode": "eat_in", "expected_cuisines": ["Scandinavian"]},
+        {"id": "q25", "query": "Traditional Japanese home cooking", "mode": "eat_in", "expected_cuisines": ["Japanese"]},
+        {"id": "q26", "query": "Something from Latin America I've never tried", "mode": "eat_in", "expected_cuisines": ["Latin American"]},
+        {"id": "q27", "query": "German recipes beyond schnitzel", "mode": "eat_in", "expected_cuisines": ["German"]},
+        {"id": "q28", "query": "Middle Eastern dishes for beginners", "mode": "eat_in", "expected_cuisines": ["Middle Eastern"]}
+      ]
+    },
+    {
+      "name": "restaurant_location",
+      "description": "Restaurant search by location",
+      "questions": [
+        {"id": "q29", "query": "Best restaurants in De Pijp", "mode": "eat_out", "neighborhood": "De Pijp"},
+        {"id": "q30", "query": "Where to eat in Jordaan tonight?", "mode": "eat_out", "neighborhood": "Jordaan"},
+        {"id": "q31", "query": "Dinner near Amsterdam-Oost", "mode": "eat_out", "neighborhood": "Oost"},
+        {"id": "q32", "query": "Restaurants near Centrum", "mode": "eat_out", "neighborhood": "Centrum"},
+        {"id": "q33", "query": "Something in Noord Amsterdam", "mode": "eat_out", "neighborhood": "Noord"},
+        {"id": "q34", "query": "Casual dining in Oud-West", "mode": "eat_out", "neighborhood": "Oud-West"},
+        {"id": "q35", "query": "Are there good restaurants in Amstelveen?", "mode": "eat_out", "neighborhood": "Amstelveen"}
+      ]
+    },
+    {
+      "name": "restaurant_cuisine_vibe",
+      "description": "Restaurant search by cuisine and vibe",
+      "questions": [
+        {"id": "q36", "query": "Romantic Italian restaurant for date night", "mode": "eat_out", "cuisine": "Italian", "vibe": "romantic"},
+        {"id": "q37", "query": "Casual Thai place in Amsterdam", "mode": "eat_out", "cuisine": "Thai", "vibe": "casual"},
+        {"id": "q38", "query": "Upscale French restaurant", "mode": "eat_out", "cuisine": "French", "vibe": "upscale"},
+        {"id": "q39", "query": "Family-friendly Indonesian restaurant", "mode": "eat_out", "cuisine": "Indonesian", "vibe": "family-friendly"},
+        {"id": "q40", "query": "Good Japanese ramen near me", "mode": "eat_out", "cuisine": "Japanese"},
+        {"id": "q41", "query": "Where can I get good Surinamese food?", "mode": "eat_out", "cuisine": "Surinamese"},
+        {"id": "q42", "query": "Trendy brunch spot with outdoor seating", "mode": "eat_out", "vibe": "trendy"},
+        {"id": "q43", "query": "Hole-in-the-wall Turkish kebab place", "mode": "eat_out", "cuisine": "Turkish", "vibe": "hole-in-the-wall"}
+      ]
+    },
+    {
+      "name": "restaurant_dietary",
+      "description": "Restaurant search with dietary constraints",
+      "questions": [
+        {"id": "q44", "query": "Vegan-friendly restaurants in Amsterdam", "mode": "eat_out", "dietary": "vegan_ok"},
+        {"id": "q45", "query": "Halal restaurant for family dinner", "mode": "eat_out", "dietary": "halal_ok"},
+        {"id": "q46", "query": "Gluten-free options in De Pijp", "mode": "eat_out", "dietary": "gluten_free_ok"},
+        {"id": "q47", "query": "Restaurant with good vegetarian menu", "mode": "eat_out", "dietary": "vegetarian_ok"},
+        {"id": "q48", "query": "Where can my celiac friend eat safely?", "mode": "eat_out", "dietary": "gluten_free_ok"},
+        {"id": "q49", "query": "Kosher-friendly dining in Amsterdam", "mode": "eat_out", "dietary": "kosher_ok"}
+      ]
+    },
+    {
+      "name": "edge_cases",
+      "description": "Edge cases and stress tests",
+      "questions": [
+        {"id": "q50", "query": "I want sushi but I'm vegan and allergic to soy", "mode": "eat_in", "expected_result": "limited_results_with_explanation"},
+        {"id": "q51", "query": "Quick halal gluten-free nut-free dinner under 20 minutes", "mode": "eat_in", "expected_result": "highly_constrained"},
+        {"id": "q52", "query": "Romantic restaurant that's open on Monday late night", "mode": "eat_out", "expected_result": "check_hours"},
+        {"id": "q53", "query": "Cheap fine dining", "mode": "eat_out", "expected_result": "contradiction"},
+        {"id": "q54", "query": "I want something spicy but not too spicy", "mode": "eat_in", "expected_result": "ambiguous_preference"},
+        {"id": "q55", "query": "", "mode": "eat_in", "expected_result": "empty_query"},
+        {"id": "q56", "query": "Tell me a joke", "mode": "eat_in", "expected_result": "off_topic"},
+        {"id": "q57", "query": "Is Restaurant Haesje Claes still open?", "mode": "eat_out", "expected_result": "permanently_closed"},
+        {"id": "q58", "query": "Restaurant with great reviews in a neighborhood that doesn't exist", "mode": "eat_out", "expected_result": "unknown_location"},
+        {"id": "q59", "query": "I need a recipe for exactly 7 people with no leftovers", "mode": "eat_in", "expected_result": "unusual_serving_size"},
+        {"id": "q60", "query": "What's open right now near me?", "mode": "eat_out", "expected_result": "real_time_availability"}
+      ]
+    }
+  ]
+}

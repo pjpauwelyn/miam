@@ -1,0 +1,239 @@
+{
+  "profile_id": "766702aa-8573-4381-b322-928fbc30ede4",
+  "user_id": "050d1112-d2bd-4672-8058-0c10ab75a907",
+  "schema_version": "1.0.0",
+  "created_at": "2026-04-08T07:53:54.899603",
+  "last_updated": "2026-04-08T07:53:54.899605",
+  "dietary": {
+    "spectrum_label": "mostly-plant-based",
+    "hard_stops": [
+      {
+        "label": "no-veal",
+        "is_hard_stop": true,
+        "reason": "Ethical",
+        "confidence": 1.0
+      },
+      {
+        "label": "no-foie-gras",
+        "is_hard_stop": true,
+        "reason": "Ethical",
+        "confidence": 1.0
+      }
+    ],
+    "soft_stops": [
+      {
+        "label": "reduce-meat",
+        "is_hard_stop": false,
+        "reason": "Flexitarian \u2014 eats fish occasionally",
+        "confidence": 1.0
+      }
+    ],
+    "nuance_notes": "Prefers sustainable sourcing. Flexitarian leaning plant-based.",
+    "meta": {
+      "weight": "core",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.899266",
+      "update_source": "onboarding"
+    }
+  },
+  "cuisine_affinities": {
+    "affinities": [
+      {
+        "cuisine": "Japanese",
+        "level": "love",
+        "sub_nuances": [],
+        "confidence": 0.95
+      },
+      {
+        "cuisine": "Thai",
+        "level": "love",
+        "sub_nuances": [],
+        "confidence": 0.9
+      },
+      {
+        "cuisine": "Dutch",
+        "level": "like",
+        "sub_nuances": [],
+        "confidence": 0.8
+      },
+      {
+        "cuisine": "Indian",
+        "level": "like",
+        "sub_nuances": [],
+        "confidence": 0.85
+      },
+      {
+        "cuisine": "Italian",
+        "level": "like",
+        "sub_nuances": [],
+        "confidence": 0.75
+      },
+      {
+        "cuisine": "French",
+        "level": "neutral",
+        "sub_nuances": [],
+        "confidence": 0.6
+      }
+    ],
+    "meta": {
+      "weight": "core",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.899330",
+      "update_source": "onboarding"
+    }
+  },
+  "flavor": {
+    "spicy": 7.0,
+    "sweet": 3.0,
+    "sour": 6.0,
+    "umami": 9.0,
+    "bitter": 4.0,
+    "fatty": 5.0,
+    "fermented": 7.0,
+    "smoky": 5.0,
+    "salty": 6.0,
+    "meta": {
+      "weight": "important",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.899370",
+      "update_source": "onboarding"
+    }
+  },
+  "texture": {
+    "crunchy": 8.0,
+    "creamy": 5.0,
+    "soft": 4.0,
+    "chewy": 3.0,
+    "crispy": 9.0,
+    "silky": 6.0,
+    "chunky": 5.0,
+    "meta": {
+      "weight": "optional",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.899390",
+      "update_source": "onboarding"
+    }
+  },
+  "cooking": {
+    "skill": "advanced",
+    "kitchen_setup": "fully_equipped",
+    "specific_equipment": {
+      "stand_mixer": false,
+      "food_processor": true,
+      "sous_vide": false,
+      "pressure_cooker": true,
+      "air_fryer": false,
+      "wok": true,
+      "cast_iron": true,
+      "outdoor_grill": false,
+      "pasta_machine": false,
+      "dehydrator": false
+    },
+    "weeknight_minutes": 45,
+    "weekend_minutes": 120,
+    "meta": {
+      "weight": "important",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.899405",
+      "update_source": "onboarding"
+    }
+  },
+  "budget": {
+    "home_per_meal_eur": 12.0,
+    "out_per_meal_eur": 45.0,
+    "meta": {
+      "weight": "optional",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.899474",
+      "update_source": "onboarding"
+    }
+  },
+  "dining_vibe": {
+    "vibes": [
+      {
+        "vibe": "casual",
+        "score": 9.0,
+        "confidence": 0.4
+      },
+      {
+        "vibe": "cozy",
+        "score": 8.5,
+        "confidence": 0.4
+      },
+      {
+        "vibe": "trendy",
+        "score": 7.0,
+        "confidence": 0.4
+      },
+      {
+        "vibe": "outdoor-terrace",
+        "score": 8.0,
+        "confidence": 0.4
+      }
+    ],
+    "meta": {
+      "weight": "important",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.899487",
+      "update_source": "onboarding"
+    }
+  },
+  "adventurousness": {
+    "cooking_score": 8.5,
+    "dining_score": 8.0,
+    "meta": {
+      "weight": "important",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.899513",
+      "update_source": "onboarding"
+    }
+  },
+  "nutrition": {
+    "level": "light",
+    "tracked_dimensions": [],
+    "meta": {
+      "weight": "optional",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.899523",
+      "update_source": "onboarding"
+    }
+  },
+  "social": {
+    "default_social_context": "couple",
+    "meals_out_per_week": 2.0,
+    "home_cooked_per_week": 5.0,
+    "meta": {
+      "weight": "optional",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.899534",
+      "update_source": "onboarding"
+    }
+  },
+  "lifestyle": {
+    "seasonal_preference_score": 8.0,
+    "sustainability_priority_score": 7.0,
+    "special_interests": [],
+    "inspiration_style": "wide_selection",
+    "meta": {
+      "weight": "optional",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.899546",
+      "update_source": "onboarding"
+    }
+  },
+  "location": {
+    "city": "Amsterdam",
+    "country": "NL",
+    "radius_km": 5.0,
+    "meta": {
+      "weight": "important",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.899559",
+      "update_source": "onboarding"
+    }
+  },
+  "tensions": [],
+  "profile_summary_text": "Lena is an adventurous Dutch home cook who leans plant-based. She loves Japanese and Thai flavours, has a well-equipped kitchen with a wok and cast iron, and enjoys discovering new cuisines from farmers' markets and food blogs.",
+  "onboarding_complete": true,
+  "onboarding_version": "1.0.0"
+}

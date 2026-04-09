@@ -1,0 +1,247 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* miam — dark-mode-only app */
+:root {
+  --button-outline: rgba(255, 255, 255, 0.1);
+  --badge-outline: rgba(255, 255, 255, 0.05);
+  --opaque-button-border-intensity: 9;
+  --elevate-1: rgba(255, 255, 255, 0.04);
+  --elevate-2: rgba(255, 255, 255, 0.09);
+
+  /* Background & Surfaces */
+  --background: 0 0% 8%;
+  --foreground: 36 14% 93%;
+  --border: 0 0% 20%;
+  --border-subtle: 0 0% 16%;
+
+  /* Cards / Surfaces */
+  --card: 0 0% 12%;
+  --card-foreground: 36 14% 93%;
+  --card-border: 0 0% 20%;
+
+  --popover: 0 0% 15%;
+  --popover-foreground: 36 14% 93%;
+  --popover-border: 0 0% 20%;
+
+  /* Surface levels */
+  --surface: 0 0% 12%;
+  --surface-2: 0 0% 15%;
+  --surface-3: 0 0% 16%;
+
+  /* Primary = Amber accent */
+  --primary: 38 63% 58%;
+  --primary-foreground: 0 0% 8%;
+
+  /* Secondary */
+  --secondary: 0 0% 15%;
+  --secondary-foreground: 36 14% 93%;
+
+  /* Muted */
+  --muted: 0 0% 16%;
+  --muted-foreground: 40 5% 60%;
+
+  /* Accent */
+  --accent: 0 0% 16%;
+  --accent-foreground: 36 14% 93%;
+
+  /* Destructive */
+  --destructive: 0 42% 39%;
+  --destructive-foreground: 36 14% 93%;
+
+  --input: 0 0% 16%;
+  --ring: 38 63% 58%;
+
+  --chart-1: 38 63% 58%;
+  --chart-2: 350 42% 39%;
+  --chart-3: 138 31% 42%;
+  --chart-4: 30 59% 46%;
+  --chart-5: 220 33% 15%;
+
+  --font-sans: 'Inter', sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius: 0.75rem;
+
+  --shadow-2xs: 0px 2px 0px 0px hsl(0 0% 0% / 0);
+  --shadow-xs: 0px 2px 0px 0px hsl(0 0% 0% / 0);
+  --shadow-sm: 0px 2px 0px 0px hsl(0 0% 0% / 0), 0px 1px 2px -1px hsl(0 0% 0% / 0);
+  --shadow: 0px 2px 0px 0px hsl(0 0% 0% / 0), 0px 1px 2px -1px hsl(0 0% 0% / 0);
+  --shadow-md: 0px 2px 0px 0px hsl(0 0% 0% / 0), 0px 2px 4px -1px hsl(0 0% 0% / 0);
+  --shadow-lg: 0px 2px 0px 0px hsl(0 0% 0% / 0), 0px 4px 6px -1px hsl(0 0% 0% / 0);
+  --shadow-xl: 0px 2px 0px 0px hsl(0 0% 0% / 0), 0px 8px 10px -1px hsl(0 0% 0% / 0);
+  --shadow-2xl: 0px 2px 0px 0px hsl(0 0% 0% / 0);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+
+  /* Fallback for older browsers */
+  --primary-border: hsl(var(--primary));
+  --primary-border: hsl(
+    from hsl(var(--primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha
+  );
+  --secondary-border: hsl(var(--secondary));
+  --secondary-border: hsl(
+    from hsl(var(--secondary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha
+  );
+  --muted-border: hsl(var(--muted));
+  --muted-border: hsl(
+    from hsl(var(--muted)) h s calc(l + var(--opaque-button-border-intensity)) / alpha
+  );
+  --accent-border: hsl(var(--accent));
+  --accent-border: hsl(
+    from hsl(var(--accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha
+  );
+  --destructive-border: hsl(var(--destructive));
+  --destructive-border: hsl(
+    from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha
+  );
+
+  /* Sidebar (unused in mobile app but needed for shadcn) */
+  --sidebar: 0 0% 12%;
+  --sidebar-foreground: 36 14% 93%;
+  --sidebar-border: 0 0% 20%;
+  --sidebar-primary: 38 63% 58%;
+  --sidebar-primary-foreground: 0 0% 8%;
+  --sidebar-accent: 0 0% 16%;
+  --sidebar-accent-foreground: 36 14% 93%;
+  --sidebar-ring: 38 63% 58%;
+  --sidebar-primary-border: hsl(var(--sidebar-primary));
+  --sidebar-accent-border: hsl(var(--sidebar-accent));
+}
+
+/* Dark class is always applied — same values */
+.dark {
+  --button-outline: rgba(255, 255, 255, 0.1);
+  --badge-outline: rgba(255, 255, 255, 0.05);
+  --opaque-button-border-intensity: 9;
+  --elevate-1: rgba(255, 255, 255, 0.04);
+  --elevate-2: rgba(255, 255, 255, 0.09);
+  --background: 0 0% 8%;
+  --foreground: 36 14% 93%;
+  --border: 0 0% 20%;
+  --card: 0 0% 12%;
+  --card-foreground: 36 14% 93%;
+  --card-border: 0 0% 20%;
+  --popover: 0 0% 15%;
+  --popover-foreground: 36 14% 93%;
+  --popover-border: 0 0% 20%;
+  --primary: 38 63% 58%;
+  --primary-foreground: 0 0% 8%;
+  --secondary: 0 0% 15%;
+  --secondary-foreground: 36 14% 93%;
+  --muted: 0 0% 16%;
+  --muted-foreground: 40 5% 60%;
+  --accent: 0 0% 16%;
+  --accent-foreground: 36 14% 93%;
+  --destructive: 0 42% 39%;
+  --destructive-foreground: 36 14% 93%;
+  --input: 0 0% 16%;
+  --ring: 38 63% 58%;
+  --sidebar: 0 0% 12%;
+  --sidebar-foreground: 36 14% 93%;
+  --sidebar-border: 0 0% 20%;
+  --sidebar-primary: 38 63% 58%;
+  --sidebar-primary-foreground: 0 0% 8%;
+  --sidebar-accent: 0 0% 16%;
+  --sidebar-accent-foreground: 36 14% 93%;
+  --sidebar-ring: 38 63% 58%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    /* Force dark mode always */
+    color-scheme: dark;
+  }
+
+  body {
+    @apply font-sans antialiased;
+    background: #0a0a0a;
+    color: #F0EDE8;
+    overflow-x: hidden;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* Hide scrollbar for horizontal scroll containers */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Phone frame — fills viewport on mobile, framed on desktop */
+.phone-frame {
+  width: 100%;
+  max-width: 100vw;
+  height: 100dvh;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  background: #141414;
+}
+
+/* Desktop preview: constrained phone frame */
+@media (min-width: 500px) and (hover: hover) {
+  .phone-frame {
+    max-width: 430px;
+    height: min(932px, calc(100vh - 40px));
+    border-radius: 40px;
+    margin-top: 20px;
+    border: 1px solid #2A2A2A;
+    box-shadow: 
+      0 0 0 1px rgba(255,255,255,0.03),
+      0 25px 50px -12px rgba(0,0,0,0.5);
+  }
+}
+
+/* Smooth transitions for mode tinting */
+/* Onboarding slider thumb */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  outline: none;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #D4A855;
+  cursor: pointer;
+  border: 2px solid #141414;
+  box-shadow: 0 0 6px rgba(212, 168, 85, 0.4);
+}
+
+input[type='range']::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #D4A855;
+  cursor: pointer;
+  border: 2px solid #141414;
+  box-shadow: 0 0 6px rgba(212, 168, 85, 0.4);
+}
+
+.mode-tint-eatin {
+  background: linear-gradient(180deg, #1A2A20 0%, #141414 30%);
+}
+
+.mode-tint-eatout {
+  background: linear-gradient(180deg, #1A2030 0%, #141414 30%);
+}

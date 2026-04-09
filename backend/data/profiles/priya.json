@@ -1,0 +1,236 @@
+{
+  "profile_id": "06e0e258-0005-4b71-92c5-810bd48f4508",
+  "user_id": "f6b14511-48e7-4aeb-9de3-82fc21217f5b",
+  "schema_version": "1.0.0",
+  "created_at": "2026-04-08T07:53:54.901858",
+  "last_updated": "2026-04-08T07:53:54.901860",
+  "dietary": {
+    "spectrum_label": "vegetarian",
+    "hard_stops": [
+      {
+        "label": "no-beef",
+        "is_hard_stop": true,
+        "reason": "Religious \u2014 Hindu",
+        "confidence": 1.0
+      },
+      {
+        "label": "no-pork",
+        "is_hard_stop": true,
+        "reason": "Religious \u2014 Hindu",
+        "confidence": 1.0
+      },
+      {
+        "label": "no-gelatin",
+        "is_hard_stop": true,
+        "reason": "Vegetarian",
+        "confidence": 1.0
+      },
+      {
+        "label": "no-lard",
+        "is_hard_stop": true,
+        "reason": "Vegetarian",
+        "confidence": 1.0
+      },
+      {
+        "label": "no-rennet",
+        "is_hard_stop": true,
+        "reason": "Vegetarian",
+        "confidence": 1.0
+      }
+    ],
+    "soft_stops": [],
+    "nuance_notes": "Hindu \u2014 lifelong strict vegetarian. No beef or pork ever. Family recipes from Kerala and Gujarat.",
+    "meta": {
+      "weight": "core",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.901696",
+      "update_source": "onboarding"
+    }
+  },
+  "cuisine_affinities": {
+    "affinities": [
+      {
+        "cuisine": "Indian",
+        "level": "love",
+        "sub_nuances": [],
+        "confidence": 0.98
+      },
+      {
+        "cuisine": "Middle Eastern",
+        "level": "like",
+        "sub_nuances": [],
+        "confidence": 0.8
+      },
+      {
+        "cuisine": "Thai",
+        "level": "like",
+        "sub_nuances": [],
+        "confidence": 0.75
+      },
+      {
+        "cuisine": "Italian",
+        "level": "neutral",
+        "sub_nuances": [],
+        "confidence": 0.65
+      }
+    ],
+    "meta": {
+      "weight": "core",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.901727",
+      "update_source": "onboarding"
+    }
+  },
+  "flavor": {
+    "spicy": 9.5,
+    "sweet": 6.0,
+    "sour": 7.0,
+    "umami": 8.0,
+    "bitter": 4.0,
+    "fatty": 5.0,
+    "fermented": 6.0,
+    "smoky": 3.0,
+    "salty": 5.0,
+    "meta": {
+      "weight": "core",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.901751",
+      "update_source": "onboarding"
+    }
+  },
+  "texture": {
+    "crunchy": 7.0,
+    "creamy": 8.0,
+    "soft": 7.0,
+    "chewy": 4.0,
+    "crispy": 6.0,
+    "silky": 5.0,
+    "chunky": 5.0,
+    "meta": {
+      "weight": "important",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.901762",
+      "update_source": "onboarding"
+    }
+  },
+  "cooking": {
+    "skill": "professional",
+    "kitchen_setup": "fully_equipped",
+    "specific_equipment": {
+      "stand_mixer": false,
+      "food_processor": true,
+      "sous_vide": false,
+      "pressure_cooker": true,
+      "air_fryer": false,
+      "wok": false,
+      "cast_iron": false,
+      "outdoor_grill": false,
+      "pasta_machine": false,
+      "dehydrator": false
+    },
+    "weeknight_minutes": 45,
+    "weekend_minutes": 150,
+    "meta": {
+      "weight": "important",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.901772",
+      "update_source": "onboarding"
+    }
+  },
+  "budget": {
+    "home_per_meal_eur": 8.0,
+    "out_per_meal_eur": 30.0,
+    "meta": {
+      "weight": "important",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.901786",
+      "update_source": "onboarding"
+    }
+  },
+  "dining_vibe": {
+    "vibes": [
+      {
+        "vibe": "casual",
+        "score": 8.5,
+        "confidence": 0.4
+      },
+      {
+        "vibe": "family-friendly",
+        "score": 9.0,
+        "confidence": 0.4
+      },
+      {
+        "vibe": "authentic",
+        "score": 9.5,
+        "confidence": 0.4
+      }
+    ],
+    "meta": {
+      "weight": "important",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.901794",
+      "update_source": "onboarding"
+    }
+  },
+  "adventurousness": {
+    "cooking_score": 7.0,
+    "dining_score": 6.0,
+    "meta": {
+      "weight": "important",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.901809",
+      "update_source": "onboarding"
+    }
+  },
+  "nutrition": {
+    "level": "strict",
+    "tracked_dimensions": [
+      "protein",
+      "iron"
+    ],
+    "meta": {
+      "weight": "important",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.901816",
+      "update_source": "onboarding"
+    }
+  },
+  "social": {
+    "default_social_context": "family",
+    "meals_out_per_week": 1.5,
+    "home_cooked_per_week": 6.0,
+    "meta": {
+      "weight": "important",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.901824",
+      "update_source": "onboarding"
+    }
+  },
+  "lifestyle": {
+    "seasonal_preference_score": 7.0,
+    "sustainability_priority_score": 6.0,
+    "special_interests": [],
+    "inspiration_style": "one_best",
+    "meta": {
+      "weight": "important",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.901833",
+      "update_source": "onboarding"
+    }
+  },
+  "location": {
+    "city": "Amsterdam",
+    "country": "NL",
+    "radius_km": 5.0,
+    "meta": {
+      "weight": "important",
+      "confidence": 0.5,
+      "last_updated": "2026-04-08T07:53:54.901840",
+      "update_source": "onboarding"
+    }
+  },
+  "tensions": [],
+  "profile_summary_text": "Priya is a professional-level vegetarian cook from India, strict about no beef/pork/gelatin. Loves spicy, aromatic dishes. Family-oriented dining, prefers authentic casual spots.",
+  "onboarding_complete": true,
+  "onboarding_version": "1.0.0"
+}

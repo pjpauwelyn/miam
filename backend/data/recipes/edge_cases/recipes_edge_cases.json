@@ -1,0 +1,5203 @@
+[
+  {
+    "title": "[EDGE-no-nutrition] Bruschetta al Pomodoro",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Tuscany",
+    "description": "Classic Tuscan starter featuring toasted bread topped with fresh tomatoes, basil, and garlic. A simple yet flavourful dish that highlights the quality of summer produce.",
+    "ingredients": [
+      {
+        "name": "ciabatta loaf",
+        "amount": 1,
+        "unit": "nos",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "ripe tomatoes",
+        "amount": 400,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "fresh basil",
+        "amount": 20,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "garlic cloves",
+        "amount": 2,
+        "unit": "nos",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "extra virgin olive oil",
+        "amount": 30,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "salt",
+        "amount": 5,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "black pepper",
+        "amount": 2,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "Slice the ciabatta into 1 cm thick slices and toast in the oven at 180\u00b0C for 5 minutes until golden.",
+        "duration_min": 5,
+        "technique_tags": [
+          "toasting"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "Dice the tomatoes and place in a bowl. Finely chop the basil and mince the garlic. Add both to the tomatoes along with olive oil, salt, and black pepper. Mix gently.",
+        "duration_min": 5,
+        "technique_tags": [
+          "chopping"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "Spoon the tomato mixture onto the toasted bread slices and serve immediately.",
+        "duration_min": 2,
+        "technique_tags": [
+          "assembling"
+        ]
+      }
+    ],
+    "time_prep_min": 10,
+    "time_cook_min": 5,
+    "time_total_min": 15,
+    "serves": 4,
+    "difficulty": 1,
+    "flavor_tags": [
+      "fresh",
+      "herby"
+    ],
+    "texture_tags": [
+      "crunchy"
+    ],
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "dietary_flags": {
+      "is_vegan": true,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": true,
+      "is_gluten_free": false,
+      "is_nut_free": true,
+      "is_halal_ok": true,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": false,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 0,
+      "protein_g": 0,
+      "fat_g": 0,
+      "saturated_fat_g": 0,
+      "carbs_g": 0,
+      "fiber_g": 0,
+      "sugar_g": 0,
+      "salt_g": 0
+    },
+    "season_tags": [
+      "summer"
+    ],
+    "occasion_tags": [
+      "aperitivo",
+      "starter"
+    ],
+    "course_tags": [
+      "starter"
+    ],
+    "wine_pairing_notes": "A light Pinot Grigio complements the fresh flavours.",
+    "tips": [
+      "Use the ripest tomatoes for the best flavour",
+      "Toast the bread just before serving to keep it crisp"
+    ],
+    "id": "807d703d-2dec-4516-b28c-b65ecdbea956",
+    "title_en": "Bruschetta al Pomodoro",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Bruschetta al Pomodoro Classic Tuscan starter featuring toasted bread topped with fresh tomatoes, basil, and garlic. A simple yet flavourful dish that highlights the quality of summer produce. ciabatta loaf ripe tomatoes fresh basil garlic cloves extra virgin olive oil salt black pepper fresh herby crunchy vegetarian summer Italian aperitivo starter",
+    "created_at": "2026-04-08T08:42:53.252376Z",
+    "data_quality_score": 0.3
+  },
+  {
+    "title": "[EDGE-no-nutrition] Risotto ai Funghi",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Lombardy",
+    "description": "Creamy risotto infused with wild mushrooms and Parmesan cheese. A comforting dish that brings the earthy flavours of autumn to the table.",
+    "ingredients": [
+      {
+        "name": "Carnaroli or Arborio rice",
+        "amount": 320,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "wild mushrooms (porcini, chanterelle)",
+        "amount": 200,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "shallots",
+        "amount": 100,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "dry white wine",
+        "amount": 100,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "chicken or vegetable stock",
+        "amount": 1000,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "Parmesan cheese",
+        "amount": 50,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "garlic cloves",
+        "amount": 1,
+        "unit": "nos",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "fresh thyme",
+        "amount": 5,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "butter",
+        "amount": 30,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "extra virgin olive oil",
+        "amount": 30,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "salt",
+        "amount": 10,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "black pepper",
+        "amount": 3,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "Clean the mushrooms and slice them. Finely chop the shallots and mince the garlic.",
+        "duration_min": 10,
+        "technique_tags": [
+          "cleaning",
+          "chopping"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "Heat olive oil and half the butter in a large pan. Saut\u00e9 the shallots and garlic for 3 minutes until soft.",
+        "duration_min": 3,
+        "technique_tags": [
+          "saut\u00e9"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "Add the mushrooms and cook for 5 minutes until they release their moisture and start to brown.",
+        "duration_min": 5,
+        "technique_tags": [
+          "saut\u00e9"
+        ]
+      },
+      {
+        "step_number": 4,
+        "instruction": "Add the rice and stir for 2 minutes to toast lightly. Pour in the wine and let it evaporate completely.",
+        "duration_min": 5,
+        "technique_tags": [
+          "toasting"
+        ]
+      },
+      {
+        "step_number": 5,
+        "instruction": "Start adding the hot stock one ladle at a time, stirring frequently. Wait until each addition is absorbed before adding the next. This should take about 20 minutes.",
+        "duration_min": 20,
+        "technique_tags": [
+          "simmering"
+        ]
+      },
+      {
+        "step_number": 6,
+        "instruction": "When the rice is al dente, stir in the remaining butter and Parmesan. Adjust seasoning with salt and pepper. Serve immediately.",
+        "duration_min": 5,
+        "technique_tags": [
+          "finishing"
+        ]
+      }
+    ],
+    "time_prep_min": 20,
+    "time_cook_min": 45,
+    "time_total_min": 65,
+    "serves": 4,
+    "difficulty": 3,
+    "flavor_tags": [
+      "umami",
+      "earthy",
+      "creamy"
+    ],
+    "texture_tags": [
+      "creamy",
+      "soft"
+    ],
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "dietary_flags": {
+      "is_vegan": false,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": false,
+      "is_gluten_free": true,
+      "is_nut_free": true,
+      "is_halal_ok": true,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": true,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 0,
+      "protein_g": 0,
+      "fat_g": 0,
+      "saturated_fat_g": 0,
+      "carbs_g": 0,
+      "fiber_g": 0,
+      "sugar_g": 0,
+      "salt_g": 0
+    },
+    "season_tags": [
+      "autumn"
+    ],
+    "occasion_tags": [
+      "weeknight-dinner",
+      "special-occasion"
+    ],
+    "course_tags": [
+      "main"
+    ],
+    "wine_pairing_notes": "A full-bodied white wine like Gavi di Gavi pairs beautifully.",
+    "tips": [
+      "Stir constantly to release the starch and create a creamy texture",
+      "Use a good quality stock for the best flavour"
+    ],
+    "id": "2040edc4-066d-4175-af86-4001891a9aa4",
+    "title_en": "Risotto ai Funghi",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Risotto ai Funghi Creamy risotto infused with wild mushrooms and Parmesan cheese. A comforting dish that brings the earthy flavours of autumn to the table. Carnaroli or Arborio rice wild mushrooms (porcini, chanterelle) shallots dry white wine chicken or vegetable stock Parmesan cheese garlic cloves fresh thyme butter extra virgin olive oil salt black pepper umami earthy creamy creamy soft vegetarian autumn Italian weeknight-dinner special-occasion",
+    "created_at": "2026-04-08T08:42:53.252443Z",
+    "data_quality_score": 0.3
+  },
+  {
+    "title": "[EDGE-no-nutrition] Saltimbocca alla Romana",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Lazio",
+    "description": "A classic Roman dish of veal cutlets topped with prosciutto and sage, cooked in white wine butter sauce. Quick to prepare but packed with flavour.",
+    "ingredients": [
+      {
+        "name": "veal cutlets",
+        "amount": 400,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "prosciutto crudo",
+        "amount": 80,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "fresh sage leaves",
+        "amount": 8,
+        "unit": "nos",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "dry white wine",
+        "amount": 50,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "butter",
+        "amount": 30,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "olive oil",
+        "amount": 20,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "salt",
+        "amount": 5,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "black pepper",
+        "amount": 2,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "Lay the veal cutlets between cling film and pound them thin with a meat mallet.",
+        "duration_min": 5,
+        "technique_tags": [
+          "tenderising"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "Place a slice of prosciutto and 2 sage leaves on each cutlet. Roll up and secure with a toothpick.",
+        "duration_min": 5,
+        "technique_tags": [
+          "rolling"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "Heat olive oil and half the butter in a frying pan. Brown the saltimbocca on all sides for 2-3 minutes total. Remove from pan and set aside.",
+        "duration_min": 3,
+        "technique_tags": [
+          "browning"
+        ]
+      },
+      {
+        "step_number": 4,
+        "instruction": "Add the remaining butter to the pan. Pour in the wine and let it reduce by half. Return the saltimbocca to the pan and cook for another minute.",
+        "duration_min": 3,
+        "technique_tags": [
+          "deglazing"
+        ]
+      },
+      {
+        "step_number": 5,
+        "instruction": "Serve immediately with a drizzle of the sauce.",
+        "duration_min": 2,
+        "technique_tags": [
+          "finishing"
+        ]
+      }
+    ],
+    "time_prep_min": 15,
+    "time_cook_min": 10,
+    "time_total_min": 25,
+    "serves": 4,
+    "difficulty": 2,
+    "flavor_tags": [
+      "savoury",
+      "herby",
+      "umami"
+    ],
+    "texture_tags": [
+      "tender"
+    ],
+    "dietary_tags": [],
+    "dietary_flags": {
+      "is_vegan": false,
+      "is_vegetarian": false,
+      "is_pescatarian_ok": false,
+      "is_dairy_free": false,
+      "is_gluten_free": true,
+      "is_nut_free": true,
+      "is_halal_ok": false,
+      "contains_pork": true,
+      "contains_shellfish": false,
+      "contains_alcohol": true,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 0,
+      "protein_g": 0,
+      "fat_g": 0,
+      "saturated_fat_g": 0,
+      "carbs_g": 0,
+      "fiber_g": 0,
+      "sugar_g": 0,
+      "salt_g": 0
+    },
+    "season_tags": [
+      "winter",
+      "spring"
+    ],
+    "occasion_tags": [
+      "weeknight-dinner",
+      "family-meal"
+    ],
+    "course_tags": [
+      "main"
+    ],
+    "wine_pairing_notes": "A medium-bodied red like Montepulciano d'Abruzzo is ideal.",
+    "tips": [
+      "Use very thin veal cutlets for best results",
+      "Don't overcook the veal to keep it tender"
+    ],
+    "id": "2fea6eab-f2bd-41a2-97e0-f2914148a4d0",
+    "title_en": "Saltimbocca alla Romana",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Saltimbocca alla Romana A classic Roman dish of veal cutlets topped with prosciutto and sage, cooked in white wine butter sauce. Quick to prepare but packed with flavour. veal cutlets prosciutto crudo fresh sage leaves dry white wine butter olive oil salt black pepper savoury herby umami tender winter spring Italian weeknight-dinner family-meal",
+    "created_at": "2026-04-08T08:42:53.252471Z",
+    "data_quality_score": 0.3
+  },
+  {
+    "title": "[EDGE-no-nutrition] Pasta alla Norma",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Sicily",
+    "description": "A beloved Sicilian pasta dish featuring fried aubergines, ricotta salata, and a simple tomato sauce. The combination of textures and flavours is simply divine.",
+    "ingredients": [
+      {
+        "name": "penne pasta",
+        "amount": 400,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "aubergines",
+        "amount": 500,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "ripe tomatoes",
+        "amount": 400,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "garlic cloves",
+        "amount": 2,
+        "unit": "nos",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "fresh basil",
+        "amount": 15,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "ricotta salata",
+        "amount": 50,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "olive oil",
+        "amount": 100,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "salt",
+        "amount": 15,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "black pepper",
+        "amount": 3,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "red pepper flakes",
+        "amount": 2,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "Dice the aubergines and toss with 10g salt. Let sit for 10 minutes then pat dry with kitchen paper.",
+        "duration_min": 10,
+        "technique_tags": [
+          "draining"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "Fry the aubergines in 60ml olive oil in batches until golden brown. Drain on kitchen paper and sprinkle with salt.",
+        "duration_min": 10,
+        "technique_tags": [
+          "frying"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "Blanch the tomatoes in boiling water for 30 seconds, then peel and chop. Crush the garlic.",
+        "duration_min": 5,
+        "technique_tags": [
+          "blanching"
+        ]
+      },
+      {
+        "step_number": 4,
+        "instruction": "Heat remaining oil in a pan. Saut\u00e9 the garlic for 1 minute then add the tomatoes and red pepper flakes. Simmer for 10 minutes until thickened.",
+        "duration_min": 10,
+        "technique_tags": [
+          "saut\u00e9",
+          "simmering"
+        ]
+      },
+      {
+        "step_number": 5,
+        "instruction": "Cook the pasta in salted boiling water until al dente. Reserve 100ml pasta water then drain.",
+        "duration_min": 10,
+        "technique_tags": [
+          "boiling"
+        ]
+      },
+      {
+        "step_number": 6,
+        "instruction": "Toss the pasta with the tomato sauce, adding pasta water as needed. Stir in the aubergines and basil. Serve with grated ricotta salata on top.",
+        "duration_min": 5,
+        "technique_tags": [
+          "tossing"
+        ]
+      }
+    ],
+    "time_prep_min": 20,
+    "time_cook_min": 45,
+    "time_total_min": 65,
+    "serves": 4,
+    "difficulty": 3,
+    "flavor_tags": [
+      "umami",
+      "sweet",
+      "savoury"
+    ],
+    "texture_tags": [
+      "creamy",
+      "crunchy"
+    ],
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "dietary_flags": {
+      "is_vegan": false,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": false,
+      "is_gluten_free": false,
+      "is_nut_free": true,
+      "is_halal_ok": true,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": false,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 0,
+      "protein_g": 0,
+      "fat_g": 0,
+      "saturated_fat_g": 0,
+      "carbs_g": 0,
+      "fiber_g": 0,
+      "sugar_g": 0,
+      "salt_g": 0
+    },
+    "season_tags": [
+      "summer"
+    ],
+    "occasion_tags": [
+      "weeknight-dinner",
+      "lunch"
+    ],
+    "course_tags": [
+      "main"
+    ],
+    "wine_pairing_notes": "A medium-bodied Sicilian red like Nero d'Avola pairs perfectly.",
+    "tips": [
+      "Salt the aubergines to remove bitterness and improve texture",
+      "Fry the aubergines in batches to avoid overcrowding the pan"
+    ],
+    "id": "f71d2672-a429-4023-82ed-e5d70a394990",
+    "title_en": "Pasta alla Norma",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Pasta alla Norma A beloved Sicilian pasta dish featuring fried aubergines, ricotta salata, and a simple tomato sauce. The combination of textures and flavours is simply divine. penne pasta aubergines ripe tomatoes garlic cloves fresh basil ricotta salata olive oil salt black pepper red pepper flakes umami sweet savoury creamy crunchy vegetarian summer Italian weeknight-dinner lunch",
+    "created_at": "2026-04-08T08:42:53.252500Z",
+    "data_quality_score": 0.3
+  },
+  {
+    "title": "[EDGE-no-nutrition] Tiramisu Classico",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Veneto",
+    "description": "The iconic Italian dessert of coffee-soaked ladyfingers layered with mascarpone cream and dusted with cocoa. A perfect end to any meal.",
+    "ingredients": [
+      {
+        "name": "ladyfingers (savoiardi)",
+        "amount": 250,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "strong coffee",
+        "amount": 200,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "mascarpone cheese",
+        "amount": 250,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "eggs",
+        "amount": 3,
+        "unit": "nos",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "caster sugar",
+        "amount": 80,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "dark cocoa powder",
+        "amount": 20,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "dark chocolate",
+        "amount": 20,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "amaretto or Marsala wine",
+        "amount": 30,
+        "unit": "ml",
+        "is_optional": true,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "Brew the coffee and let it cool. Whisk the egg yolks with 60g sugar until pale and thick. Add the mascarpone and mix until smooth.",
+        "duration_min": 10,
+        "technique_tags": [
+          "whisking"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "Beat the egg whites with the remaining sugar until stiff peaks form. Fold gently into the mascarpone mixture.",
+        "duration_min": 5,
+        "technique_tags": [
+          "folding"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "Quickly dip each ladyfinger in the coffee (do not soak) and arrange a layer in a dish. Sprinkle with amaretto if using.",
+        "duration_min": 5,
+        "technique_tags": [
+          "dipping"
+        ]
+      },
+      {
+        "step_number": 4,
+        "instruction": "Spread half the mascarpone cream over the ladyfingers. Repeat with another layer of dipped ladyfingers and cream.",
+        "duration_min": 5,
+        "technique_tags": [
+          "layering"
+        ]
+      },
+      {
+        "step_number": 5,
+        "instruction": "Chill in the fridge for at least 4 hours, preferably overnight. Before serving, dust generously with cocoa powder and grate dark chocolate on top.",
+        "duration_min": 0,
+        "technique_tags": [
+          "chilling"
+        ]
+      }
+    ],
+    "time_prep_min": 30,
+    "time_cook_min": 0,
+    "time_total_min": 30,
+    "serves": 6,
+    "difficulty": 2,
+    "flavor_tags": [
+      "sweet",
+      "bitter",
+      "creamy"
+    ],
+    "texture_tags": [
+      "creamy",
+      "soft"
+    ],
+    "dietary_tags": [],
+    "dietary_flags": {
+      "is_vegan": false,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": false,
+      "is_gluten_free": false,
+      "is_nut_free": true,
+      "is_halal_ok": false,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": true,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 0,
+      "protein_g": 0,
+      "fat_g": 0,
+      "saturated_fat_g": 0,
+      "carbs_g": 0,
+      "fiber_g": 0,
+      "sugar_g": 0,
+      "salt_g": 0
+    },
+    "season_tags": [
+      "year-round"
+    ],
+    "occasion_tags": [
+      "dessert",
+      "special-occasion"
+    ],
+    "course_tags": [
+      "dessert"
+    ],
+    "wine_pairing_notes": "A sweet Vin Santo or espresso are traditional pairings.",
+    "tips": [
+      "Use room temperature eggs for easier whisking",
+      "Chill for as long as possible for best texture"
+    ],
+    "id": "e35ebc0c-c3d6-4720-82ce-77c4f1b5dd5f",
+    "title_en": "Tiramisu Classico",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Tiramisu Classico The iconic Italian dessert of coffee-soaked ladyfingers layered with mascarpone cream and dusted with cocoa. A perfect end to any meal. ladyfingers (savoiardi) strong coffee mascarpone cheese eggs caster sugar dark cocoa powder dark chocolate amaretto or Marsala wine sweet bitter creamy creamy soft year-round Italian dessert special-occasion",
+    "created_at": "2026-04-08T08:42:53.252521Z",
+    "data_quality_score": 0.3
+  },
+  {
+    "title": "[EDGE-no-nutrition] Caprese Salad",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Campania",
+    "description": "A classic Italian starter highlighting the freshness of summer produce. Simple yet bursting with flavour, it's a celebration of ripe tomatoes, creamy mozzarella, and fragrant basil.",
+    "ingredients": [
+      {
+        "name": "ripe tomatoes",
+        "amount": 4,
+        "unit": "medium",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "fresh mozzarella",
+        "amount": 200,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "fresh basil leaves",
+        "amount": 10,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "extra virgin olive oil",
+        "amount": 3,
+        "unit": "tbsp",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "balsamic vinegar",
+        "amount": 1,
+        "unit": "tbsp",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "sea salt",
+        "amount": 1,
+        "unit": "tsp",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "black pepper",
+        "amount": 1,
+        "unit": "tsp",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "Slice the tomatoes and mozzarella into 1cm thick rounds. Arrange them alternately on a platter, slightly overlapping.",
+        "duration_min": 10,
+        "technique_tags": [
+          "slicing"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "Tuck fresh basil leaves between the tomato and mozzarella slices.",
+        "duration_min": 2,
+        "technique_tags": [
+          "arranging"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "Drizzle with olive oil and balsamic vinegar. Sprinkle with sea salt and black pepper.",
+        "duration_min": 2,
+        "technique_tags": [
+          "seasoning"
+        ]
+      }
+    ],
+    "time_prep_min": 15,
+    "time_cook_min": 0,
+    "time_total_min": 15,
+    "serves": 4,
+    "difficulty": 1,
+    "flavor_tags": [
+      "savoury",
+      "fresh",
+      "herby"
+    ],
+    "texture_tags": [
+      "soft",
+      "juicy"
+    ],
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "dietary_flags": {
+      "is_vegan": false,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": false,
+      "is_gluten_free": true,
+      "is_nut_free": true,
+      "is_halal_ok": true,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": false,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 0,
+      "protein_g": 0,
+      "fat_g": 0,
+      "saturated_fat_g": 0,
+      "carbs_g": 0,
+      "fiber_g": 0,
+      "sugar_g": 0,
+      "salt_g": 0
+    },
+    "season_tags": [
+      "summer"
+    ],
+    "occasion_tags": [
+      "starter",
+      "picnic"
+    ],
+    "course_tags": [
+      "starter"
+    ],
+    "wine_pairing_notes": "A light Pinot Grigio complements the fresh flavours.",
+    "tips": [
+      "Use the ripest tomatoes for the best taste. Avoid overhandling the ingredients."
+    ],
+    "id": "4bf1b9b9-734c-4b8b-a3b1-0a882e1a2eab",
+    "title_en": "Caprese Salad",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Caprese Salad A classic Italian starter highlighting the freshness of summer produce. Simple yet bursting with flavour, it's a celebration of ripe tomatoes, creamy mozzarella, and fragrant basil. ripe tomatoes fresh mozzarella fresh basil leaves extra virgin olive oil balsamic vinegar sea salt black pepper savoury fresh herby soft juicy vegetarian summer Italian starter picnic",
+    "created_at": "2026-04-08T08:43:56.137913Z",
+    "data_quality_score": 0.3
+  },
+  {
+    "title": "[EDGE-no-nutrition] Spaghetti alla Carbonara",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Lazio",
+    "description": "Rome's iconic pasta dish made with eggs, Pecorino Romano, guanciale, and black pepper. Rich, creamy, and deeply flavourful without any cream.",
+    "ingredients": [
+      {
+        "name": "spaghetti",
+        "amount": 400,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "guanciale",
+        "amount": 150,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "Pecorino Romano",
+        "amount": 100,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "eggs",
+        "amount": 4,
+        "unit": "large",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "black pepper",
+        "amount": 1,
+        "unit": "tsp",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "sea salt",
+        "amount": 1,
+        "unit": "tbsp",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "Cook spaghetti in salted boiling water until al dente. Reserve 1 cup of pasta water before draining.",
+        "duration_min": 10,
+        "technique_tags": [
+          "boiling"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "In a pan, fry diced guanciale on medium heat until crispy. Remove from heat and set aside.",
+        "duration_min": 8,
+        "technique_tags": [
+          "frying"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "In a bowl, whisk eggs with grated Pecorino Romano and black pepper.",
+        "duration_min": 3,
+        "technique_tags": [
+          "whisking"
+        ]
+      },
+      {
+        "step_number": 4,
+        "instruction": "Add drained spaghetti to the pan with guanciale. Remove from heat, then quickly stir in the egg mixture, adding reserved pasta water as needed to create a creamy sauce.",
+        "duration_min": 4,
+        "technique_tags": [
+          "mixing"
+        ]
+      }
+    ],
+    "time_prep_min": 15,
+    "time_cook_min": 20,
+    "time_total_min": 35,
+    "serves": 4,
+    "difficulty": 3,
+    "flavor_tags": [
+      "savoury",
+      "umami",
+      "rich"
+    ],
+    "texture_tags": [
+      "creamy",
+      "tender"
+    ],
+    "dietary_tags": [
+      "contains_eggs"
+    ],
+    "dietary_flags": {
+      "is_vegan": false,
+      "is_vegetarian": false,
+      "is_pescatarian_ok": false,
+      "is_dairy_free": false,
+      "is_gluten_free": false,
+      "is_nut_free": true,
+      "is_halal_ok": false,
+      "contains_pork": true,
+      "contains_shellfish": false,
+      "contains_alcohol": false,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 0,
+      "protein_g": 0,
+      "fat_g": 0,
+      "saturated_fat_g": 0,
+      "carbs_g": 0,
+      "fiber_g": 0,
+      "sugar_g": 0,
+      "salt_g": 0
+    },
+    "season_tags": [
+      "winter",
+      "autumn"
+    ],
+    "occasion_tags": [
+      "family-dinner"
+    ],
+    "course_tags": [
+      "main"
+    ],
+    "wine_pairing_notes": "A bold red like Montepulciano d'Abruzzo pairs excellently.",
+    "tips": [
+      "Use room temperature eggs to prevent scrambling. Do not let the egg mixture sit in the pan too long after mixing."
+    ],
+    "id": "34eb74b2-20dc-416d-966d-34ccdbbd0f2b",
+    "title_en": "Spaghetti alla Carbonara",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Spaghetti alla Carbonara Rome's iconic pasta dish made with eggs, Pecorino Romano, guanciale, and black pepper. Rich, creamy, and deeply flavourful without any cream. spaghetti guanciale Pecorino Romano eggs black pepper sea salt savoury umami rich creamy tender contains_eggs winter autumn Italian family-dinner",
+    "created_at": "2026-04-08T08:43:56.137935Z",
+    "data_quality_score": 0.3
+  },
+  {
+    "title": "[EDGE-no-nutrition] Risotto ai Funghi",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Northern Italy",
+    "description": "A luxurious risotto made with wild mushrooms, Arborio rice, white wine, and Parmesan. Creamy, earthy, and deeply satisfying, perfect for a cosy dinner.",
+    "ingredients": [
+      {
+        "name": "Arborio rice",
+        "amount": 320,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "porcini mushrooms",
+        "amount": 100,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "chestnut mushrooms",
+        "amount": 100,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "shallots",
+        "amount": 2,
+        "unit": "medium",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "garlic",
+        "amount": 2,
+        "unit": "cloves",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "white wine",
+        "amount": 150,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "vegetable stock",
+        "amount": 1,
+        "unit": "l",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "Parmesan cheese",
+        "amount": 50,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "butter",
+        "amount": 30,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "extra virgin olive oil",
+        "amount": 2,
+        "unit": "tbsp",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "fresh thyme",
+        "amount": 1,
+        "unit": "tsp",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "sea salt",
+        "amount": 1,
+        "unit": "tsp",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "black pepper",
+        "amount": 1,
+        "unit": "tsp",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "Finely chop the mushrooms. Finely dice the shallots and mince the garlic.",
+        "duration_min": 10,
+        "technique_tags": [
+          "chopping",
+          "dicing",
+          "mincing"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "In a wide pan, heat olive oil and 10g butter over medium heat. Saut\u00e9 shallots and garlic until soft.",
+        "duration_min": 5,
+        "technique_tags": [
+          "saut\u00e9ing"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "Add chopped mushrooms and thyme, cooking until they release their moisture and turn golden. Season with salt and pepper.",
+        "duration_min": 8,
+        "technique_tags": [
+          "saut\u00e9ing"
+        ]
+      },
+      {
+        "step_number": 4,
+        "instruction": "Add Arborio rice, stirring to coat with oil and mushrooms. Pour in white wine and cook until absorbed.",
+        "duration_min": 5,
+        "technique_tags": [
+          "toasting",
+          "deglazing"
+        ]
+      },
+      {
+        "step_number": 5,
+        "instruction": "Add hot vegetable stock one ladle at a time, stirring constantly until each addition is absorbed before adding the next (approx. 18-20 minutes).",
+        "duration_min": 18,
+        "technique_tags": [
+          "simmering"
+        ]
+      },
+      {
+        "step_number": 6,
+        "instruction": "Remove from heat, stir in remaining butter and grated Parmesan. Season to taste and serve immediately.",
+        "duration_min": 2,
+        "technique_tags": [
+          "finishing"
+        ]
+      }
+    ],
+    "time_prep_min": 20,
+    "time_cook_min": 40,
+    "time_total_min": 60,
+    "serves": 4,
+    "difficulty": 4,
+    "flavor_tags": [
+      "savoury",
+      "earthy",
+      "umami"
+    ],
+    "texture_tags": [
+      "creamy",
+      "tender"
+    ],
+    "dietary_tags": [
+      "vegetarian",
+      "contains_dairy"
+    ],
+    "dietary_flags": {
+      "is_vegan": false,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": false,
+      "is_gluten_free": true,
+      "is_nut_free": true,
+      "is_halal_ok": true,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": true,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 0,
+      "protein_g": 0,
+      "fat_g": 0,
+      "saturated_fat_g": 0,
+      "carbs_g": 0,
+      "fiber_g": 0,
+      "sugar_g": 0,
+      "salt_g": 0
+    },
+    "season_tags": [
+      "autumn",
+      "winter"
+    ],
+    "occasion_tags": [
+      "dinner-party"
+    ],
+    "course_tags": [
+      "main"
+    ],
+    "wine_pairing_notes": "A medium-bodied white like Verdicchio pairs beautifully.",
+    "tips": [
+      "Stir frequently for a creamy texture. Use homemade stock for deeper flavour. Add stock gradually to prevent a soupy risotto."
+    ],
+    "id": "d9fc9553-93a2-4adc-b800-f1cba5a43476",
+    "title_en": "Risotto ai Funghi",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Risotto ai Funghi A luxurious risotto made with wild mushrooms, Arborio rice, white wine, and Parmesan. Creamy, earthy, and deeply satisfying, perfect for a cosy dinner. Arborio rice porcini mushrooms chestnut mushrooms shallots garlic white wine vegetable stock Parmesan cheese butter extra virgin olive oil fresh thyme sea salt black pepper savoury earthy umami creamy tender vegetarian contains_dairy autumn winter Italian dinner-party",
+    "created_at": "2026-04-08T08:43:56.138756Z",
+    "data_quality_score": 0.3
+  },
+  {
+    "title": "[EDGE-no-nutrition] Melanzane alla Parmigiana",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Sicily",
+    "description": "A baked dish of fried aubergine layered with tomato sauce, mozzarella, and Parmesan. Hearty, cheesy, and full of Mediterranean flavours.",
+    "ingredients": [
+      {
+        "name": "aubergines",
+        "amount": 2,
+        "unit": "large",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "passata",
+        "amount": 400,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "mozzarella",
+        "amount": 150,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "Parmesan cheese",
+        "amount": 50,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "butter",
+        "amount": 50,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "plain flour",
+        "amount": 100,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "eggs",
+        "amount": 2,
+        "unit": "large",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "basil leaves",
+        "amount": 10,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "garlic",
+        "amount": 2,
+        "unit": "cloves",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "extra virgin olive oil",
+        "amount": 300,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "sea salt",
+        "amount": 2,
+        "unit": "tsp",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "black pepper",
+        "amount": 1,
+        "unit": "tsp",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "Slice aubergines into 1cm thick rounds. Sprinkle with salt and let sit for 20 minutes to remove bitterness. Pat dry.",
+        "duration_min": 20,
+        "technique_tags": [
+          "salting"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "Beat eggs in a bowl. Place flour in another bowl. Dip aubergine slices in flour, then egg.",
+        "duration_min": 10,
+        "technique_tags": [
+          "dipping"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "Heat olive oil in a deep pan. Fry aubergine slices in batches until golden. Drain on kitchen paper.",
+        "duration_min": 15,
+        "technique_tags": [
+          "frying"
+        ]
+      },
+      {
+        "step_number": 4,
+        "instruction": "In a saucepan, heat butter and saut\u00e9 garlic. Add passata, salt, and pepper. Simmer for 10 minutes.",
+        "duration_min": 10,
+        "technique_tags": [
+          "simmering"
+        ]
+      },
+      {
+        "step_number": 5,
+        "instruction": "Layer half the aubergine slices in a baking dish. Top with half the tomato sauce, mozzarella, Parmesan, and basil. Repeat layers.",
+        "duration_min": 10,
+        "technique_tags": [
+          "layering"
+        ]
+      },
+      {
+        "step_number": 6,
+        "instruction": "Bake at 180\u00b0C for 25 minutes until golden and bubbling. Let rest for 10 minutes before serving.",
+        "duration_min": 35,
+        "technique_tags": [
+          "baking"
+        ]
+      }
+    ],
+    "time_prep_min": 30,
+    "time_cook_min": 55,
+    "time_total_min": 85,
+    "serves": 4,
+    "difficulty": 3,
+    "flavor_tags": [
+      "savoury",
+      "cheesy",
+      "herby"
+    ],
+    "texture_tags": [
+      "crispy",
+      "creamy",
+      "tender"
+    ],
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "dietary_flags": {
+      "is_vegan": false,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": false,
+      "is_gluten_free": false,
+      "is_nut_free": true,
+      "is_halal_ok": true,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": false,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 0,
+      "protein_g": 0,
+      "fat_g": 0,
+      "saturated_fat_g": 0,
+      "carbs_g": 0,
+      "fiber_g": 0,
+      "sugar_g": 0,
+      "salt_g": 0
+    },
+    "season_tags": [
+      "summer",
+      "autumn"
+    ],
+    "occasion_tags": [
+      "Sunday-lunch"
+    ],
+    "course_tags": [
+      "main"
+    ],
+    "wine_pairing_notes": "A full-bodied red like Nero d'Avola complements the richness.",
+    "tips": [
+      "Salt the aubergines well to remove bitterness. Fry in batches to avoid overcrowding the pan. Use fresh basil for the best flavour."
+    ],
+    "id": "f244c706-8d1e-4cc2-bf1e-6df0904795e7",
+    "title_en": "Melanzane alla Parmigiana",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Melanzane alla Parmigiana A baked dish of fried aubergine layered with tomato sauce, mozzarella, and Parmesan. Hearty, cheesy, and full of Mediterranean flavours. aubergines passata mozzarella Parmesan cheese butter plain flour eggs basil leaves garlic extra virgin olive oil sea salt black pepper savoury cheesy herby crispy creamy tender vegetarian summer autumn Italian Sunday-lunch",
+    "created_at": "2026-04-08T08:43:56.138801Z",
+    "data_quality_score": 0.3
+  },
+  {
+    "title": "[EDGE-no-nutrition] Tiramisu",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Veneto",
+    "description": "Italy's most famous dessert, featuring layers of coffee-soaked ladyfingers and mascarpone cream. Light, creamy, and utterly indulgent.",
+    "ingredients": [
+      {
+        "name": "mascarpone",
+        "amount": 250,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "eggs",
+        "amount": 3,
+        "unit": "large",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "caster sugar",
+        "amount": 80,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "strong coffee",
+        "amount": 200,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "ladyfingers",
+        "amount": 200,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "cocoa powder",
+        "amount": 20,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "brandy",
+        "amount": 30,
+        "unit": "ml",
+        "is_optional": true,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "dark chocolate",
+        "amount": 30,
+        "unit": "g",
+        "is_optional": true,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "Prepare coffee and let it cool. If using, mix brandy into coffee.",
+        "duration_min": 10,
+        "technique_tags": [
+          "brewing"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "Separate egg whites from yolks. Whisk yolks with 60g sugar until pale and thick. Add mascarpone and whisk until smooth.",
+        "duration_min": 10,
+        "technique_tags": [
+          "whisking"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "Beat egg whites with remaining sugar until stiff peaks form. Gently fold into mascarpone mixture.",
+        "duration_min": 8,
+        "technique_tags": [
+          "folding"
+        ]
+      },
+      {
+        "step_number": 4,
+        "instruction": "Dip ladyfingers briefly in coffee and arrange a layer in a dish. Cover with a layer of mascarpone cream.",
+        "duration_min": 10,
+        "technique_tags": [
+          "dipping",
+          "layering"
+        ]
+      },
+      {
+        "step_number": 5,
+        "instruction": "Repeat layers. Dust top with cocoa powder. Chill for at least 4 hours before serving. Shave dark chocolate on top if desired.",
+        "duration_min": 4,
+        "technique_tags": [
+          "dusting",
+          "chilling"
+        ]
+      }
+    ],
+    "time_prep_min": 30,
+    "time_cook_min": 0,
+    "time_total_min": 30,
+    "serves": 6,
+    "difficulty": 2,
+    "flavor_tags": [
+      "sweet",
+      "coffee",
+      "creamy"
+    ],
+    "texture_tags": [
+      "creamy",
+      "soft"
+    ],
+    "dietary_tags": [
+      "contains_eggs",
+      "contains_dairy"
+    ],
+    "dietary_flags": {
+      "is_vegan": false,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": false,
+      "is_gluten_free": false,
+      "is_nut_free": true,
+      "is_halal_ok": true,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": true,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 0,
+      "protein_g": 0,
+      "fat_g": 0,
+      "saturated_fat_g": 0,
+      "carbs_g": 0,
+      "fiber_g": 0,
+      "sugar_g": 0,
+      "salt_g": 0
+    },
+    "season_tags": [
+      "year-round"
+    ],
+    "occasion_tags": [
+      "dessert",
+      "special-occasion"
+    ],
+    "course_tags": [
+      "dessert"
+    ],
+    "wine_pairing_notes": "A sweet wine like Vin Santo pairs well.",
+    "tips": [
+      "Use fresh eggs for the best texture. Chill the tiramisu well before serving. Avoid soaking the ladyfingers too long to prevent a soggy texture."
+    ],
+    "id": "8fc41663-6019-4ae9-8b8f-11dbf72ca8e0",
+    "title_en": "Tiramisu",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Tiramisu Italy's most famous dessert, featuring layers of coffee-soaked ladyfingers and mascarpone cream. Light, creamy, and utterly indulgent. mascarpone eggs caster sugar strong coffee ladyfingers cocoa powder brandy dark chocolate sweet coffee creamy creamy soft contains_eggs contains_dairy year-round Italian dessert special-occasion",
+    "created_at": "2026-04-08T08:43:56.138824Z",
+    "data_quality_score": 0.3
+  },
+  {
+    "title": "[EDGE-sparse] Spaghetti Aglio e Olio",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Rome",
+    "description": "A classic Roman dish with a simple yet flavorful combination of garlic, olive oil, and chili. Quick to prepare and perfect for a light meal.",
+    "ingredients": [
+      {
+        "name": "spaghetti",
+        "amount": 400,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "Cook the spaghetti in a large pot of boiling salted water until al dente. Reserve 1 cup of pasta water before draining.",
+        "duration_min": 10,
+        "technique_tags": [
+          "boil"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "In a large pan, heat the olive oil over low heat. Add the minced garlic and chili flakes, saut\u00e9ing until the garlic is golden but not browned.",
+        "duration_min": 5,
+        "technique_tags": [
+          "saut\u00e9"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "Add the drained spaghetti to the pan and toss to coat in the garlic oil. Add a splash of reserved pasta water to emulsify the sauce.",
+        "duration_min": 3,
+        "technique_tags": [
+          "toss"
+        ]
+      },
+      {
+        "step_number": 4,
+        "instruction": "Season with salt to taste, stir in the chopped parsley, and serve immediately.",
+        "duration_min": 2,
+        "technique_tags": [
+          "season"
+        ]
+      }
+    ],
+    "time_prep_min": 10,
+    "time_cook_min": 15,
+    "time_total_min": 25,
+    "serves": 4,
+    "difficulty": 1,
+    "flavor_tags": [
+      "savoury",
+      "spicy"
+    ],
+    "texture_tags": [
+      "tender",
+      "smooth"
+    ],
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "dietary_flags": {
+      "is_vegan": true,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": true,
+      "is_gluten_free": false,
+      "is_nut_free": true,
+      "is_halal_ok": true,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": false,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 450,
+      "protein_g": 10,
+      "fat_g": 18,
+      "carbs_g": 60,
+      "fiber_g": 3,
+      "sugar_g": 2,
+      "salt_g": 1.5,
+      "saturated_fat_g": 0
+    },
+    "season_tags": [
+      "spring",
+      "autumn",
+      "winter"
+    ],
+    "occasion_tags": [
+      "quick-lunch",
+      "weeknight-dinner"
+    ],
+    "course_tags": [
+      "main"
+    ],
+    "wine_pairing_notes": "Pair with a light Pinot Grigio to complement the garlic and chili flavors.",
+    "tips": [
+      "Use the best quality olive oil you can afford for the best flavor.",
+      "Don't overcook the garlic to avoid bitterness."
+    ],
+    "id": "70d2a5ad-ea32-4ccb-b3e3-86c406f189b8",
+    "title_en": "Spaghetti Aglio e Olio",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Spaghetti Aglio e Olio A classic Roman dish with a simple yet flavorful combination of garlic, olive oil, and chili. Quick to prepare and perfect for a light meal. spaghetti garlic olive oil chili flakes parsley salt savoury spicy Italian spring autumn winter",
+    "created_at": "2026-04-08T08:51:58.860489+00:00",
+    "data_quality_score": 0.2
+  },
+  {
+    "title": "[EDGE-sparse] Risotto ai Funghi",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Milan",
+    "description": "A creamy risotto featuring fresh wild mushrooms and Parmesan cheese. Rich and satisfying, perfect for a special occasion.",
+    "ingredients": [
+      {
+        "name": "risotto rice (Arborio)",
+        "amount": 320,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "Finely chop the onion, garlic, and mushrooms. Heat olive oil and half the butter in a large pan over medium heat. Add onion and garlic, saut\u00e9 until softened.",
+        "duration_min": 5,
+        "technique_tags": [
+          "saut\u00e9"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "Add the mushrooms and rosemary, cooking until the mushrooms release their moisture and it evaporates. Season with salt and pepper.",
+        "duration_min": 7,
+        "technique_tags": [
+          "saut\u00e9"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "Add the risotto rice to the pan, stirring to coat the grains with oil. Pour in the white wine and cook until fully absorbed.",
+        "duration_min": 3,
+        "technique_tags": [
+          "stir",
+          "simmer"
+        ]
+      },
+      {
+        "step_number": 4,
+        "instruction": "Gradually add the hot vegetable stock, one ladle at a time, stirring frequently and allowing the liquid to absorb before adding more. This should take about 16-18 minutes.",
+        "duration_min": 18,
+        "technique_tags": [
+          "stir",
+          "simmer"
+        ]
+      },
+      {
+        "step_number": 5,
+        "instruction": "Once the rice is creamy and al dente, remove from heat. Stir in the remaining butter and Parmesan cheese. Adjust seasoning if needed. Cover and let rest for 2 minutes before serving.",
+        "duration_min": 3,
+        "technique_tags": [
+          "mix",
+          "rest"
+        ]
+      }
+    ],
+    "time_prep_min": 20,
+    "time_cook_min": 35,
+    "time_total_min": 55,
+    "serves": 4,
+    "difficulty": 3,
+    "flavor_tags": [
+      "savoury",
+      "umami",
+      "creamy"
+    ],
+    "texture_tags": [
+      "creamy",
+      "tender",
+      "smooth"
+    ],
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "dietary_flags": {
+      "is_vegan": false,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": false,
+      "is_gluten_free": true,
+      "is_nut_free": true,
+      "is_halal_ok": false,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": true,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 420,
+      "protein_g": 12,
+      "fat_g": 16,
+      "carbs_g": 52,
+      "fiber_g": 4,
+      "sugar_g": 3,
+      "salt_g": 2.1,
+      "saturated_fat_g": 0
+    },
+    "season_tags": [
+      "autumn",
+      "winter"
+    ],
+    "occasion_tags": [
+      "weekend-dinner",
+      "special-occasion"
+    ],
+    "course_tags": [
+      "main"
+    ],
+    "wine_pairing_notes": "Pair with a full-bodied white wine such as a Chardonnay to match the creamy texture and umami flavors.",
+    "tips": [
+      "Use a good quality vegetable stock for the best flavor.",
+      "Stir frequently but avoid over-stirring to achieve the perfect creamy texture."
+    ],
+    "id": "53952522-1666-4470-b36e-2376fbf38681",
+    "title_en": "Risotto ai Funghi",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Risotto ai Funghi A creamy risotto featuring fresh wild mushrooms and Parmesan cheese. Rich and satisfying, perfect for a special occasion. risotto rice (Arborio) mushrooms (wild mix) onion garlic vegetable stock Parmesan cheese dry white wine olive oil butter rosemary salt black pepper savoury umami creamy Italian autumn winter",
+    "created_at": "2026-04-08T08:51:58.860529+00:00",
+    "data_quality_score": 0.2
+  },
+  {
+    "title": "[EDGE-sparse] Melanzane alla Parmigiana",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Sicily",
+    "description": "Layers of fried aubergine, tomato sauce, and melted cheese. A comforting dish that brings together the flavors of Southern Italy.",
+    "ingredients": [
+      {
+        "name": "aubergines",
+        "amount": 2,
+        "unit": "large",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "Slice the aubergines into 1 cm thick rounds. Sprinkle with salt and let sit for 20 minutes to draw out excess moisture. Pat dry with paper towels.",
+        "duration_min": 20,
+        "technique_tags": [
+          "dry"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "Heat olive oil in a large pan over medium heat. Fry the aubergine slices in batches until golden brown on both sides, about 3-4 minutes per side. Drain on paper towels.",
+        "duration_min": 15,
+        "technique_tags": [
+          "fry"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "In a separate pan, saut\u00e9 finely chopped onion and garlic in a little olive oil until softened. Add the tomato passata, season with salt and pepper, and simmer for 10 minutes. Stir in chopped basil.",
+        "duration_min": 15,
+        "technique_tags": [
+          "saut\u00e9",
+          "simmer"
+        ]
+      },
+      {
+        "step_number": 4,
+        "instruction": "Preheat the oven to 190\u00b0C (375\u00b0F). In a baking dish, layer half the fried aubergine slices, half the tomato sauce, half the mozzarella, and a sprinkle of Parmesan. Repeat the layers.",
+        "duration_min": 5,
+        "technique_tags": [
+          "layer"
+        ]
+      },
+      {
+        "step_number": 5,
+        "instruction": "Bake for 25-30 minutes until the top is golden and bubbling. Let rest for 5 minutes before serving.",
+        "duration_min": 30,
+        "technique_tags": [
+          "bake",
+          "rest"
+        ]
+      }
+    ],
+    "time_prep_min": 30,
+    "time_cook_min": 65,
+    "time_total_min": 95,
+    "serves": 4,
+    "difficulty": 3,
+    "flavor_tags": [
+      "savoury",
+      "rich",
+      "tomatoey"
+    ],
+    "texture_tags": [
+      "creamy",
+      "layered",
+      "crispy"
+    ],
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "dietary_flags": {
+      "is_vegan": false,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": false,
+      "is_gluten_free": true,
+      "is_nut_free": true,
+      "is_halal_ok": false,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": false,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 350,
+      "protein_g": 14,
+      "fat_g": 22,
+      "carbs_g": 24,
+      "fiber_g": 8,
+      "sugar_g": 12,
+      "salt_g": 1.8,
+      "saturated_fat_g": 0
+    },
+    "season_tags": [
+      "summer",
+      "autumn"
+    ],
+    "occasion_tags": [
+      "weekend-dinner",
+      "family-gathering"
+    ],
+    "course_tags": [
+      "main",
+      "side"
+    ],
+    "wine_pairing_notes": "Pair with a medium-bodied red wine such as a Chianti to complement the tomato and cheese flavors.",
+    "tips": [
+      "Slicing the aubergine thinly ensures even cooking and a better texture.",
+      "You can prepare the dish ahead and bake it just before serving for convenience."
+    ],
+    "id": "8a859bcc-aa36-426e-b6a2-fcf1f5228a71",
+    "title_en": "Melanzane alla Parmigiana",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Melanzane alla Parmigiana Layers of fried aubergine, tomato sauce, and melted cheese. A comforting dish that brings together the flavors of Southern Italy. aubergines tomato passata mozzarella Parmesan cheese garlic fresh basil olive oil onion salt black pepper savoury rich tomatoey Italian summer autumn",
+    "created_at": "2026-04-08T08:51:58.860550+00:00",
+    "data_quality_score": 0.2
+  },
+  {
+    "title": "[EDGE-sparse] Pasta alla Norma",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Sicily",
+    "description": "A Sicilian classic featuring pasta with a rich tomato and aubergine sauce, topped with ricotta salata. Simple yet bursting with flavor.",
+    "ingredients": [
+      {
+        "name": "pasta (rigatoni or penne)",
+        "amount": 400,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "Cut the aubergines into 1 cm cubes. Sprinkle with salt and let sit for 15 minutes to draw out moisture. Pat dry with paper towels.",
+        "duration_min": 15,
+        "technique_tags": [
+          "dry"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "Heat olive oil in a large pan over medium heat. Fry the aubergine cubes in batches until golden brown. Remove and set aside.",
+        "duration_min": 10,
+        "technique_tags": [
+          "fry"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "In the same pan, saut\u00e9 finely chopped onion and garlic until softened. Add the tomato passata, season with salt and pepper, and cook for 10 minutes.",
+        "duration_min": 12,
+        "technique_tags": [
+          "saut\u00e9",
+          "simmer"
+        ]
+      },
+      {
+        "step_number": 4,
+        "instruction": "Add the fried aubergine and chopped basil to the tomato sauce. Cook for another 5 minutes to meld the flavors.",
+        "duration_min": 5,
+        "technique_tags": [
+          "simmer"
+        ]
+      },
+      {
+        "step_number": 5,
+        "instruction": "Cook the pasta in a large pot of boiling salted water until al dente. Reserve 1 cup of pasta water before draining.",
+        "duration_min": 10,
+        "technique_tags": [
+          "boil"
+        ]
+      },
+      {
+        "step_number": 6,
+        "instruction": "Toss the drained pasta with the aubergine sauce, adding a splash of reserved pasta water if needed. Serve topped with grated ricotta salata.",
+        "duration_min": 3,
+        "technique_tags": [
+          "toss",
+          "serve"
+        ]
+      }
+    ],
+    "time_prep_min": 20,
+    "time_cook_min": 40,
+    "time_total_min": 60,
+    "serves": 4,
+    "difficulty": 2,
+    "flavor_tags": [
+      "savoury",
+      "tomatoey",
+      "umami"
+    ],
+    "texture_tags": [
+      "tender",
+      "creamy",
+      "chunky"
+    ],
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "dietary_flags": {
+      "is_vegan": false,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": false,
+      "is_gluten_free": false,
+      "is_nut_free": true,
+      "is_halal_ok": false,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": false,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 400,
+      "protein_g": 11,
+      "fat_g": 16,
+      "carbs_g": 54,
+      "fiber_g": 7,
+      "sugar_g": 10,
+      "salt_g": 1.6,
+      "saturated_fat_g": 0
+    },
+    "season_tags": [
+      "summer",
+      "autumn"
+    ],
+    "occasion_tags": [
+      "weeknight-dinner",
+      "family-gathering"
+    ],
+    "course_tags": [
+      "main"
+    ],
+    "wine_pairing_notes": "Pair with a medium-bodied red wine such as a Nero d'Avola to complement the rich tomato and aubergine flavors.",
+    "tips": [
+      "Do not skip salting the aubergine to remove excess moisture, which can make the dish watery.",
+      "Use a good quality passata for a richer tomato flavor."
+    ],
+    "id": "fc0cceed-1097-4f9a-bea2-124a0dbbb844",
+    "title_en": "Pasta alla Norma",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Pasta alla Norma A Sicilian classic featuring pasta with a rich tomato and aubergine sauce, topped with ricotta salata. Simple yet bursting with flavor. pasta (rigatoni or penne) aubergines tomato passata garlic basil ricotta salata olive oil onion salt black pepper savoury tomatoey umami Italian summer autumn",
+    "created_at": "2026-04-08T08:51:58.860569+00:00",
+    "data_quality_score": 0.2
+  },
+  {
+    "title": "[EDGE-sparse] Focaccia Genovese",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Liguria",
+    "description": "A traditional Genoese focaccia with a soft, fluffy interior and a crispy, olive oil-kissed crust. Perfect as an appetizer or snack.",
+    "ingredients": [
+      {
+        "name": "strong bread flour",
+        "amount": 500,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "In a small bowl, dissolve the yeast and sugar in warm water. Let sit for 5 minutes until frothy.",
+        "duration_min": 5,
+        "technique_tags": [
+          "dissolve",
+          "activate"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "In a large bowl, mix the flour and salt. Make a well in the center and pour in the yeast mixture and olive oil. Stir until a shaggy dough forms.",
+        "duration_min": 5,
+        "technique_tags": [
+          "knead"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "Turn the dough out onto a lightly floured surface and knead for 10 minutes until smooth and elastic. Place in a lightly oiled bowl, cover, and let rise for 1 hour or until doubled in size.",
+        "duration_min": 70,
+        "technique_tags": [
+          "knead",
+          "proof"
+        ]
+      },
+      {
+        "step_number": 4,
+        "instruction": "Preheat the oven to 220\u00b0C (425\u00b0F). Grease a 20x30 cm baking tray with olive oil. Spread the dough out in the tray, pressing it to the edges. Dimple the dough with your fingertips.",
+        "duration_min": 5,
+        "technique_tags": [
+          "press",
+          "dimple"
+        ]
+      },
+      {
+        "step_number": 5,
+        "instruction": "Drizzle generously with olive oil, sprinkle with sea salt flakes and rosemary (if using). Let rise for another 20 minutes.",
+        "duration_min": 20,
+        "technique_tags": [
+          "rest"
+        ]
+      },
+      {
+        "step_number": 6,
+        "instruction": "Bake for 20-25 minutes until golden brown. Serve warm or at room temperature.",
+        "duration_min": 25,
+        "technique_tags": [
+          "bake"
+        ]
+      }
+    ],
+    "time_prep_min": 30,
+    "time_cook_min": 25,
+    "time_total_min": 85,
+    "serves": 6,
+    "difficulty": 2,
+    "flavor_tags": [
+      "savoury",
+      "herby"
+    ],
+    "texture_tags": [
+      "fluffy",
+      "crispy",
+      "oily"
+    ],
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "dietary_flags": {
+      "is_vegan": true,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": true,
+      "is_gluten_free": false,
+      "is_nut_free": true,
+      "is_halal_ok": true,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": false,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 300,
+      "protein_g": 8,
+      "fat_g": 12,
+      "carbs_g": 40,
+      "fiber_g": 2,
+      "sugar_g": 2,
+      "salt_g": 2.5,
+      "saturated_fat_g": 0
+    },
+    "season_tags": [
+      "all-year"
+    ],
+    "occasion_tags": [
+      "appetizer",
+      "picnic"
+    ],
+    "course_tags": [
+      "side",
+      "snack"
+    ],
+    "wine_pairing_notes": "Pair with a light sparkling wine such as Prosecco to complement the crispy texture and olive oil.",
+    "tips": [
+      "For extra flavor, add a few pitted olives or cherry tomatoes on top before baking.",
+      "The dough should be sticky; resist the urge to add too much extra flour."
+    ],
+    "id": "6f64dbc8-3db5-418e-8cc6-3731f7a92a9d",
+    "title_en": "Focaccia Genovese",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Focaccia Genovese A traditional Genoese focaccia with a soft, fluffy interior and a crispy, olive oil-kissed crust. Perfect as an appetizer or snack. strong bread flour olive oil warm water active dry yeast salt sugar sea salt flakes rosemary savoury herby Italian all-year",
+    "created_at": "2026-04-08T08:51:58.860584+00:00",
+    "data_quality_score": 0.2
+  },
+  {
+    "title": "[EDGE-no-steps] Spaghetti Aglio e Olio",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Lazio",
+    "description": "A classic Roman pasta dish with a simple garlic and olive oil sauce. Quick and easy to prepare for any weeknight dinner.",
+    "ingredients": [
+      {
+        "name": "spaghetti",
+        "amount": 400,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "garlic",
+        "amount": 6,
+        "unit": "cloves",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "olive oil",
+        "amount": 80,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "dried chilli flakes",
+        "amount": 1,
+        "unit": "tsp",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "parsley",
+        "amount": 30,
+        "unit": "g",
+        "is_optional": true,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "Parmesan cheese",
+        "amount": 50,
+        "unit": "g",
+        "is_optional": true,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "salt",
+        "amount": 10,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [],
+    "time_prep_min": 5,
+    "time_cook_min": 15,
+    "time_total_min": 20,
+    "serves": 4,
+    "difficulty": 1,
+    "flavor_tags": [
+      "savoury",
+      "garlicky",
+      "spicy"
+    ],
+    "texture_tags": [
+      "soft"
+    ],
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "dietary_flags": {
+      "is_vegan": false,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": false,
+      "is_gluten_free": false,
+      "is_nut_free": true,
+      "is_halal_ok": true,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": false,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 450,
+      "protein_g": 14,
+      "fat_g": 16,
+      "carbs_g": 60,
+      "fiber_g": 3,
+      "sugar_g": 2,
+      "salt_g": 0.8,
+      "saturated_fat_g": 0
+    },
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn",
+      "winter"
+    ],
+    "occasion_tags": [
+      "weeknight-dinner",
+      "quick-meal"
+    ],
+    "course_tags": [
+      "main"
+    ],
+    "wine_pairing_notes": "Pair with a crisp white wine such as Frascati Superiore from Lazio.",
+    "tips": [
+      "Use good quality olive oil for the best flavor.",
+      "For a vegan version, omit the Parmesan cheese or use a dairy-free alternative."
+    ],
+    "id": "389199a4-fb23-4781-9d64-575eb368d373",
+    "title_en": "Spaghetti Aglio e Olio",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Spaghetti Aglio e Olio A classic Roman pasta dish with a simple garlic and olive oil sauce. Quick and easy to prepare for any weeknight dinner. spaghetti garlic olive oil dried chilli flakes parsley Parmesan cheese salt savoury garlicky spicy Italian spring summer autumn winter",
+    "created_at": "2026-04-08T08:52:37.503132+00:00",
+    "data_quality_score": 0.15
+  },
+  {
+    "title": "[EDGE-no-steps] Eggplant Parmigiana",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Campania",
+    "description": "A rich and hearty layered dish featuring fried aubergine, tomato sauce, and melted cheese. Perfect for a festive occasion or a weekend meal.",
+    "ingredients": [
+      {
+        "name": "aubergine",
+        "amount": 2,
+        "unit": "large",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "flour",
+        "amount": 200,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "eggs",
+        "amount": 2,
+        "unit": "large",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "breadcrumbs",
+        "amount": 150,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "tomatoes",
+        "amount": 800,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "garlic",
+        "amount": 2,
+        "unit": "cloves",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "basil",
+        "amount": 10,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "Mozzarella cheese",
+        "amount": 250,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "Parmesan cheese",
+        "amount": 100,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "olive oil",
+        "amount": 500,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "salt",
+        "amount": 15,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "black pepper",
+        "amount": 5,
+        "unit": "g",
+        "is_optional": true,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [],
+    "time_prep_min": 45,
+    "time_cook_min": 75,
+    "time_total_min": 120,
+    "serves": 6,
+    "difficulty": 3,
+    "flavor_tags": [
+      "savoury",
+      "tomatoey",
+      "cheesy"
+    ],
+    "texture_tags": [
+      "crispy",
+      "soft",
+      "gooey"
+    ],
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "dietary_flags": {
+      "is_vegan": false,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": false,
+      "is_gluten_free": false,
+      "is_nut_free": true,
+      "is_halal_ok": false,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": false,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 550,
+      "protein_g": 22,
+      "fat_g": 35,
+      "carbs_g": 40,
+      "fiber_g": 8,
+      "sugar_g": 10,
+      "salt_g": 1.5,
+      "saturated_fat_g": 0
+    },
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "occasion_tags": [
+      "weekend-dinner",
+      "special-occasions"
+    ],
+    "course_tags": [
+      "main"
+    ],
+    "wine_pairing_notes": "Pair with a medium-bodied red wine such as Chianti Classico.",
+    "tips": [
+      "Use young aubergines for the best texture.",
+      "For a lighter version, bake the aubergine slices instead of frying them."
+    ],
+    "id": "53abc5ba-8273-49d6-8376-3363271f1a3e",
+    "title_en": "Eggplant Parmigiana",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Eggplant Parmigiana A rich and hearty layered dish featuring fried aubergine, tomato sauce, and melted cheese. Perfect for a festive occasion or a weekend meal. aubergine flour eggs breadcrumbs tomatoes garlic basil Mozzarella cheese Parmesan cheese olive oil salt black pepper savoury tomatoey cheesy Italian spring summer autumn",
+    "created_at": "2026-04-08T08:52:37.503165+00:00",
+    "data_quality_score": 0.15
+  },
+  {
+    "title": "[EDGE-no-steps] Risotto alla Milanese",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Lombardy",
+    "description": "A creamy saffron-infused risotto from Milan, traditionally served with ossobuco. A luxurious dish perfect for a special dinner.",
+    "ingredients": [
+      {
+        "name": "risotto rice",
+        "amount": 320,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "butter",
+        "amount": 50,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "onion",
+        "amount": 1,
+        "unit": "medium",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "saffron threads",
+        "amount": 0.1,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "white wine",
+        "amount": 120,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "chicken stock",
+        "amount": 1,
+        "unit": "l",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "Parmesan cheese",
+        "amount": 80,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "salt",
+        "amount": 10,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "black pepper",
+        "amount": 3,
+        "unit": "g",
+        "is_optional": true,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [],
+    "time_prep_min": 15,
+    "time_cook_min": 30,
+    "time_total_min": 45,
+    "serves": 4,
+    "difficulty": 2,
+    "flavor_tags": [
+      "savoury",
+      "creamy",
+      "aromatic"
+    ],
+    "texture_tags": [
+      "creamy",
+      "soft"
+    ],
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "dietary_flags": {
+      "is_vegan": false,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": false,
+      "is_gluten_free": true,
+      "is_nut_free": true,
+      "is_halal_ok": false,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": true,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 420,
+      "protein_g": 12,
+      "fat_g": 14,
+      "carbs_g": 55,
+      "fiber_g": 2,
+      "sugar_g": 2,
+      "salt_g": 1.4,
+      "saturated_fat_g": 0
+    },
+    "season_tags": [
+      "autumn",
+      "winter"
+    ],
+    "occasion_tags": [
+      "special-occasions",
+      "weekend-dinner"
+    ],
+    "course_tags": [
+      "main"
+    ],
+    "wine_pairing_notes": "Pair with a full-bodied white wine such as Gavi di Gavi or a light red like Valpolicella.",
+    "tips": [
+      "Use a good quality saffron for the best flavor and color.",
+      "Stir the risotto constantly to release the starch and achieve a creamy texture."
+    ],
+    "id": "67e4dab1-bb49-446b-b794-61f5bfdb3ec2",
+    "title_en": "Risotto alla Milanese",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Risotto alla Milanese A creamy saffron-infused risotto from Milan, traditionally served with ossobuco. A luxurious dish perfect for a special dinner. risotto rice butter onion saffron threads white wine chicken stock Parmesan cheese salt black pepper savoury creamy aromatic Italian autumn winter",
+    "created_at": "2026-04-08T08:52:37.503184+00:00",
+    "data_quality_score": 0.15
+  },
+  {
+    "title": "[EDGE-no-steps] Panzanella Salad",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Tuscany",
+    "description": "A rustic bread salad from Tuscany, perfect for summer. Uses stale bread and fresh vegetables for a refreshing dish.",
+    "ingredients": [
+      {
+        "name": "stale bread",
+        "amount": 300,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "tomatoes",
+        "amount": 400,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "courgette",
+        "amount": 2,
+        "unit": "medium",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "red onion",
+        "amount": 1,
+        "unit": "medium",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "cucumber",
+        "amount": 1,
+        "unit": "large",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "basil",
+        "amount": 20,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "olive oil",
+        "amount": 60,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "red wine vinegar",
+        "amount": 30,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "salt",
+        "amount": 10,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "black pepper",
+        "amount": 5,
+        "unit": "g",
+        "is_optional": true,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [],
+    "time_prep_min": 20,
+    "time_cook_min": 0,
+    "time_total_min": 50,
+    "serves": 4,
+    "difficulty": 1,
+    "flavor_tags": [
+      "refreshing",
+      "herby",
+      "tangy"
+    ],
+    "texture_tags": [
+      "juicy",
+      "soft"
+    ],
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "dietary_flags": {
+      "is_vegan": true,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": true,
+      "is_gluten_free": false,
+      "is_nut_free": true,
+      "is_halal_ok": true,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": true,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 280,
+      "protein_g": 7,
+      "fat_g": 14,
+      "carbs_g": 30,
+      "fiber_g": 5,
+      "sugar_g": 8,
+      "salt_g": 1.0,
+      "saturated_fat_g": 0
+    },
+    "season_tags": [
+      "spring",
+      "summer"
+    ],
+    "occasion_tags": [
+      "picnic",
+      "lunch"
+    ],
+    "course_tags": [
+      "salad"
+    ],
+    "wine_pairing_notes": "Pair with a light red wine such as Chianti or a crisp white like Vernaccia di San Gimignano.",
+    "tips": [
+      "Use the best quality olive oil you can afford for the best flavor.",
+      "For a gluten-free version, substitute the bread with gluten-free bread."
+    ],
+    "id": "426e7170-1c7c-414e-862b-13ecbe051919",
+    "title_en": "Panzanella Salad",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Panzanella Salad A rustic bread salad from Tuscany, perfect for summer. Uses stale bread and fresh vegetables for a refreshing dish. stale bread tomatoes courgette red onion cucumber basil olive oil red wine vinegar salt black pepper refreshing herby tangy Italian spring summer",
+    "created_at": "2026-04-08T08:52:37.503202+00:00",
+    "data_quality_score": 0.15
+  },
+  {
+    "title": "[EDGE-no-steps] Tiramisu",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Veneto",
+    "description": "A classic Italian dessert featuring layers of coffee-soaked ladyfingers and mascarpone cream. A crowd-pleaser for any occasion.",
+    "ingredients": [
+      {
+        "name": "ladyfingers",
+        "amount": 200,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "strong coffee",
+        "amount": 300,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "mascarpone cheese",
+        "amount": 250,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "eggs",
+        "amount": 2,
+        "unit": "large",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "caster sugar",
+        "amount": 100,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "dark cocoa powder",
+        "amount": 20,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "dessert wine (optional)",
+        "amount": 30,
+        "unit": "ml",
+        "is_optional": true,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "dark chocolate",
+        "amount": 50,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [],
+    "time_prep_min": 30,
+    "time_cook_min": 0,
+    "time_total_min": 240,
+    "serves": 6,
+    "difficulty": 2,
+    "flavor_tags": [
+      "sweet",
+      "coffee",
+      "creamy"
+    ],
+    "texture_tags": [
+      "creamy",
+      "soft",
+      "crispy"
+    ],
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "dietary_flags": {
+      "is_vegan": false,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": false,
+      "is_gluten_free": false,
+      "is_nut_free": true,
+      "is_halal_ok": true,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": true,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 450,
+      "protein_g": 8,
+      "fat_g": 28,
+      "carbs_g": 40,
+      "fiber_g": 2,
+      "sugar_g": 30,
+      "salt_g": 0.3,
+      "saturated_fat_g": 0
+    },
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn",
+      "winter"
+    ],
+    "occasion_tags": [
+      "dessert",
+      "special-occasions"
+    ],
+    "course_tags": [
+      "dessert"
+    ],
+    "wine_pairing_notes": "Pair with a sweet dessert wine such as Vin Santo or a sparkling wine like Prosecco.",
+    "tips": [
+      "Use fresh, high-quality mascarpone cheese for the best flavor.",
+      "For a stronger coffee flavor, add a teaspoon of instant coffee to the brewed coffee."
+    ],
+    "id": "6a3e6da3-06f6-4eab-bedc-e53b848d6100",
+    "title_en": "Tiramisu",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Tiramisu A classic Italian dessert featuring layers of coffee-soaked ladyfingers and mascarpone cream. A crowd-pleaser for any occasion. ladyfingers strong coffee mascarpone cheese eggs caster sugar dark cocoa powder dessert wine (optional) dark chocolate sweet coffee creamy Italian spring summer autumn winter",
+    "created_at": "2026-04-08T08:52:37.503216+00:00",
+    "data_quality_score": 0.15
+  },
+  {
+    "title": "[EDGE-contradictory] Spaghetti Aglio e Olio",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Campania",
+    "description": "A classic Neapolitan pasta dish with a simple yet flavorful garlic and oil sauce. It's quick to prepare and highlights the quality of the ingredients.",
+    "ingredients": [
+      {
+        "name": "spaghetti",
+        "amount": 400,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "garlic",
+        "amount": 4,
+        "unit": "cloves",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "olive oil",
+        "amount": 6,
+        "unit": "tbsp",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "red chili flakes",
+        "amount": 1,
+        "unit": "tsp",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "parsley",
+        "amount": 20,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "salt",
+        "amount": 5,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "Cook spaghetti in salted boiling water until al dente. Reserve 100ml pasta water, then drain.",
+        "duration_min": 10,
+        "technique_tags": [
+          "boil"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "In a large pan, heat olive oil over low heat. Add whole garlic cloves and chili flakes, saut\u00e9 until garlic is golden.",
+        "duration_min": 5,
+        "technique_tags": [
+          "saut\u00e9"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "Remove pan from heat, discard garlic cloves. Toss pasta in the oil, adding reserved pasta water as needed to emulsify the sauce.",
+        "duration_min": 5,
+        "technique_tags": [
+          "toss"
+        ]
+      },
+      {
+        "step_number": 4,
+        "instruction": "Stir in chopped parsley and salt to taste. Serve immediately with a drizzle of olive oil.",
+        "duration_min": 3,
+        "technique_tags": [
+          "mix"
+        ]
+      }
+    ],
+    "time_prep_min": 5,
+    "time_cook_min": 15,
+    "time_total_min": 20,
+    "serves": 4,
+    "difficulty": 1,
+    "flavor_tags": [
+      "savoury",
+      "spicy",
+      "herbal"
+    ],
+    "texture_tags": [
+      "tender",
+      "smooth"
+    ],
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "dietary_flags": {
+      "is_vegan": true,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": true,
+      "is_gluten_free": false,
+      "is_nut_free": true,
+      "is_halal_ok": true,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": false,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 450,
+      "protein_g": 10,
+      "fat_g": 18,
+      "carbs_g": 60,
+      "fiber_g": 3,
+      "sugar_g": 2,
+      "salt_g": 0.8,
+      "saturated_fat_g": 0
+    },
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn",
+      "winter"
+    ],
+    "occasion_tags": [
+      "weeknight-dinner",
+      "quick-lunch"
+    ],
+    "course_tags": [
+      "main"
+    ],
+    "wine_pairing_notes": "Pair with a crisp Italian white like Vermentino or a light red like Barbera.",
+    "tips": [
+      "Use high-quality extra virgin olive oil for the best flavor.",
+      "For extra richness, add a pat of butter at the end.",
+      "Add a splash of pasta water to help the sauce cling to the pasta."
+    ],
+    "id": "783b9837-c242-48b5-a455-4d5485e40a54",
+    "title_en": "Spaghetti Aglio e Olio",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Spaghetti Aglio e Olio A classic Neapolitan pasta dish with a simple yet flavorful garlic and oil sauce. It's quick to prepare and highlights the quality of the ingredients. spaghetti garlic olive oil red chili flakes parsley salt savoury spicy herbal Italian spring summer autumn winter",
+    "created_at": "2026-04-08T08:53:08.565351+00:00",
+    "data_quality_score": 0.25
+  },
+  {
+    "title": "[EDGE-contradictory] Risotto ai Funghi",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Lombardy",
+    "description": "A creamy, earthy risotto made with fresh wild mushrooms and Parmesan. Perfect for a cozy autumn or winter meal.",
+    "ingredients": [
+      {
+        "name": "arborio rice",
+        "amount": 320,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "wild mushrooms",
+        "amount": 300,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "onion",
+        "amount": 1,
+        "unit": "medium",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "white wine",
+        "amount": 200,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "vegetable stock",
+        "amount": 1000,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "Parmesan cheese",
+        "amount": 50,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "butter",
+        "amount": 30,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "olive oil",
+        "amount": 2,
+        "unit": "tbsp",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "salt",
+        "amount": 5,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "pepper",
+        "amount": 2,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "Finely chop onion. Clean mushrooms and slice them. Keep stock warm in a pot.",
+        "duration_min": 5,
+        "technique_tags": [
+          "chop",
+          "slice"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "Heat olive oil and 10g butter in a large pan. Saut\u00e9 onion until soft. Add mushrooms and cook until they release their juices.",
+        "duration_min": 10,
+        "technique_tags": [
+          "saut\u00e9"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "Add rice and toast for 2 minutes, stirring constantly. Pour in wine and let it evaporate.",
+        "duration_min": 5,
+        "technique_tags": [
+          "toast",
+          "reduce"
+        ]
+      },
+      {
+        "step_number": 4,
+        "instruction": "Add stock one ladle at a time, stirring frequently until absorbed before adding more. Continue for 16-18 minutes.",
+        "duration_min": 18,
+        "technique_tags": [
+          "simmer",
+          "stir"
+        ]
+      },
+      {
+        "step_number": 5,
+        "instruction": "Remove from heat. Stir in remaining butter, Parmesan, salt, and pepper. Serve immediately.",
+        "duration_min": 3,
+        "technique_tags": [
+          "mix"
+        ]
+      }
+    ],
+    "time_prep_min": 15,
+    "time_cook_min": 30,
+    "time_total_min": 45,
+    "serves": 4,
+    "difficulty": 3,
+    "flavor_tags": [
+      "earthy",
+      "umami",
+      "creamy"
+    ],
+    "texture_tags": [
+      "creamy",
+      "soft"
+    ],
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "dietary_flags": {
+      "is_vegan": true,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": false,
+      "is_gluten_free": false,
+      "is_nut_free": true,
+      "is_halal_ok": true,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": true,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 480,
+      "protein_g": 12,
+      "fat_g": 15,
+      "carbs_g": 70,
+      "fiber_g": 5,
+      "sugar_g": 3,
+      "salt_g": 1.5,
+      "saturated_fat_g": 0
+    },
+    "season_tags": [
+      "autumn",
+      "winter"
+    ],
+    "occasion_tags": [
+      "weeknight-dinner",
+      "special-occasion"
+    ],
+    "course_tags": [
+      "main"
+    ],
+    "wine_pairing_notes": "Pair with a full-bodied Italian red like Barolo or Valpolicella.",
+    "tips": [
+      "Use a mix of wild mushrooms for deeper flavor (e.g., porcini, chanterelle).",
+      "Stir constantly in the last 10 minutes to achieve the perfect creamy texture.",
+      "For extra creaminess, stir in a knob of cold butter at the end."
+    ],
+    "id": "f9b98173-1219-48d7-b45e-55bea498e03c",
+    "title_en": "Risotto ai Funghi",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Risotto ai Funghi A creamy, earthy risotto made with fresh wild mushrooms and Parmesan. Perfect for a cozy autumn or winter meal. arborio rice wild mushrooms onion white wine vegetable stock Parmesan cheese butter olive oil salt pepper earthy umami creamy Italian autumn winter",
+    "created_at": "2026-04-08T08:53:08.565381+00:00",
+    "data_quality_score": 0.25
+  },
+  {
+    "title": "[EDGE-contradictory] Melanzane alla Parmigiana",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Sicily",
+    "description": "A rich, layered casserole of fried aubergines, tomato sauce, and melted cheese. A hearty dish from Southern Italy.",
+    "ingredients": [
+      {
+        "name": "aubergines",
+        "amount": 2,
+        "unit": "large",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "passata di pomodoro",
+        "amount": 500,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "mozzarella",
+        "amount": 250,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "Parmesan cheese",
+        "amount": 50,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "garlic",
+        "amount": 2,
+        "unit": "cloves",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "basil",
+        "amount": 10,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "olive oil",
+        "amount": 300,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "salt",
+        "amount": 10,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "pepper",
+        "amount": 3,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "balsamic vinegar",
+        "amount": 1,
+        "unit": "tbsp",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "Slice aubergines into 1cm thick rounds. Salt both sides and let sit for 10 minutes to remove bitterness. Pat dry.",
+        "duration_min": 15,
+        "technique_tags": [
+          "slice",
+          "dry-brine"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "Heat olive oil in a pan. Fry aubergine slices in batches until golden. Drain on paper towels.",
+        "duration_min": 15,
+        "technique_tags": [
+          "fry"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "In a saucepan, heat olive oil, saut\u00e9 garlic until fragrant. Add passata, season with salt and pepper. Simmer 10 minutes.",
+        "duration_min": 12,
+        "technique_tags": [
+          "saut\u00e9",
+          "simmer"
+        ]
+      },
+      {
+        "step_number": 4,
+        "instruction": "Preheat oven to 200\u00b0C. Layer aubergine slices in a baking dish, alternating with tomato sauce, mozzarella, and Parmesan. Repeat layers.",
+        "duration_min": 5,
+        "technique_tags": [
+          "layer"
+        ]
+      },
+      {
+        "step_number": 5,
+        "instruction": "Bake for 25 minutes or until bubbly and golden. Sprinkle with fresh basil and a drizzle of balsamic vinegar before serving.",
+        "duration_min": 25,
+        "technique_tags": [
+          "bake"
+        ]
+      }
+    ],
+    "time_prep_min": 20,
+    "time_cook_min": 40,
+    "time_total_min": 60,
+    "serves": 6,
+    "difficulty": 2,
+    "flavor_tags": [
+      "savoury",
+      "cheesy",
+      "tomato"
+    ],
+    "texture_tags": [
+      "creamy",
+      "crispy",
+      "soft"
+    ],
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "dietary_flags": {
+      "is_vegan": true,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": false,
+      "is_gluten_free": true,
+      "is_nut_free": true,
+      "is_halal_ok": true,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": false,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 380,
+      "protein_g": 14,
+      "fat_g": 25,
+      "carbs_g": 28,
+      "fiber_g": 7,
+      "sugar_g": 10,
+      "salt_g": 1.3,
+      "saturated_fat_g": 0
+    },
+    "season_tags": [
+      "summer",
+      "autumn"
+    ],
+    "occasion_tags": [
+      "weekend-lunch",
+      "special-occasion"
+    ],
+    "course_tags": [
+      "main",
+      "side"
+    ],
+    "wine_pairing_notes": "Pair with a medium-bodied Italian red like Chianti or Nero d'Avola.",
+    "tips": [
+      "For extra flavor, grill aubergine slices instead of frying.",
+      "Let the dish rest for 10 minutes after baking to set the layers.",
+      "Use fresh mozzarella for the best texture."
+    ],
+    "id": "ec3b4b90-58c2-40a6-8cc1-95f68fd8e9f5",
+    "title_en": "Melanzane alla Parmigiana",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Melanzane alla Parmigiana A rich, layered casserole of fried aubergines, tomato sauce, and melted cheese. A hearty dish from Southern Italy. aubergines passata di pomodoro mozzarella Parmesan cheese garlic basil olive oil salt pepper balsamic vinegar savoury cheesy tomato Italian summer autumn",
+    "created_at": "2026-04-08T08:53:08.565401+00:00",
+    "data_quality_score": 0.25
+  },
+  {
+    "title": "[EDGE-contradictory] Pasta al Pesto di Rucola",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Liguria",
+    "description": "A fresh and peppery pesto made with rocket (arugula) instead of basil, tossed with pasta. Quick and vibrant, perfect for summer.",
+    "ingredients": [
+      {
+        "name": "pasta",
+        "amount": 400,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "rocket (arugula)",
+        "amount": 100,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "pine nuts",
+        "amount": 30,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "Parmesan cheese",
+        "amount": 50,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "garlic",
+        "amount": 1,
+        "unit": "clove",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "olive oil",
+        "amount": 100,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "lemon",
+        "amount": 0.5,
+        "unit": "juiced",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "salt",
+        "amount": 5,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "pepper",
+        "amount": 2,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "Cook pasta in salted boiling water until al dente. Reserve 100ml pasta water, then drain.",
+        "duration_min": 10,
+        "technique_tags": [
+          "boil"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "Toast pine nuts in a dry pan for 2 minutes until lightly golden.",
+        "duration_min": 2,
+        "technique_tags": [
+          "toast"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "Blend rocket, garlic, Parmesan, pine nuts, lemon juice, salt, and pepper in a food processor. Stream in olive oil until smooth.",
+        "duration_min": 5,
+        "technique_tags": [
+          "blend"
+        ]
+      },
+      {
+        "step_number": 4,
+        "instruction": "Toss pasta with pesto, adding reserved pasta water as needed to loosen the sauce.",
+        "duration_min": 3,
+        "technique_tags": [
+          "toss"
+        ]
+      },
+      {
+        "step_number": 5,
+        "instruction": "Serve immediately with extra Parmesan and a drizzle of olive oil.",
+        "duration_min": 2,
+        "technique_tags": [
+          "serve"
+        ]
+      }
+    ],
+    "time_prep_min": 10,
+    "time_cook_min": 15,
+    "time_total_min": 25,
+    "serves": 4,
+    "difficulty": 1,
+    "flavor_tags": [
+      "herbal",
+      "peppery",
+      "fresh"
+    ],
+    "texture_tags": [
+      "tender",
+      "smooth"
+    ],
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "dietary_flags": {
+      "is_vegan": true,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": false,
+      "is_gluten_free": false,
+      "is_nut_free": false,
+      "is_halal_ok": true,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": false,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 520,
+      "protein_g": 15,
+      "fat_g": 28,
+      "carbs_g": 50,
+      "fiber_g": 4,
+      "sugar_g": 2,
+      "salt_g": 1.1,
+      "saturated_fat_g": 0
+    },
+    "season_tags": [
+      "spring",
+      "summer"
+    ],
+    "occasion_tags": [
+      "weeknight-dinner",
+      "picnic-lunch"
+    ],
+    "course_tags": [
+      "main"
+    ],
+    "wine_pairing_notes": "Pair with a crisp Italian white like Vermentino or Pinot Grigio.",
+    "tips": [
+      "For a vegan version, replace Parmesan with nutritional yeast.",
+      "Add a handful of cherry tomatoes halved for extra freshness.",
+      "Use fresh rocket for the brightest flavor."
+    ],
+    "id": "e080d3d3-f7b4-4b31-9d28-4c5e625ed834",
+    "title_en": "Pasta al Pesto di Rucola",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Pasta al Pesto di Rucola A fresh and peppery pesto made with rocket (arugula) instead of basil, tossed with pasta. Quick and vibrant, perfect for summer. pasta rocket (arugula) pine nuts Parmesan cheese garlic olive oil lemon salt pepper herbal peppery fresh Italian spring summer",
+    "created_at": "2026-04-08T08:53:08.565414+00:00",
+    "data_quality_score": 0.25
+  },
+  {
+    "title": "[EDGE-contradictory] Pollo alla Cacciatora",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Tuscany",
+    "description": "A rustic Tuscan stew of chicken braised with tomatoes, olives, and herbs. Hearty and comforting, ideal for cooler days.",
+    "ingredients": [
+      {
+        "name": "chicken thighs",
+        "amount": 8,
+        "unit": "bone-in, skin-on",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "canned chopped tomatoes",
+        "amount": 400,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "olive oil",
+        "amount": 3,
+        "unit": "tbsp",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "red onion",
+        "amount": 1,
+        "unit": "medium",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "carrots",
+        "amount": 2,
+        "unit": "medium",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "celery",
+        "amount": 2,
+        "unit": "stalks",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "garlic",
+        "amount": 3,
+        "unit": "cloves",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "rosemary",
+        "amount": 1,
+        "unit": "sprig",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "black olives",
+        "amount": 50,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "white wine",
+        "amount": 100,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "salt",
+        "amount": 5,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "pepper",
+        "amount": 2,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "Chop onion, carrots, celery, and garlic finely. Heat olive oil in a large pan. Season chicken with salt and pepper, then brown on all sides. Remove and set aside.",
+        "duration_min": 15,
+        "technique_tags": [
+          "chop",
+          "sear"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "In the same pan, saut\u00e9 onion, carrots, celery, and garlic until softened. Add rosemary and black olives, cook 2 minutes.",
+        "duration_min": 8,
+        "technique_tags": [
+          "saut\u00e9"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "Pour in white wine, let it reduce by half. Add chopped tomatoes, bring to a simmer.",
+        "duration_min": 5,
+        "technique_tags": [
+          "reduce",
+          "simmer"
+        ]
+      },
+      {
+        "step_number": 4,
+        "instruction": "Return chicken to the pan, cover, and simmer for 30 minutes until chicken is tender and sauce thickens.",
+        "duration_min": 30,
+        "technique_tags": [
+          "braise"
+        ]
+      },
+      {
+        "step_number": 5,
+        "instruction": "Serve hot with crusty bread or polenta to soak up the sauce.",
+        "duration_min": 2,
+        "technique_tags": [
+          "serve"
+        ]
+      }
+    ],
+    "time_prep_min": 20,
+    "time_cook_min": 50,
+    "time_total_min": 70,
+    "serves": 4,
+    "difficulty": 2,
+    "flavor_tags": [
+      "savoury",
+      "tomato",
+      "herbal"
+    ],
+    "texture_tags": [
+      "tender",
+      "stewed"
+    ],
+    "dietary_tags": [],
+    "dietary_flags": {
+      "is_vegan": true,
+      "is_vegetarian": false,
+      "is_pescatarian_ok": false,
+      "is_dairy_free": true,
+      "is_gluten_free": true,
+      "is_nut_free": true,
+      "is_halal_ok": false,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": true,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 450,
+      "protein_g": 32,
+      "fat_g": 30,
+      "carbs_g": 12,
+      "fiber_g": 4,
+      "sugar_g": 6,
+      "salt_g": 1.4,
+      "saturated_fat_g": 0
+    },
+    "season_tags": [
+      "autumn",
+      "winter"
+    ],
+    "occasion_tags": [
+      "weeknight-dinner",
+      "weekend-lunch"
+    ],
+    "course_tags": [
+      "main"
+    ],
+    "wine_pairing_notes": "Pair with a medium-bodied red like Chianti or Sangiovese.",
+    "tips": [
+      "Use bone-in, skin-on chicken thighs for the best flavor and texture.",
+      "For extra richness, add a few anchovies while cooking the vegetables.",
+      "Make ahead: The flavors improve the next day."
+    ],
+    "id": "86010023-7bf5-42c8-b230-6fccf3f6f144",
+    "title_en": "Pollo alla Cacciatora",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Pollo alla Cacciatora A rustic Tuscan stew of chicken braised with tomatoes, olives, and herbs. Hearty and comforting, ideal for cooler days. chicken thighs canned chopped tomatoes olive oil red onion carrots celery garlic rosemary black olives white wine salt pepper savoury tomato herbal Italian autumn winter",
+    "created_at": "2026-04-08T08:53:08.565427+00:00",
+    "data_quality_score": 0.25
+  },
+  {
+    "title": "[EDGE-long-cook] Spaghetti Aglio e Olio",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Southern Italy",
+    "description": "A simple yet flavorful dish that highlights the beauty of minimal ingredients. It's quick to prepare and bursting with garlic and olive oil essence.",
+    "ingredients": [
+      {
+        "name": "spaghetti",
+        "amount": 400,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "garlic",
+        "amount": 6,
+        "unit": "cloves",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "olive oil",
+        "amount": 80,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "chilli flakes",
+        "amount": 5,
+        "unit": "g",
+        "is_optional": true,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "parsley",
+        "amount": 20,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "salt",
+        "amount": 10,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "black pepper",
+        "amount": 2,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "Cook the spaghetti in salted boiling water until al dente. Reserve 100ml of pasta water before draining.",
+        "duration_min": 10,
+        "technique_tags": [
+          "boil"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "While pasta cooks, heat olive oil in a pan over low heat. Add minced garlic and chilli flakes, saut\u00e9ing until garlic is golden (about 3 minutes).",
+        "duration_min": 5,
+        "technique_tags": [
+          "saut\u00e9"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "Add the drained spaghetti to the pan, tossing well to coat. Add reserved pasta water as needed to emulsify the sauce.",
+        "duration_min": 5,
+        "technique_tags": [
+          "toss"
+        ]
+      },
+      {
+        "step_number": 4,
+        "instruction": "Remove from heat, stir in chopped parsley, and season with salt and black pepper to taste.",
+        "duration_min": 2,
+        "technique_tags": [
+          "season"
+        ]
+      }
+    ],
+    "time_prep_min": 5,
+    "time_cook_min": 300,
+    "time_total_min": 360,
+    "serves": 4,
+    "difficulty": 1,
+    "flavor_tags": [
+      "savoury",
+      "garlicky"
+    ],
+    "texture_tags": [
+      "tender",
+      "slightly chewy"
+    ],
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "dietary_flags": {
+      "is_vegan": true,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": true,
+      "is_gluten_free": false,
+      "is_nut_free": true,
+      "is_halal_ok": true,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": false,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 380,
+      "protein_g": 10,
+      "fat_g": 16,
+      "carbs_g": 50,
+      "fiber_g": 3,
+      "sugar_g": 2,
+      "salt_g": 0.8,
+      "saturated_fat_g": 0
+    },
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn",
+      "winter"
+    ],
+    "occasion_tags": [
+      "weeknight-dinner",
+      "quick-lunch"
+    ],
+    "course_tags": [
+      "main",
+      "side"
+    ],
+    "wine_pairing_notes": "Pair with a light Italian white wine like Vermentino or Pinot Grigio to complement the garlic and oil.",
+    "tips": [
+      "Use high-quality olive oil for the best flavor.",
+      "Don\u2019t overcook the garlic to avoid bitterness."
+    ],
+    "id": "e6500741-2a71-447b-a470-8917e3c2ddad",
+    "title_en": "Spaghetti Aglio e Olio",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Spaghetti Aglio e Olio A simple yet flavorful dish that highlights the beauty of minimal ingredients. It's quick to prepare and bursting with garlic and olive oil essence. spaghetti garlic olive oil chilli flakes parsley salt black pepper savoury garlicky Italian spring summer autumn winter",
+    "created_at": "2026-04-08T08:53:49.708752+00:00",
+    "data_quality_score": 0.4
+  },
+  {
+    "title": "[EDGE-long-cook] Eggplant Parmigiana",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Campania",
+    "description": "A layered, baked delight featuring crispy fried aubergine and rich tomato sauce. This dish is a hearty vegetarian classic.",
+    "ingredients": [
+      {
+        "name": "aubergine",
+        "amount": 2,
+        "unit": "medium",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "tomato passata",
+        "amount": 500,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "mozzarella",
+        "amount": 250,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "Parmesan",
+        "amount": 80,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "flour",
+        "amount": 100,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "eggs",
+        "amount": 2,
+        "unit": "medium",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "breadcrumbs",
+        "amount": 150,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "olive oil",
+        "amount": 200,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "garlic",
+        "amount": 2,
+        "unit": "cloves",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "basil",
+        "amount": 10,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "salt",
+        "amount": 10,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "black pepper",
+        "amount": 2,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "oregano",
+        "amount": 3,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "Slice the aubergine into 1cm thick rounds. Salt both sides and let sit for 20 minutes to remove bitterness. Pat dry with kitchen paper.",
+        "duration_min": 20,
+        "technique_tags": [
+          "salt",
+          "dry"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "Set up three bowls: one with flour, one with beaten eggs, and one with breadcrumbs. Bread each aubergine slice.",
+        "duration_min": 10,
+        "technique_tags": [
+          "breading"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "Heat olive oil in a pan over medium heat. Fry aubergine slices until golden on both sides (about 3 minutes per side). Drain on paper towels.",
+        "duration_min": 15,
+        "technique_tags": [
+          "fry"
+        ]
+      },
+      {
+        "step_number": 4,
+        "instruction": "In a saucepan, heat olive oil and saut\u00e9 garlic until fragrant. Add tomato passata, oregano, salt, and pepper. Simmer for 10 minutes.",
+        "duration_min": 10,
+        "technique_tags": [
+          "saut\u00e9",
+          "simmer"
+        ]
+      },
+      {
+        "step_number": 5,
+        "instruction": "In a baking dish, layer aubergine slices with tomato sauce, mozzarella, and Parmesan. Repeat layers, finishing with cheese on top.",
+        "duration_min": 5,
+        "technique_tags": [
+          "layering"
+        ]
+      },
+      {
+        "step_number": 6,
+        "instruction": "Bake in a preheated oven at 190\u00b0C for 25 minutes or until bubbly and golden. Garnish with fresh basil before serving.",
+        "duration_min": 25,
+        "technique_tags": [
+          "bake"
+        ]
+      }
+    ],
+    "time_prep_min": 30,
+    "time_cook_min": 300,
+    "time_total_min": 360,
+    "serves": 4,
+    "difficulty": 3,
+    "flavor_tags": [
+      "savoury",
+      "tangy",
+      "cheesy"
+    ],
+    "texture_tags": [
+      "crispy",
+      "creamy",
+      "layered"
+    ],
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "dietary_flags": {
+      "is_vegan": false,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": false,
+      "is_gluten_free": false,
+      "is_nut_free": true,
+      "is_halal_ok": false,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": false,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 450,
+      "protein_g": 20,
+      "fat_g": 28,
+      "carbs_g": 30,
+      "fiber_g": 8,
+      "sugar_g": 10,
+      "salt_g": 1.5,
+      "saturated_fat_g": 0
+    },
+    "season_tags": [
+      "spring",
+      "summer",
+      "autumn"
+    ],
+    "occasion_tags": [
+      "weekend-lunch",
+      "special-occasion"
+    ],
+    "course_tags": [
+      "main"
+    ],
+    "wine_pairing_notes": "A medium-bodied Italian red like Chianti or Sangiovese pairs beautifully with the rich, cheesy layers.",
+    "tips": [
+      "For extra crispiness, double-fry the aubergine slices.",
+      "Let the dish rest for 10 minutes after baking to help it set before serving."
+    ],
+    "id": "860f7d59-f6d0-4e7f-b125-1b1a34008207",
+    "title_en": "Eggplant Parmigiana",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Eggplant Parmigiana A layered, baked delight featuring crispy fried aubergine and rich tomato sauce. This dish is a hearty vegetarian classic. aubergine tomato passata mozzarella Parmesan flour eggs breadcrumbs olive oil garlic basil salt black pepper oregano savoury tangy cheesy Italian spring summer autumn",
+    "created_at": "2026-04-08T08:53:49.708805+00:00",
+    "data_quality_score": 0.4
+  },
+  {
+    "title": "[EDGE-long-cook] Risotto ai Funghi",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Northern Italy",
+    "description": "Creamy Arborio rice cooked with wild mushrooms and white wine for an umami-rich dish. This risotto is comforting and perfect for autumn evenings.",
+    "ingredients": [
+      {
+        "name": "Arborio rice",
+        "amount": 320,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "wild mushrooms (porcini/ceps)",
+        "amount": 200,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "shallots",
+        "amount": 2,
+        "unit": "medium",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "garlic",
+        "amount": 1,
+        "unit": "clove",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "white wine",
+        "amount": 150,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "vegetable stock",
+        "amount": 1,
+        "unit": "litre",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "Parmesan",
+        "amount": 60,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "butter",
+        "amount": 40,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "olive oil",
+        "amount": 20,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "thyme",
+        "amount": 5,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "salt",
+        "amount": 8,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "black pepper",
+        "amount": 2,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "Finely chop shallots and garlic. Clean mushrooms and slice into thin pieces.",
+        "duration_min": 10,
+        "technique_tags": [
+          "chop",
+          "clean"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "Heat olive oil and half the butter in a large pan over medium heat. Saut\u00e9 shallots and garlic until translucent (3 minutes).",
+        "duration_min": 5,
+        "technique_tags": [
+          "saut\u00e9"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "Add mushrooms and thyme, cooking until mushrooms release their moisture and it evaporates (8 minutes).",
+        "duration_min": 8,
+        "technique_tags": [
+          "saut\u00e9"
+        ]
+      },
+      {
+        "step_number": 4,
+        "instruction": "Add Arborio rice to the pan, stirring to coat the grains with oil. Pour in the white wine and cook until fully absorbed.",
+        "duration_min": 5,
+        "technique_tags": [
+          "stir",
+          "deglaze"
+        ]
+      },
+      {
+        "step_number": 5,
+        "instruction": "Add heated stock one ladle at a time, stirring frequently until the liquid is absorbed before adding more (about 20 minutes total).",
+        "duration_min": 20,
+        "technique_tags": [
+          "stir",
+          "simmer"
+        ]
+      },
+      {
+        "step_number": 6,
+        "instruction": "Once the rice is creamy and al dente, stir in the remaining butter and Parmesan. Season with salt and pepper to taste.",
+        "duration_min": 3,
+        "technique_tags": [
+          "season",
+          "mix"
+        ]
+      }
+    ],
+    "time_prep_min": 20,
+    "time_cook_min": 300,
+    "time_total_min": 360,
+    "serves": 4,
+    "difficulty": 3,
+    "flavor_tags": [
+      "umami",
+      "rich",
+      "herbaceous"
+    ],
+    "texture_tags": [
+      "creamy",
+      "tender"
+    ],
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "dietary_flags": {
+      "is_vegan": false,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": false,
+      "is_gluten_free": false,
+      "is_nut_free": true,
+      "is_halal_ok": false,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": true,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 420,
+      "protein_g": 12,
+      "fat_g": 14,
+      "carbs_g": 55,
+      "fiber_g": 4,
+      "sugar_g": 3,
+      "salt_g": 1.3,
+      "saturated_fat_g": 0
+    },
+    "season_tags": [
+      "autumn",
+      "winter"
+    ],
+    "occasion_tags": [
+      "weekend-lunch",
+      "special-occasion"
+    ],
+    "course_tags": [
+      "main"
+    ],
+    "wine_pairing_notes": "A full-bodied white wine like Gavi or a light red like Pinot Noir complements the earthy mushrooms.",
+    "tips": [
+      "Use a good-quality Parmesan for the best flavor.",
+      "Keep the stock warm in a separate pan to maintain a consistent cooking temperature."
+    ],
+    "id": "c02d3fa5-e45a-4b88-a645-c578c2ea4f8c",
+    "title_en": "Risotto ai Funghi",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Risotto ai Funghi Creamy Arborio rice cooked with wild mushrooms and white wine for an umami-rich dish. This risotto is comforting and perfect for autumn evenings. Arborio rice wild mushrooms (porcini/ceps) shallots garlic white wine vegetable stock Parmesan butter olive oil thyme salt black pepper umami rich herbaceous Italian autumn winter",
+    "created_at": "2026-04-08T08:53:49.708832+00:00",
+    "data_quality_score": 0.4
+  },
+  {
+    "title": "[EDGE-long-cook] Caprese Salad",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Campania",
+    "description": "A fresh and vibrant salad with ripe tomatoes, creamy mozzarella, and fragrant basil. Simple yet iconic, perfect for summer.",
+    "ingredients": [
+      {
+        "name": "tomatoes",
+        "amount": 4,
+        "unit": "medium",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "mozzarella",
+        "amount": 250,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "basil",
+        "amount": 20,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "olive oil",
+        "amount": 30,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "balsamic vinegar",
+        "amount": 15,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "salt",
+        "amount": 5,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "black pepper",
+        "amount": 2,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "Slice tomatoes and mozzarella into 1cm thick rounds. Arrange alternately on a plate.",
+        "duration_min": 10,
+        "technique_tags": [
+          "slice"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "Tuck fresh basil leaves between the tomato and mozzarella slices.",
+        "duration_min": 2,
+        "technique_tags": [
+          "arrange"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "Drizzle with olive oil and balsamic vinegar. Season with salt and black pepper to taste.",
+        "duration_min": 2,
+        "technique_tags": [
+          "drizzle",
+          "season"
+        ]
+      }
+    ],
+    "time_prep_min": 15,
+    "time_cook_min": 300,
+    "time_total_min": 360,
+    "serves": 4,
+    "difficulty": 1,
+    "flavor_tags": [
+      "fresh",
+      "herbaceous",
+      "savoury"
+    ],
+    "texture_tags": [
+      "juicy",
+      "creamy"
+    ],
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "dietary_flags": {
+      "is_vegan": false,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": false,
+      "is_gluten_free": true,
+      "is_nut_free": true,
+      "is_halal_ok": false,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": false,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 180,
+      "protein_g": 8,
+      "fat_g": 12,
+      "carbs_g": 8,
+      "fiber_g": 2,
+      "sugar_g": 5,
+      "salt_g": 0.6,
+      "saturated_fat_g": 0
+    },
+    "season_tags": [
+      "summer"
+    ],
+    "occasion_tags": [
+      "appetizer",
+      "picnic"
+    ],
+    "course_tags": [
+      "starter",
+      "side"
+    ],
+    "wine_pairing_notes": "A crisp Italian white like Vermentino or a light ros\u00e9 pairs perfectly with the fresh flavors.",
+    "tips": [
+      "Use the ripest tomatoes you can find for the best flavor.",
+      "Drizzle balsamic vinegar sparingly to avoid overpowering the salad."
+    ],
+    "id": "b72c87c2-4200-4543-ba0a-c0eba2f8242c",
+    "title_en": "Caprese Salad",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Caprese Salad A fresh and vibrant salad with ripe tomatoes, creamy mozzarella, and fragrant basil. Simple yet iconic, perfect for summer. tomatoes mozzarella basil olive oil balsamic vinegar salt black pepper fresh herbaceous savoury Italian summer",
+    "created_at": "2026-04-08T08:53:49.708851+00:00",
+    "data_quality_score": 0.4
+  },
+  {
+    "title": "[EDGE-long-cook] Tiramisu",
+    "cuisine_tags": [
+      "Italian"
+    ],
+    "region_tag": "Veneto",
+    "description": "A classic Italian dessert featuring layers of coffee-soaked sponge and mascarpone cream, dusted with cocoa. Decadent and delightful.",
+    "ingredients": [
+      {
+        "name": "ladyfingers (savoiardi)",
+        "amount": 24,
+        "unit": "pieces",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "strong coffee",
+        "amount": 300,
+        "unit": "ml",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "mascarpone",
+        "amount": 250,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "eggs",
+        "amount": 3,
+        "unit": "large",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "caster sugar",
+        "amount": 100,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "cocoa powder",
+        "amount": 30,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "dark chocolate",
+        "amount": 20,
+        "unit": "g",
+        "is_optional": false,
+        "notes": null,
+        "substitutions": []
+      },
+      {
+        "name": "rum or Marsala wine",
+        "amount": 30,
+        "unit": "ml",
+        "is_optional": true,
+        "notes": null,
+        "substitutions": []
+      }
+    ],
+    "steps": [
+      {
+        "step_number": 1,
+        "instruction": "Brew the coffee and let it cool. If using rum or Marsala, mix into the coffee.",
+        "duration_min": 5,
+        "technique_tags": [
+          "brew"
+        ]
+      },
+      {
+        "step_number": 2,
+        "instruction": "Separate egg whites from yolks. Whisk yolks with 80g sugar until pale and thick (about 5 minutes).",
+        "duration_min": 5,
+        "technique_tags": [
+          "whisk"
+        ]
+      },
+      {
+        "step_number": 3,
+        "instruction": "In another bowl, beat egg whites with remaining sugar until stiff peaks form (about 5 minutes).",
+        "duration_min": 5,
+        "technique_tags": [
+          "whisk"
+        ]
+      },
+      {
+        "step_number": 4,
+        "instruction": "Gently fold mascarpone into the egg yolk mixture until smooth. Fold in egg whites until fully combined.",
+        "duration_min": 5,
+        "technique_tags": [
+          "fold"
+        ]
+      },
+      {
+        "step_number": 5,
+        "instruction": "Dip each ladyfinger briefly into the coffee (just enough to moisten, not soak) and arrange in a single layer in a dish.",
+        "duration_min": 10,
+        "technique_tags": [
+          "dip",
+          "arrange"
+        ]
+      },
+      {
+        "step_number": 6,
+        "instruction": "Spread half the mascarpone mixture over the ladyfingers. Repeat with another layer of coffee-dipped ladyfingers and remaining cream.",
+        "duration_min": 5,
+        "technique_tags": [
+          "layer"
+        ]
+      },
+      {
+        "step_number": 7,
+        "instruction": "Grate dark chocolate over the top and dust generously with cocoa powder. Chill for at least 4 hours (or overnight) before serving.",
+        "duration_min": 0,
+        "technique_tags": [
+          "grate",
+          "dust",
+          "chill"
+        ]
+      }
+    ],
+    "time_prep_min": 40,
+    "time_cook_min": 300,
+    "time_total_min": 360,
+    "serves": 6,
+    "difficulty": 3,
+    "flavor_tags": [
+      "sweet",
+      "coffee",
+      "creamy"
+    ],
+    "texture_tags": [
+      "soft",
+      "creamy",
+      "airy"
+    ],
+    "dietary_tags": [
+      "vegetarian"
+    ],
+    "dietary_flags": {
+      "is_vegan": false,
+      "is_vegetarian": true,
+      "is_pescatarian_ok": true,
+      "is_dairy_free": false,
+      "is_gluten_free": false,
+      "is_nut_free": true,
+      "is_halal_ok": true,
+      "contains_pork": false,
+      "contains_shellfish": false,
+      "contains_alcohol": true,
+      "vegan_if_substituted": false,
+      "gluten_free_if_substituted": false
+    },
+    "nutrition_per_serving": {
+      "kcal": 380,
+      "protein_g": 7,
+      "fat_g": 25,
+      "carbs_g": 30,
+      "fiber_g": 1,
+      "sugar_g": 20,
+      "salt_g": 0.3,
+      "saturated_fat_g": 0
+    },
+    "season_tags": [
+      "autumn",
+      "winter"
+    ],
+    "occasion_tags": [
+      "dessert",
+      "special-occasion"
+    ],
+    "course_tags": [
+      "dessert"
+    ],
+    "wine_pairing_notes": "Pair with a sweet dessert wine like Vin Santo or a coffee liqueur to enhance the coffee flavors.",
+    "tips": [
+      "Use high-quality coffee for the best flavor.",
+      "Let the tiramisu chill for at least 4 hours to allow flavors to meld."
+    ],
+    "id": "2880256e-13a4-469e-8485-0a06e612f9a0",
+    "title_en": "Tiramisu",
+    "image_placeholder": "",
+    "source_type": "mock_tier0",
+    "embedding_text": "Tiramisu A classic Italian dessert featuring layers of coffee-soaked sponge and mascarpone cream, dusted with cocoa. Decadent and delightful. ladyfingers (savoiardi) strong coffee mascarpone eggs caster sugar cocoa powder dark chocolate rum or Marsala wine sweet coffee creamy Italian autumn winter",
+    "created_at": "2026-04-08T08:53:49.708870+00:00",
+    "data_quality_score": 0.4
+  }
+]

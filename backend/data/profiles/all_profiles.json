@@ -1,0 +1,1178 @@
+[
+  {
+    "profile_id": "766702aa-8573-4381-b322-928fbc30ede4",
+    "user_id": "050d1112-d2bd-4672-8058-0c10ab75a907",
+    "schema_version": "1.0.0",
+    "created_at": "2026-04-08T07:53:54.899603",
+    "last_updated": "2026-04-08T07:53:54.899605",
+    "dietary": {
+      "spectrum_label": "mostly-plant-based",
+      "hard_stops": [
+        {
+          "label": "no-veal",
+          "is_hard_stop": true,
+          "reason": "Ethical",
+          "confidence": 1.0
+        },
+        {
+          "label": "no-foie-gras",
+          "is_hard_stop": true,
+          "reason": "Ethical",
+          "confidence": 1.0
+        }
+      ],
+      "soft_stops": [
+        {
+          "label": "reduce-meat",
+          "is_hard_stop": false,
+          "reason": "Flexitarian \u2014 eats fish occasionally",
+          "confidence": 1.0
+        }
+      ],
+      "nuance_notes": "Prefers sustainable sourcing. Flexitarian leaning plant-based.",
+      "meta": {
+        "weight": "core",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.899266",
+        "update_source": "onboarding"
+      }
+    },
+    "cuisine_affinities": {
+      "affinities": [
+        {
+          "cuisine": "Japanese",
+          "level": "love",
+          "sub_nuances": [],
+          "confidence": 0.95
+        },
+        {
+          "cuisine": "Thai",
+          "level": "love",
+          "sub_nuances": [],
+          "confidence": 0.9
+        },
+        {
+          "cuisine": "Dutch",
+          "level": "like",
+          "sub_nuances": [],
+          "confidence": 0.8
+        },
+        {
+          "cuisine": "Indian",
+          "level": "like",
+          "sub_nuances": [],
+          "confidence": 0.85
+        },
+        {
+          "cuisine": "Italian",
+          "level": "like",
+          "sub_nuances": [],
+          "confidence": 0.75
+        },
+        {
+          "cuisine": "French",
+          "level": "neutral",
+          "sub_nuances": [],
+          "confidence": 0.6
+        }
+      ],
+      "meta": {
+        "weight": "core",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.899330",
+        "update_source": "onboarding"
+      }
+    },
+    "flavor": {
+      "spicy": 7.0,
+      "sweet": 3.0,
+      "sour": 6.0,
+      "umami": 9.0,
+      "bitter": 4.0,
+      "fatty": 5.0,
+      "fermented": 7.0,
+      "smoky": 5.0,
+      "salty": 6.0,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.899370",
+        "update_source": "onboarding"
+      }
+    },
+    "texture": {
+      "crunchy": 8.0,
+      "creamy": 5.0,
+      "soft": 4.0,
+      "chewy": 3.0,
+      "crispy": 9.0,
+      "silky": 6.0,
+      "chunky": 5.0,
+      "meta": {
+        "weight": "optional",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.899390",
+        "update_source": "onboarding"
+      }
+    },
+    "cooking": {
+      "skill": "advanced",
+      "kitchen_setup": "fully_equipped",
+      "specific_equipment": {
+        "stand_mixer": false,
+        "food_processor": true,
+        "sous_vide": false,
+        "pressure_cooker": true,
+        "air_fryer": false,
+        "wok": true,
+        "cast_iron": true,
+        "outdoor_grill": false,
+        "pasta_machine": false,
+        "dehydrator": false
+      },
+      "weeknight_minutes": 45,
+      "weekend_minutes": 120,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.899405",
+        "update_source": "onboarding"
+      }
+    },
+    "budget": {
+      "home_per_meal_eur": 12.0,
+      "out_per_meal_eur": 45.0,
+      "meta": {
+        "weight": "optional",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.899474",
+        "update_source": "onboarding"
+      }
+    },
+    "dining_vibe": {
+      "vibes": [
+        {
+          "vibe": "casual",
+          "score": 9.0,
+          "confidence": 0.4
+        },
+        {
+          "vibe": "cozy",
+          "score": 8.5,
+          "confidence": 0.4
+        },
+        {
+          "vibe": "trendy",
+          "score": 7.0,
+          "confidence": 0.4
+        },
+        {
+          "vibe": "outdoor-terrace",
+          "score": 8.0,
+          "confidence": 0.4
+        }
+      ],
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.899487",
+        "update_source": "onboarding"
+      }
+    },
+    "adventurousness": {
+      "cooking_score": 8.5,
+      "dining_score": 8.0,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.899513",
+        "update_source": "onboarding"
+      }
+    },
+    "nutrition": {
+      "level": "light",
+      "tracked_dimensions": [],
+      "meta": {
+        "weight": "optional",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.899523",
+        "update_source": "onboarding"
+      }
+    },
+    "social": {
+      "default_social_context": "couple",
+      "meals_out_per_week": 2.0,
+      "home_cooked_per_week": 5.0,
+      "meta": {
+        "weight": "optional",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.899534",
+        "update_source": "onboarding"
+      }
+    },
+    "lifestyle": {
+      "seasonal_preference_score": 8.0,
+      "sustainability_priority_score": 7.0,
+      "special_interests": [],
+      "inspiration_style": "wide_selection",
+      "meta": {
+        "weight": "optional",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.899546",
+        "update_source": "onboarding"
+      }
+    },
+    "location": {
+      "city": "Amsterdam",
+      "country": "NL",
+      "radius_km": 5.0,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.899559",
+        "update_source": "onboarding"
+      }
+    },
+    "tensions": [],
+    "profile_summary_text": "Lena is an adventurous Dutch home cook who leans plant-based. She loves Japanese and Thai flavours, has a well-equipped kitchen with a wok and cast iron, and enjoys discovering new cuisines from farmers' markets and food blogs.",
+    "onboarding_complete": true,
+    "onboarding_version": "1.0.0"
+  },
+  {
+    "profile_id": "47a7a092-72e8-48c6-a0bf-11b5424e2e40",
+    "user_id": "16380873-17ee-4f66-9631-8234de62a4fe",
+    "schema_version": "1.0.0",
+    "created_at": "2026-04-08T07:53:54.900993",
+    "last_updated": "2026-04-08T07:53:54.900995",
+    "dietary": {
+      "spectrum_label": "omnivore",
+      "hard_stops": [],
+      "soft_stops": [],
+      "nuance_notes": "No dietary restrictions. Enjoys all types of meat and seafood.",
+      "meta": {
+        "weight": "optional",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.900611",
+        "update_source": "onboarding"
+      }
+    },
+    "cuisine_affinities": {
+      "affinities": [
+        {
+          "cuisine": "Italian",
+          "level": "love",
+          "sub_nuances": [],
+          "confidence": 0.98
+        },
+        {
+          "cuisine": "French",
+          "level": "like",
+          "sub_nuances": [],
+          "confidence": 0.85
+        },
+        {
+          "cuisine": "Spanish",
+          "level": "like",
+          "sub_nuances": [],
+          "confidence": 0.75
+        },
+        {
+          "cuisine": "Dutch",
+          "level": "neutral",
+          "sub_nuances": [],
+          "confidence": 0.4
+        }
+      ],
+      "meta": {
+        "weight": "core",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.900626",
+        "update_source": "onboarding"
+      }
+    },
+    "flavor": {
+      "spicy": 2.0,
+      "sweet": 4.0,
+      "sour": 6.0,
+      "umami": 8.0,
+      "bitter": 5.0,
+      "fatty": 7.0,
+      "fermented": 3.0,
+      "smoky": 4.0,
+      "salty": 6.0,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.900648",
+        "update_source": "onboarding"
+      }
+    },
+    "texture": {
+      "crunchy": 6.0,
+      "creamy": 8.0,
+      "soft": 7.0,
+      "chewy": 2.0,
+      "crispy": 7.0,
+      "silky": 6.0,
+      "chunky": 4.0,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.900874",
+        "update_source": "onboarding"
+      }
+    },
+    "cooking": {
+      "skill": "professional",
+      "kitchen_setup": "fully_equipped",
+      "specific_equipment": {
+        "stand_mixer": true,
+        "food_processor": false,
+        "sous_vide": false,
+        "pressure_cooker": false,
+        "air_fryer": false,
+        "wok": false,
+        "cast_iron": true,
+        "outdoor_grill": false,
+        "pasta_machine": true,
+        "dehydrator": false
+      },
+      "weeknight_minutes": 60,
+      "weekend_minutes": 180,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.900886",
+        "update_source": "onboarding"
+      }
+    },
+    "budget": {
+      "home_per_meal_eur": 15.0,
+      "out_per_meal_eur": 60.0,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.900905",
+        "update_source": "onboarding"
+      }
+    },
+    "dining_vibe": {
+      "vibes": [
+        {
+          "vibe": "romantic",
+          "score": 9.0,
+          "confidence": 0.4
+        },
+        {
+          "vibe": "traditional",
+          "score": 8.5,
+          "confidence": 0.4
+        },
+        {
+          "vibe": "upscale",
+          "score": 7.0,
+          "confidence": 0.4
+        }
+      ],
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.900917",
+        "update_source": "onboarding"
+      }
+    },
+    "adventurousness": {
+      "cooking_score": 4.0,
+      "dining_score": 3.5,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.900935",
+        "update_source": "onboarding"
+      }
+    },
+    "nutrition": {
+      "level": "none",
+      "tracked_dimensions": [],
+      "meta": {
+        "weight": "optional",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.900943",
+        "update_source": "onboarding"
+      }
+    },
+    "social": {
+      "default_social_context": "couple",
+      "meals_out_per_week": 3.0,
+      "home_cooked_per_week": 5.0,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.900951",
+        "update_source": "onboarding"
+      }
+    },
+    "lifestyle": {
+      "seasonal_preference_score": 9.0,
+      "sustainability_priority_score": 4.0,
+      "special_interests": [],
+      "inspiration_style": "one_best",
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.900959",
+        "update_source": "onboarding"
+      }
+    },
+    "location": {
+      "city": "Amsterdam",
+      "country": "NL",
+      "radius_km": 3.0,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.900968",
+        "update_source": "onboarding"
+      }
+    },
+    "tensions": [],
+    "profile_summary_text": "Marco is an Italian expat and professional-level cook who values tradition. He favours Italian and French cuisine, uses a pasta machine regularly, and prefers romantic upscale dining experiences.",
+    "onboarding_complete": true,
+    "onboarding_version": "1.0.0"
+  },
+  {
+    "profile_id": "06e0e258-0005-4b71-92c5-810bd48f4508",
+    "user_id": "f6b14511-48e7-4aeb-9de3-82fc21217f5b",
+    "schema_version": "1.0.0",
+    "created_at": "2026-04-08T07:53:54.901858",
+    "last_updated": "2026-04-08T07:53:54.901860",
+    "dietary": {
+      "spectrum_label": "vegetarian",
+      "hard_stops": [
+        {
+          "label": "no-beef",
+          "is_hard_stop": true,
+          "reason": "Religious \u2014 Hindu",
+          "confidence": 1.0
+        },
+        {
+          "label": "no-pork",
+          "is_hard_stop": true,
+          "reason": "Religious \u2014 Hindu",
+          "confidence": 1.0
+        },
+        {
+          "label": "no-gelatin",
+          "is_hard_stop": true,
+          "reason": "Vegetarian",
+          "confidence": 1.0
+        },
+        {
+          "label": "no-lard",
+          "is_hard_stop": true,
+          "reason": "Vegetarian",
+          "confidence": 1.0
+        },
+        {
+          "label": "no-rennet",
+          "is_hard_stop": true,
+          "reason": "Vegetarian",
+          "confidence": 1.0
+        }
+      ],
+      "soft_stops": [],
+      "nuance_notes": "Hindu \u2014 lifelong strict vegetarian. No beef or pork ever. Family recipes from Kerala and Gujarat.",
+      "meta": {
+        "weight": "core",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.901696",
+        "update_source": "onboarding"
+      }
+    },
+    "cuisine_affinities": {
+      "affinities": [
+        {
+          "cuisine": "Indian",
+          "level": "love",
+          "sub_nuances": [],
+          "confidence": 0.98
+        },
+        {
+          "cuisine": "Middle Eastern",
+          "level": "like",
+          "sub_nuances": [],
+          "confidence": 0.8
+        },
+        {
+          "cuisine": "Thai",
+          "level": "like",
+          "sub_nuances": [],
+          "confidence": 0.75
+        },
+        {
+          "cuisine": "Italian",
+          "level": "neutral",
+          "sub_nuances": [],
+          "confidence": 0.65
+        }
+      ],
+      "meta": {
+        "weight": "core",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.901727",
+        "update_source": "onboarding"
+      }
+    },
+    "flavor": {
+      "spicy": 9.5,
+      "sweet": 6.0,
+      "sour": 7.0,
+      "umami": 8.0,
+      "bitter": 4.0,
+      "fatty": 5.0,
+      "fermented": 6.0,
+      "smoky": 3.0,
+      "salty": 5.0,
+      "meta": {
+        "weight": "core",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.901751",
+        "update_source": "onboarding"
+      }
+    },
+    "texture": {
+      "crunchy": 7.0,
+      "creamy": 8.0,
+      "soft": 7.0,
+      "chewy": 4.0,
+      "crispy": 6.0,
+      "silky": 5.0,
+      "chunky": 5.0,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.901762",
+        "update_source": "onboarding"
+      }
+    },
+    "cooking": {
+      "skill": "professional",
+      "kitchen_setup": "fully_equipped",
+      "specific_equipment": {
+        "stand_mixer": false,
+        "food_processor": true,
+        "sous_vide": false,
+        "pressure_cooker": true,
+        "air_fryer": false,
+        "wok": false,
+        "cast_iron": false,
+        "outdoor_grill": false,
+        "pasta_machine": false,
+        "dehydrator": false
+      },
+      "weeknight_minutes": 45,
+      "weekend_minutes": 150,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.901772",
+        "update_source": "onboarding"
+      }
+    },
+    "budget": {
+      "home_per_meal_eur": 8.0,
+      "out_per_meal_eur": 30.0,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.901786",
+        "update_source": "onboarding"
+      }
+    },
+    "dining_vibe": {
+      "vibes": [
+        {
+          "vibe": "casual",
+          "score": 8.5,
+          "confidence": 0.4
+        },
+        {
+          "vibe": "family-friendly",
+          "score": 9.0,
+          "confidence": 0.4
+        },
+        {
+          "vibe": "authentic",
+          "score": 9.5,
+          "confidence": 0.4
+        }
+      ],
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.901794",
+        "update_source": "onboarding"
+      }
+    },
+    "adventurousness": {
+      "cooking_score": 7.0,
+      "dining_score": 6.0,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.901809",
+        "update_source": "onboarding"
+      }
+    },
+    "nutrition": {
+      "level": "strict",
+      "tracked_dimensions": [
+        "protein",
+        "iron"
+      ],
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.901816",
+        "update_source": "onboarding"
+      }
+    },
+    "social": {
+      "default_social_context": "family",
+      "meals_out_per_week": 1.5,
+      "home_cooked_per_week": 6.0,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.901824",
+        "update_source": "onboarding"
+      }
+    },
+    "lifestyle": {
+      "seasonal_preference_score": 7.0,
+      "sustainability_priority_score": 6.0,
+      "special_interests": [],
+      "inspiration_style": "one_best",
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.901833",
+        "update_source": "onboarding"
+      }
+    },
+    "location": {
+      "city": "Amsterdam",
+      "country": "NL",
+      "radius_km": 5.0,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.901840",
+        "update_source": "onboarding"
+      }
+    },
+    "tensions": [],
+    "profile_summary_text": "Priya is a professional-level vegetarian cook from India, strict about no beef/pork/gelatin. Loves spicy, aromatic dishes. Family-oriented dining, prefers authentic casual spots.",
+    "onboarding_complete": true,
+    "onboarding_version": "1.0.0"
+  },
+  {
+    "profile_id": "e4c8880d-cec4-418f-95cc-5633f4367f70",
+    "user_id": "c5aed613-7924-4f1f-b48f-b821b0ac97ce",
+    "schema_version": "1.0.0",
+    "created_at": "2026-04-08T07:53:54.902763",
+    "last_updated": "2026-04-08T07:53:54.902765",
+    "dietary": {
+      "spectrum_label": "vegan",
+      "hard_stops": [
+        {
+          "label": "no-meat",
+          "is_hard_stop": true,
+          "reason": "Environmental",
+          "confidence": 1.0
+        },
+        {
+          "label": "no-dairy",
+          "is_hard_stop": true,
+          "reason": "Environmental",
+          "confidence": 1.0
+        },
+        {
+          "label": "no-eggs",
+          "is_hard_stop": true,
+          "reason": "Environmental",
+          "confidence": 1.0
+        }
+      ],
+      "soft_stops": [
+        {
+          "label": "fish-ok",
+          "is_hard_stop": false,
+          "reason": "Sustainable fish is acceptable",
+          "confidence": 1.0
+        }
+      ],
+      "nuance_notes": "Self-identifies as vegan but eats sustainably sourced fish. Tree nut allergy.",
+      "meta": {
+        "weight": "core",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.902615",
+        "update_source": "onboarding"
+      }
+    },
+    "cuisine_affinities": {
+      "affinities": [
+        {
+          "cuisine": "Thai",
+          "level": "love",
+          "sub_nuances": [],
+          "confidence": 0.95
+        },
+        {
+          "cuisine": "Japanese",
+          "level": "like",
+          "sub_nuances": [],
+          "confidence": 0.85
+        },
+        {
+          "cuisine": "Vietnamese",
+          "level": "like",
+          "sub_nuances": [],
+          "confidence": 0.8
+        }
+      ],
+      "meta": {
+        "weight": "core",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.902641",
+        "update_source": "onboarding"
+      }
+    },
+    "flavor": {
+      "spicy": 8.5,
+      "sweet": 2.0,
+      "sour": 7.0,
+      "umami": 7.0,
+      "bitter": 3.0,
+      "fatty": 2.0,
+      "fermented": 5.0,
+      "smoky": 3.0,
+      "salty": 5.0,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.902658",
+        "update_source": "onboarding"
+      }
+    },
+    "texture": {
+      "crunchy": 8.0,
+      "creamy": 4.0,
+      "soft": 5.0,
+      "chewy": 3.0,
+      "crispy": 7.0,
+      "silky": 6.0,
+      "chunky": 4.0,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.902668",
+        "update_source": "onboarding"
+      }
+    },
+    "cooking": {
+      "skill": "confident",
+      "kitchen_setup": "well_equipped",
+      "specific_equipment": {
+        "stand_mixer": false,
+        "food_processor": false,
+        "sous_vide": false,
+        "pressure_cooker": false,
+        "air_fryer": false,
+        "wok": true,
+        "cast_iron": false,
+        "outdoor_grill": false,
+        "pasta_machine": false,
+        "dehydrator": false
+      },
+      "weeknight_minutes": 30,
+      "weekend_minutes": 90,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.902677",
+        "update_source": "onboarding"
+      }
+    },
+    "budget": {
+      "home_per_meal_eur": 8.0,
+      "out_per_meal_eur": 25.0,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.902696",
+        "update_source": "onboarding"
+      }
+    },
+    "dining_vibe": {
+      "vibes": [
+        {
+          "vibe": "casual",
+          "score": 9.0,
+          "confidence": 0.4
+        },
+        {
+          "vibe": "hole-in-the-wall",
+          "score": 8.5,
+          "confidence": 0.4
+        }
+      ],
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.902703",
+        "update_source": "onboarding"
+      }
+    },
+    "adventurousness": {
+      "cooking_score": 7.5,
+      "dining_score": 7.0,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.902715",
+        "update_source": "onboarding"
+      }
+    },
+    "nutrition": {
+      "level": "light",
+      "tracked_dimensions": [],
+      "meta": {
+        "weight": "optional",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.902722",
+        "update_source": "onboarding"
+      }
+    },
+    "social": {
+      "default_social_context": "couple",
+      "meals_out_per_week": 2.0,
+      "home_cooked_per_week": 5.0,
+      "meta": {
+        "weight": "optional",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.902730",
+        "update_source": "onboarding"
+      }
+    },
+    "lifestyle": {
+      "seasonal_preference_score": 6.0,
+      "sustainability_priority_score": 8.0,
+      "special_interests": [],
+      "inspiration_style": "short_list",
+      "meta": {
+        "weight": "optional",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.902738",
+        "update_source": "onboarding"
+      }
+    },
+    "location": {
+      "city": "Amsterdam",
+      "country": "NL",
+      "radius_km": 4.0,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.902746",
+        "update_source": "onboarding"
+      }
+    },
+    "tensions": [
+      {
+        "dimension_a": "dietary.spectrum_label",
+        "dimension_b": "cuisine_affinities.affinities[cuisine='Thai']",
+        "description": "Profile indicates strict dietary restriction ('vegan') but has 'PreferenceLevel.LOVE' affinity for Thai cuisine, which typically includes restricted ingredients. Consider adding sub_nuances or adjusting the label.",
+        "severity": "medium",
+        "detected_at": "2026-04-08T07:53:54.902794",
+        "resolved": false,
+        "resolution_note": null
+      },
+      {
+        "dimension_a": "dietary.spectrum_label",
+        "dimension_b": "cuisine_affinities.affinities[cuisine='Japanese']",
+        "description": "Profile indicates strict dietary restriction ('vegan') but has 'PreferenceLevel.LIKE' affinity for Japanese cuisine, which typically includes restricted ingredients. Consider adding sub_nuances or adjusting the label.",
+        "severity": "medium",
+        "detected_at": "2026-04-08T07:53:54.902806",
+        "resolved": false,
+        "resolution_note": null
+      },
+      {
+        "dimension_a": "dietary.spectrum_label",
+        "dimension_b": "cuisine_affinities.affinities[cuisine='Vietnamese']",
+        "description": "Profile indicates strict dietary restriction ('vegan') but has 'PreferenceLevel.LIKE' affinity for Vietnamese cuisine, which typically includes restricted ingredients. Consider adding sub_nuances or adjusting the label.",
+        "severity": "medium",
+        "detected_at": "2026-04-08T07:53:54.902813",
+        "resolved": false,
+        "resolution_note": null
+      }
+    ],
+    "profile_summary_text": "Alex self-identifies as vegan but eats sustainably sourced fish \u2014 a contradiction the system should detect. Loves Thai food and casual hole-in-the-wall spots. Tree nut allergy.",
+    "onboarding_complete": true,
+    "onboarding_version": "1.0.0"
+  },
+  {
+    "profile_id": "defdbd24-e784-4837-9ff1-1c33cb0f3975",
+    "user_id": "2731b282-87f5-47cd-bcc4-231d05a11637",
+    "schema_version": "1.0.0",
+    "created_at": "2026-04-08T07:53:54.903711",
+    "last_updated": "2026-04-08T07:53:54.903712",
+    "dietary": {
+      "spectrum_label": "halal",
+      "hard_stops": [
+        {
+          "label": "halal-only",
+          "is_hard_stop": true,
+          "reason": "Religious \u2014 strictly halal",
+          "confidence": 1.0
+        },
+        {
+          "label": "gluten-free",
+          "is_hard_stop": true,
+          "reason": "Diagnosed celiac disease",
+          "confidence": 1.0
+        },
+        {
+          "label": "no-pork",
+          "is_hard_stop": true,
+          "reason": "Halal",
+          "confidence": 1.0
+        },
+        {
+          "label": "no-alcohol",
+          "is_hard_stop": true,
+          "reason": "Halal \u2014 no alcohol in cooking",
+          "confidence": 1.0
+        },
+        {
+          "label": "no-peanuts",
+          "is_hard_stop": true,
+          "reason": "Severe allergy",
+          "confidence": 1.0
+        },
+        {
+          "label": "no-tree-nuts",
+          "is_hard_stop": true,
+          "reason": "Severe allergy",
+          "confidence": 1.0
+        },
+        {
+          "label": "no-sesame",
+          "is_hard_stop": true,
+          "reason": "Allergy",
+          "confidence": 1.0
+        },
+        {
+          "label": "no-gelatin",
+          "is_hard_stop": true,
+          "reason": "Halal \u2014 non-halal gelatin",
+          "confidence": 1.0
+        }
+      ],
+      "soft_stops": [],
+      "nuance_notes": "Strictly halal. Diagnosed celiac \u2014 no gluten. Severe peanut and tree nut allergy. Sesame allergy. No alcohol in cooking.",
+      "meta": {
+        "weight": "core",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.903548",
+        "update_source": "onboarding"
+      }
+    },
+    "cuisine_affinities": {
+      "affinities": [
+        {
+          "cuisine": "Middle Eastern",
+          "level": "love",
+          "sub_nuances": [],
+          "confidence": 0.9
+        },
+        {
+          "cuisine": "North African",
+          "level": "like",
+          "sub_nuances": [],
+          "confidence": 0.85
+        },
+        {
+          "cuisine": "Turkish",
+          "level": "like",
+          "sub_nuances": [],
+          "confidence": 0.8
+        },
+        {
+          "cuisine": "Dutch",
+          "level": "neutral",
+          "sub_nuances": [],
+          "confidence": 0.5
+        }
+      ],
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.903585",
+        "update_source": "onboarding"
+      }
+    },
+    "flavor": {
+      "spicy": 5.0,
+      "sweet": 5.0,
+      "sour": 3.0,
+      "umami": 6.0,
+      "bitter": 2.0,
+      "fatty": 4.0,
+      "fermented": 2.0,
+      "smoky": 4.0,
+      "salty": 5.0,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.903604",
+        "update_source": "onboarding"
+      }
+    },
+    "texture": {
+      "crunchy": 6.0,
+      "creamy": 5.0,
+      "soft": 7.0,
+      "chewy": 2.0,
+      "crispy": 7.0,
+      "silky": 4.0,
+      "chunky": 5.0,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.903615",
+        "update_source": "onboarding"
+      }
+    },
+    "cooking": {
+      "skill": "beginner",
+      "kitchen_setup": "basic",
+      "specific_equipment": {
+        "stand_mixer": false,
+        "food_processor": false,
+        "sous_vide": false,
+        "pressure_cooker": false,
+        "air_fryer": false,
+        "wok": false,
+        "cast_iron": false,
+        "outdoor_grill": false,
+        "pasta_machine": false,
+        "dehydrator": false
+      },
+      "weeknight_minutes": 20,
+      "weekend_minutes": 45,
+      "meta": {
+        "weight": "core",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.903624",
+        "update_source": "onboarding"
+      }
+    },
+    "budget": {
+      "home_per_meal_eur": 6.0,
+      "out_per_meal_eur": 20.0,
+      "meta": {
+        "weight": "core",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.903638",
+        "update_source": "onboarding"
+      }
+    },
+    "dining_vibe": {
+      "vibes": [
+        {
+          "vibe": "casual",
+          "score": 9.0,
+          "confidence": 0.4
+        },
+        {
+          "vibe": "quick-service",
+          "score": 8.0,
+          "confidence": 0.4
+        },
+        {
+          "vibe": "family-friendly",
+          "score": 8.5,
+          "confidence": 0.4
+        }
+      ],
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.903645",
+        "update_source": "onboarding"
+      }
+    },
+    "adventurousness": {
+      "cooking_score": 3.0,
+      "dining_score": 3.5,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.903659",
+        "update_source": "onboarding"
+      }
+    },
+    "nutrition": {
+      "level": "strict",
+      "tracked_dimensions": [
+        "protein",
+        "carbs"
+      ],
+      "meta": {
+        "weight": "core",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.903666",
+        "update_source": "onboarding"
+      }
+    },
+    "social": {
+      "default_social_context": "solo",
+      "meals_out_per_week": 1.0,
+      "home_cooked_per_week": 6.0,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.903678",
+        "update_source": "onboarding"
+      }
+    },
+    "lifestyle": {
+      "seasonal_preference_score": 4.0,
+      "sustainability_priority_score": 3.0,
+      "special_interests": [],
+      "inspiration_style": "short_list",
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.903686",
+        "update_source": "onboarding"
+      }
+    },
+    "location": {
+      "city": "Amsterdam",
+      "country": "NL",
+      "radius_km": 3.0,
+      "meta": {
+        "weight": "important",
+        "confidence": 0.5,
+        "last_updated": "2026-04-08T07:53:54.903694",
+        "update_source": "onboarding"
+      }
+    },
+    "tensions": [],
+    "profile_summary_text": "Youssef has the most constrained profile: halal + celiac + nut/sesame allergies + beginner cook with only basic equipment and a 20-minute weeknight budget. This profile stress-tests the retrieval and refinement pipeline.",
+    "onboarding_complete": true,
+    "onboarding_version": "1.0.0"
+  }
+]

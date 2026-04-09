@@ -1,0 +1,2 @@
+# Alembic migration files will be placed here.
+# Run: alembic init alembic (from backend/) to initialise.
