@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
@@ -56,62 +56,125 @@ export function getIconUrl(iconFile: string): string {
   return iconMap[iconFile] || iconDiet;
 }
 
+// Physics constants
+const GRAVITY = 0.18;        // attraction force toward centre
+const DAMPING = 0.97;        // velocity damping per frame
+const RESTITUTION = 0.5;     // bounce restitution coefficient
+const ENTITY_RADIUS = 0.52;  // collision radius in world units (~30px at fov 45 z=6)
+const NOISE_FORCE = 0.003;   // subtle random drift to keep cluster alive
+const REPULSE_CENTRE = 0.30; // radius around centre where entities are gently repelled
+
+interface PhysicsBody {
+  id: string;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+}
+
+// Shared mutable physics state — lives outside React to avoid re-render overhead
+const physicsMap: Map<string, PhysicsBody> = new Map();
+
 interface OrbitIconProps {
   entity: OrbitEntity;
   isNew?: boolean;
   isSelected?: boolean;
   onSelect?: (id: string) => void;
   interactive?: boolean;
+  allEntities: OrbitEntity[];
 }
 
-function OrbitIcon({ entity, isNew, isSelected, onSelect, interactive }: OrbitIconProps) {
+function OrbitIcon({ entity, isNew, isSelected, onSelect, interactive, allEntities }: OrbitIconProps) {
   const groupRef = useRef<THREE.Group>(null!);
-  const angleRef = useRef(entity.orbitPhase);
-  const yOffset = useRef((Math.random() - 0.5) * 0.2);
-  const [entered, setEntered] = useState(false);
-  const entryProgress = useRef(0);
 
+  // Initialise or re-use physics body
   useEffect(() => {
-    if (isNew) {
-      // Start entrance animation
-      const timer = setTimeout(() => setEntered(true), 50);
-      return () => clearTimeout(timer);
-    } else {
-      setEntered(true);
-      entryProgress.current = 1;
+    if (!physicsMap.has(entity.id)) {
+      // New entities enter from a random edge
+      const angle = Math.random() * Math.PI * 2;
+      const edgeDist = 3.5;
+      physicsMap.set(entity.id, {
+        id: entity.id,
+        x: isNew ? Math.cos(angle) * edgeDist : (Math.random() - 0.5) * 2,
+        y: isNew ? Math.sin(angle) * edgeDist : (Math.random() - 0.5) * 2,
+        vx: 0,
+        vy: 0,
+      });
     }
-  }, [isNew]);
+    return () => {
+      // Leave body in map — it may be re-used if component remounts
+    };
+  }, [entity.id, isNew]);
 
   useFrame((_, delta) => {
-    // Update orbit angle
-    angleRef.current += entity.orbitSpeed * delta;
+    const body = physicsMap.get(entity.id);
+    if (!body || !groupRef.current) return;
 
-    // Entrance animation
-    if (entered && entryProgress.current < 1) {
-      entryProgress.current = Math.min(entryProgress.current + delta * 1.8, 1);
+    const dt = Math.min(delta, 0.05); // clamp delta to avoid large jumps
+
+    // 1. Gravity toward centre (with soft repulsion near centre)
+    const dist = Math.sqrt(body.x * body.x + body.y * body.y);
+    if (dist > 0.01) {
+      const dirX = -body.x / dist;
+      const dirY = -body.y / dist;
+      if (dist > REPULSE_CENTRE) {
+        body.vx += dirX * GRAVITY * dt;
+        body.vy += dirY * GRAVITY * dt;
+      } else {
+        // gentle push away from very centre so entities ring it rather than stack
+        body.vx -= dirX * GRAVITY * 0.5 * dt;
+        body.vy -= dirY * GRAVITY * 0.5 * dt;
+      }
     }
 
-    const progress = entryProgress.current;
-    // Spring-like ease
-    const eased = 1 - Math.pow(1 - progress, 3);
-
-    if (groupRef.current) {
-      const targetX = Math.cos(angleRef.current) * entity.orbitRadius;
-      const targetZ = Math.sin(angleRef.current) * entity.orbitRadius;
-      const targetY = yOffset.current;
-
-      // During entrance: start from top, animate to orbit
-      const startY = 3.0;
-      const startX = 0;
-      const startZ = 0;
-
-      groupRef.current.position.x = startX + (targetX - startX) * eased;
-      groupRef.current.position.y = startY + (targetY - startY) * eased;
-      groupRef.current.position.z = startZ + (targetZ - startZ) * eased;
+    // 2. Circle-circle collision resolution against all other entities
+    for (const other of allEntities) {
+      if (other.id === entity.id) continue;
+      const ob = physicsMap.get(other.id);
+      if (!ob) continue;
+      const dx = body.x - ob.x;
+      const dy = body.y - ob.y;
+      const d = Math.sqrt(dx * dx + dy * dy);
+      const minDist = ENTITY_RADIUS * 2;
+      if (d < minDist && d > 0.001) {
+        // Separate
+        const overlap = minDist - d;
+        const nx = dx / d;
+        const ny = dy / d;
+        body.x += nx * overlap * 0.5;
+        body.y += ny * overlap * 0.5;
+        ob.x  -= nx * overlap * 0.5;
+        ob.y  -= ny * overlap * 0.5;
+        // Exchange velocity along collision normal with restitution
+        const relVx = body.vx - ob.vx;
+        const relVy = body.vy - ob.vy;
+        const dot = relVx * nx + relVy * ny;
+        if (dot < 0) {
+          const impulse = dot * (1 + RESTITUTION);
+          body.vx -= impulse * nx * 0.5;
+          body.vy -= impulse * ny * 0.5;
+          ob.vx   += impulse * nx * 0.5;
+          ob.vy   += impulse * ny * 0.5;
+        }
+      }
     }
+
+    // 3. Damping
+    body.vx *= DAMPING;
+    body.vy *= DAMPING;
+
+    // 4. Tiny random perturbation (keeps cluster alive)
+    body.vx += (Math.random() - 0.5) * NOISE_FORCE;
+    body.vy += (Math.random() - 0.5) * NOISE_FORCE;
+
+    // 5. Integrate position
+    body.x += body.vx;
+    body.y += body.vy;
+
+    // 6. Apply to Three.js group (flat 2D at Z=0)
+    groupRef.current.position.set(body.x, body.y, 0);
   });
 
-  const scale = isSelected ? 1.5 : 1;
   const iconSrc = entity.iconUrl || iconDiet;
 
   return (
@@ -131,8 +194,8 @@ function OrbitIcon({ entity, isNew, isSelected, onSelect, interactive }: OrbitIc
             flexDirection: 'column',
             alignItems: 'center',
             cursor: interactive ? 'pointer' : 'default',
-            transition: 'transform 0.3s ease',
-            transform: `scale(${scale})`,
+            transition: 'transform 0.25s ease',
+            transform: isSelected ? 'scale(1.25)' : 'scale(1)',
           }}
         >
           {/* Icon circle */}
@@ -144,23 +207,19 @@ function OrbitIcon({ entity, isNew, isSelected, onSelect, interactive }: OrbitIc
               background: 'rgba(20, 20, 20, 0.9)',
               border: `2px solid ${isSelected ? entity.color : `${entity.color}70`}`,
               boxShadow: isSelected
-                ? `0 0 20px ${entity.color}60, 0 0 40px ${entity.color}30`
+                ? `0 0 20px ${entity.color}70, 0 0 40px ${entity.color}40`
                 : `0 0 10px ${entity.color}30`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               overflow: 'hidden',
-              transition: 'border-color 0.3s, box-shadow 0.3s',
+              transition: 'border-color 0.25s, box-shadow 0.25s',
             }}
           >
             <img
               src={iconSrc}
               alt={entity.label}
-              style={{
-                width: 32,
-                height: 32,
-                objectFit: 'contain',
-              }}
+              style={{ width: 32, height: 32, objectFit: 'contain' }}
               draggable={false}
               onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
             />
@@ -206,6 +265,7 @@ export default function OrbitLabels({ entities, newEntityId, selectedId, onSelec
           isSelected={entity.id === selectedId}
           onSelect={onSelect}
           interactive={interactive}
+          allEntities={entities}
         />
       ))}
     </group>
