@@ -225,42 +225,56 @@ export function compileStructuredProfile(
   // --- q1: Dietary spectrum ---
   const q1Sel = getSelection(answers.q1);
   let spectrumLabel: string | null = null;
+  const spectrumMap: Record<string, string> = {
+    'I eat everything': 'omnivore',
+    'Pescatarian — fish but no meat': 'pescatarian',
+    'Vegetarian': 'vegetarian',
+    'Vegan': 'vegan',
+    'Flexitarian — mostly plants, sometimes meat': 'flexitarian',
+    'Low carb / keto': 'low_carb',
+    'Paleo / whole foods': 'paleo',
+    'Gluten-free lifestyle': 'gluten_free',
+    'Halal': 'halal',
+    'Kosher': 'kosher',
+    'Raw food': 'raw_food',
+  };
   if (Array.isArray(q1Sel) && q1Sel.length > 0) {
-    const spectrumMap: Record<string, string> = {
-      'I eat everything': 'omnivore',
-      'No meat, but I eat fish': 'pescatarian',
-      'Vegetarian': 'vegetarian',
-      'Vegan': 'vegan',
-      'Mostly plant-based, sometimes meat': 'flexitarian',
-      'Halal': 'halal',
-      'Kosher': 'kosher',
-    };
     // If multiple, combine (e.g. "flexitarian" + "halal" → "flexitarian-halal")
     const mapped = q1Sel.map((s: string) => spectrumMap[s] || s.toLowerCase()).filter(Boolean);
     spectrumLabel = mapped.length === 1 ? mapped[0] : mapped.join('-');
   } else if (typeof q1Sel === 'string') {
-    spectrumLabel = q1Sel.toLowerCase();
+    spectrumLabel = spectrumMap[q1Sel] || q1Sel.toLowerCase();
   }
 
   // --- q2: Restrictions ---
   const q2Sel = getChips(answers.q2);
-  const hardStops: DietaryRestriction[] = [];
   const reasonMap: Record<string, string> = {
-    'No pork': 'ethical', 'No beef': 'ethical', 'No red meat': 'preference',
-    'No nuts': 'allergy', 'No shellfish': 'allergy', 'No eggs': 'allergy',
-    'No soy': 'allergy', 'No fish': 'allergy',
+    'No pork': 'ethical', 'No beef': 'ethical', 'No red meat': 'preference', 'No lamb': 'preference',
+    'No nuts': 'allergy', 'No peanuts': 'allergy', 'No shellfish': 'allergy', 'No eggs': 'allergy',
+    'No soy': 'allergy', 'No fish': 'allergy', 'No sesame': 'allergy', 'No celery': 'allergy',
+    'No mustard': 'allergy', 'No lupin': 'allergy',
     'No gluten (coeliac)': 'intolerance', 'No dairy (lactose)': 'intolerance',
-    'No fructose': 'intolerance',
-    'No MSG': 'preference', 'No nightshades': 'intolerance', 'No corn': 'allergy',
+    'No fructose': 'intolerance', 'No histamine': 'intolerance',
+    'No coriander': 'dislike', 'No olives': 'dislike', 'No mushrooms': 'dislike', 'No blue cheese': 'dislike',
   };
+
+  const dislikeItems = new Set(['No coriander', 'No olives', 'No mushrooms', 'No blue cheese']);
+  const hardStops: DietaryRestriction[] = [];
+  const softStops: DietaryRestriction[] = [];
+
   for (const item of q2Sel) {
     const label = item.replace(/^No /, '').replace(/ \(.*\)/, '').toLowerCase();
-    hardStops.push({
+    const restriction: DietaryRestriction = {
       label,
-      is_hard_stop: true,
+      is_hard_stop: !dislikeItems.has(item),
       reason: reasonMap[item] || 'preference',
-      confidence: 1.0,
-    });
+      confidence: dislikeItems.has(item) ? 0.8 : 1.0,
+    };
+    if (dislikeItems.has(item)) {
+      softStops.push(restriction);
+    } else {
+      hardStops.push(restriction);
+    }
   }
 
   // --- q3: Cuisine affinities ---
@@ -288,9 +302,9 @@ export function compileStructuredProfile(
   // --- q4: Flavor sliders ---
   const q4Sliders = getSliders(answers.q4);
   const spiceRaw = q4Sliders['Spice level'] ?? null;
-  const sweetSavoryRaw = q4Sliders['Sweet vs Savory'] ?? null;
-  const lightRichRaw = q4Sliders['Light vs Rich'] ?? null;
-  const simpleComplexRaw = q4Sliders['Simple vs Complex'] ?? null;
+  const sweetSavoryRaw = q4Sliders['Sweet vs savoury'] ?? null;
+  const lightRichRaw = q4Sliders['Light vs rich'] ?? null;
+  const simpleComplexRaw = q4Sliders['Simple vs complex'] ?? null;
 
   const flavor: ProfileData['flavor'] = {
     spicy: spiceRaw !== null ? Math.round(spiceRaw / 10 * 10) / 10 : null,
@@ -305,18 +319,41 @@ export function compileStructuredProfile(
     meta: meta('important', 0.7),
   };
 
-  // --- q5: Favourite ingredients → flavor/texture boosts ---
-  const q5Chips = getChips(answers.q5);
-  const favoriteIngredients: string[] = [...q5Chips];
+  // --- q5: Favourite ingredients + textures ---
+  const q5All = getChips(answers.q5);
+  const q5Sel = getSelection(answers.q5);
+
+  // Ingredient chips come from grouped options
+  const allIngredients = ['Garlic', 'Lemon', 'Chilli', 'Ginger', 'Coriander', 'Basil',
+    'Miso', 'Cheese', 'Butter', 'Olive oil', 'Tahini', 'Coconut',
+    'Avocado', 'Mushrooms', 'Aubergine', 'Sweet potato', 'Chickpeas', 'Tofu'];
+  const allTextures = ['Crunchy', 'Creamy', 'Crispy', 'Silky smooth', 'Chunky', 'Chewy', 'Tender', 'Flaky'];
+
+  // Extract from combined answer
+  let ingredientChips: string[] = [];
+  let textureChips: string[] = [];
+
+  if (q5Sel && typeof q5Sel === 'object' && !Array.isArray(q5Sel)) {
+    // Combined format
+    const chips = Array.isArray(q5Sel.chips) ? q5Sel.chips : [];
+    const extra = Array.isArray(q5Sel.extraChips) ? q5Sel.extraChips : [];
+    ingredientChips = chips.filter((c: string) => allIngredients.includes(c));
+    textureChips = extra.filter((c: string) => allTextures.includes(c));
+  } else {
+    // Fallback: split by known sets
+    ingredientChips = q5All.filter(c => allIngredients.includes(c));
+    textureChips = q5All.filter(c => allTextures.includes(c));
+  }
+
+  const favoriteIngredients: string[] = [...ingredientChips];
 
   // Ingredient → dimension boosts
-  const umamiIngredients = ['Garlic', 'Miso', 'Truffle', 'Mushrooms', 'Sesame'];
-  const fattyIngredients = ['Butter', 'Cheese', 'Avocado', 'Olive oil', 'Coconut'];
-  const spicyIngredients = ['Chili', 'Ginger'];
-  const sweetIngredients = ['Honey', 'Chocolate'];
+  const umamiIngredients = ['Garlic', 'Miso', 'Mushrooms', 'Tahini'];
+  const fattyIngredients = ['Butter', 'Cheese', 'Avocado', 'Olive oil', 'Coconut', 'Tahini'];
+  const spicyIngredients = ['Chilli', 'Ginger'];
   const sourIngredients = ['Lemon'];
 
-  for (const ing of q5Chips) {
+  for (const ing of ingredientChips) {
     if (umamiIngredients.includes(ing) && (flavor.umami === null || flavor.umami < 7)) {
       flavor.umami = Math.min(10, (flavor.umami ?? 5) + 1.5);
     }
@@ -325,9 +362,6 @@ export function compileStructuredProfile(
     }
     if (spicyIngredients.includes(ing) && (flavor.spicy === null || flavor.spicy < 7)) {
       flavor.spicy = Math.min(10, (flavor.spicy ?? 5) + 1.0);
-    }
-    if (sweetIngredients.includes(ing) && (flavor.sweet === null || flavor.sweet < 7)) {
-      flavor.sweet = Math.min(10, (flavor.sweet ?? 5) + 1.0);
     }
     if (sourIngredients.includes(ing) && (flavor.sour === null)) {
       flavor.sour = 6.5;
@@ -343,24 +377,42 @@ export function compileStructuredProfile(
     }
   }
 
-  // Texture defaults from ingredient choices
-  const texture: ProfileData['texture'] = {
-    crunchy: q5Chips.includes('Bacon') || q5Chips.includes('Sesame') ? 6.5 : null,
-    creamy: fattyIngredients.some(i => q5Chips.includes(i)) ? 6.5 : null,
-    soft: null,
-    chewy: null,
-    crispy: q5Chips.includes('Bacon') ? 7.0 : null,
-    silky: q5Chips.includes('Avocado') || q5Chips.includes('Miso') ? 6.0 : null,
-    chunky: null,
-    meta: meta('optional', 0.4),
+  // Texture from explicit texture chips + ingredient-based boosts
+  const textureMap: Record<string, keyof ProfileData['texture']> = {
+    'Crunchy': 'crunchy',
+    'Creamy': 'creamy',
+    'Crispy': 'crispy',
+    'Silky smooth': 'silky',
+    'Chunky': 'chunky',
+    'Chewy': 'chewy',
+    'Tender': 'soft',
+    'Flaky': 'crispy', // maps to crispy dimension
   };
+
+  const texture: ProfileData['texture'] = {
+    crunchy: null, creamy: null, soft: null, chewy: null,
+    crispy: null, silky: null, chunky: null,
+    meta: meta('optional', textureChips.length > 0 ? 0.7 : 0.4),
+  };
+
+  for (const chip of textureChips) {
+    const key = textureMap[chip];
+    if (key && key !== 'meta') {
+      (texture as any)[key] = Math.min(10, ((texture as any)[key] ?? 5) + 2.5);
+    }
+  }
+
+  // Also keep ingredient-based texture boosts for backwards compat
+  if (ingredientChips.some(i => ['Butter', 'Cheese', 'Avocado', 'Olive oil', 'Coconut', 'Tahini'].includes(i))) {
+    texture.creamy = Math.min(10, (texture.creamy ?? 5) + 1.5);
+  }
 
   // --- q6: Cooking skill ---
   const q6Chips = getChips(answers.q6);
   const q6Sliders = getSliders(answers.q6);
   const skillMap: Record<string, string> = {
     'Just starting out': 'beginner',
-    'I get by': 'home_cook',
+    'I can follow a recipe': 'home_cook',
     'Pretty confident': 'confident',
     'I know my way around': 'advanced',
     'Semi-pro level': 'professional',
@@ -370,21 +422,23 @@ export function compileStructuredProfile(
     cookingSkill = skillMap[q6Chips[0]] || 'home_cook';
   }
   const weeknightMin = q6Sliders['Time on a weeknight'] ?? 30;
+  const weekendMin = q6Sliders['Time on a weekend'] ?? 60;
 
   // --- q7: Kitchen equipment ---
   const q7Chips = getChips(answers.q7);
   const q7Sliders = getSliders(answers.q7);
   const equipmentMap: Record<string, string> = {
     'Air fryer': 'air_fryer',
-    'Instant Pot': 'pressure_cooker',
-    'Slow cooker': 'pressure_cooker', // similar category
+    'Instant Pot / pressure cooker': 'pressure_cooker',
+    'Slow cooker': 'pressure_cooker',
     'Wok': 'wok',
-    'Grill': 'outdoor_grill',
+    'Grill / BBQ': 'outdoor_grill',
     'Sous vide': 'sous_vide',
-    'Blender': 'stand_mixer', // approximate
+    'Stand mixer': 'stand_mixer',
+    'Blender': 'stand_mixer',
     'Food processor': 'food_processor',
     'Dutch oven': 'cast_iron',
-    'Cast iron': 'cast_iron',
+    'Cast iron skillet': 'cast_iron',
   };
   const specificEquipment: Record<string, boolean> = {
     stand_mixer: false, food_processor: false, sous_vide: false,
@@ -403,6 +457,16 @@ export function compileStructuredProfile(
   const q8Sliders = getSliders(answers.q8);
   const typicalServings = q8Sliders['Typical servings'] ?? 2;
   const mealsPerWeek = q8Sliders['Meals you cook per week'] ?? 5;
+  const groceryBudget = q8Sliders['Grocery budget per week'] ?? 65;
+  const diningOutPerPerson = q8Sliders['Dining out per person'] ?? 25;
+
+  // Derive home cost from grocery budget
+  let homePerMealEur: number | null = null;
+  if (mealsPerWeek > 0 && typicalServings > 0) {
+    homePerMealEur = Math.round((groceryBudget / mealsPerWeek / typicalServings) * 100) / 100;
+  }
+  const outPerMealEur: number | null = diningOutPerPerson;
+
   let socialContext = 'couple';
   if (typicalServings <= 1) socialContext = 'solo';
   else if (typicalServings <= 2) socialContext = 'couple';
@@ -422,19 +486,17 @@ export function compileStructuredProfile(
     { vibe: 'efficient', score: 5.0, confidence: 0.4 },
   ];
   const vibeBoosts: Record<string, string[]> = {
-    'Quick & easy': ['efficient'],
-    'Slow & mindful': ['cozy', 'classic'],
-    'Social — cooking with friends': ['lively'],
-    'Solo comfort meals': ['cozy'],
-    'Meal prep warrior': [],
-    'Fancy plating': ['trendy'],
-    'Rustic & homey': ['classic', 'cozy'],
-    'Street food energy': ['trendy', 'lively'],
+    'Cosy & intimate': ['cozy'],
+    'Buzzy & lively': ['lively'],
+    'Trendy & modern': ['trendy'],
+    'Classic & traditional': ['classic'],
+    'Hidden gem': ['hidden_gem'],
+    'Romantic': ['romantic'],
+    'Quick & efficient': ['efficient'],
+    'Outdoor / terrace': ['lively', 'cozy'],
+    'Late night': ['lively', 'hidden_gem'],
   };
-  const mealPrepInterest = q9Chips.includes('Meal prep warrior');
   const specialInterests: string[] = [];
-  if (mealPrepInterest) specialInterests.push('meal_prep');
-  if (q9Chips.includes('Fancy plating')) specialInterests.push('food_photography');
 
   for (const chip of q9Chips) {
     const boosts = vibeBoosts[chip] || [];
@@ -445,32 +507,34 @@ export function compileStructuredProfile(
   }
 
   // --- q10: Adventurousness ---
+  const q10Sliders = getSliders(answers.q10);
   const q10Chips = getChips(answers.q10);
-  let cookingAdventure = 5.0;
-  let diningAdventure = 5.0;
-  const adventureMap: Record<string, [number, number]> = {
-    'I eat the same 10 things': [1.0, 1.0],
-    'I like what I like': [3.0, 3.0],
-    'Open to suggestions': [5.0, 5.0],
-    'Love trying new stuff': [7.0, 7.0],
-    'Will eat anything once': [6.0, 9.0],
-    'Fermented foods? Yes': [7.0, 7.0],
-    'The weirder the better': [9.0, 9.0],
+
+  let cookingAdventure = q10Sliders['Cooking adventure'] ?? 5.0;
+  let diningAdventure = q10Sliders['Dining adventure'] ?? 5.0;
+
+  // Chip boosts
+  const adventureChipBoosts: Record<string, [number, number]> = {
+    'I love my rotation of favourites': [-1.0, -1.0],
+    'I try a new recipe every week or two': [1.5, 0],
+    'I follow food trends': [1.0, 1.0],
+    'I actively seek out unfamiliar cuisines': [0, 2.0],
+    'Street food markets are my happy place': [0, 1.5],
+    "I'll order the thing I can't pronounce": [0, 2.0],
   };
+
   for (const chip of q10Chips) {
-    const [c, d] = adventureMap[chip] || [5, 5];
-    cookingAdventure = Math.max(cookingAdventure, c);
-    diningAdventure = Math.max(diningAdventure, d);
-  }
-  if (q10Chips.includes('Fermented foods? Yes')) {
-    specialInterests.push('fermentation');
+    const [c, d] = adventureChipBoosts[chip] || [0, 0];
+    cookingAdventure = Math.min(10, Math.max(0, cookingAdventure + c));
+    diningAdventure = Math.min(10, Math.max(0, diningAdventure + d));
   }
 
   // --- q11: Nutrition ---
   const q11Sliders = getSliders(answers.q11);
-  const calorieAwareness = q11Sliders['Calorie awareness'] ?? 30;
+  const calorieAwareness = q11Sliders['Calorie tracking'] ?? 30;
   const proteinFocus = q11Sliders['Protein focus'] ?? 40;
-  const sugarIntake = q11Sliders['Sugar intake'] ?? 30;
+  const sugarIntake = q11Sliders['Sugar awareness'] ?? 30;
+  const fibreLevel = q11Sliders['Fibre & wholefoods'] ?? 35;
 
   let nutritionLevel = 'none';
   if (calorieAwareness > 75) nutritionLevel = 'strict';
@@ -481,24 +545,25 @@ export function compileStructuredProfile(
   if (calorieAwareness > 50) trackedDimensions.push('calories');
   if (proteinFocus > 50) trackedDimensions.push('protein');
   if (sugarIntake > 50) trackedDimensions.push('sugar');
+  if (fibreLevel > 50) trackedDimensions.push('fibre');
 
   // --- q12: Social eating ---
   // q12 is combined: chips = social context (single-select), extraChips = venue types
   const q12AllChips = getChips(answers.q12);
   const q12Sel = getSelection(answers.q12);
   // Extract the social context chip (from options, single-select)
-  const socialOptions = ['Mostly alone', 'With my partner', '2-3 times a week with friends', 'I host often', 'Big family meals'];
-  const venueOptions = ['Fine dining', 'Casual bistro', 'Street food', 'Fast casual', 'Food trucks', 'Cafés', 'Brunch spots', 'Late night'];
+  const socialOptions = ['Mostly solo', 'With my partner', 'Small group', 'Family', 'Varies a lot'];
+  const venueOptions = ['Fine dining', 'Casual bistro', 'Street food', 'Fast casual', 'Food trucks', 'Cafés', 'Brunch spots', 'Late night spots', 'Pub grub', 'Pop-ups'];
   const socialChip = q12AllChips.find(c => socialOptions.includes(c)) ||
     (q12Sel && typeof q12Sel === 'object' && typeof q12Sel.chips === 'string' ? q12Sel.chips : null);
   const venueChips = q12AllChips.filter(c => venueOptions.includes(c));
   let mealsOutPerWeek = 2.0;
   const socialOverrides: Record<string, [string, number]> = {
-    'Mostly alone': ['solo', 0.5],
+    'Mostly solo': ['solo', 0.5],
     'With my partner': ['couple', 1.5],
-    '2-3 times a week with friends': ['group', 2.5],
-    'I host often': ['group', 1.0],
-    'Big family meals': ['family', 1.0],
+    'Small group': ['group', 2.5],
+    'Family': ['family', 1.0],
+    'Varies a lot': ['couple', 2.0],
   };
   if (socialChip && socialOverrides[socialChip]) {
     const [ctx, meals] = socialOverrides[socialChip];
@@ -506,12 +571,19 @@ export function compileStructuredProfile(
     mealsOutPerWeek = meals;
   }
 
+  const q12Sliders = getSliders(answers.q12);
+  const mealsOutSlider = q12Sliders['Meals out per week'];
+  if (typeof mealsOutSlider === 'number') {
+    mealsOutPerWeek = mealsOutSlider;
+  }
+
   // Venue chips → vibe boosts
   const venueVibeMap: Record<string, string> = {
     'Fine dining': 'romantic', 'Casual bistro': 'classic',
     'Street food': 'trendy', 'Fast casual': 'efficient',
     'Food trucks': 'trendy', 'Cafés': 'cozy',
-    'Brunch spots': 'lively', 'Late night': 'hidden_gem',
+    'Brunch spots': 'lively', 'Late night spots': 'hidden_gem',
+    'Pub grub': 'classic', 'Pop-ups': 'trendy',
   };
   for (const venue of venueChips) {
     const vibeLabel = venueVibeMap[venue];
@@ -523,8 +595,8 @@ export function compileStructuredProfile(
 
   // --- q13: Meal priorities ---
   const q13Chips = getChips(answers.q13);
-  const mealPriorities = q13Chips.map((c: string) => c.toLowerCase().replace(/ /g, '_'));
-  if (q13Chips.includes('Meal prep') && !specialInterests.includes('meal_prep')) {
+  const mealPriorities = q13Chips.map((c: string) => c.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, ''));
+  if ((q13Chips.includes('Meal prep') || q13Chips.includes('Batch cooking')) && !specialInterests.includes('meal_prep')) {
     specialInterests.push('meal_prep');
   }
   if (q13Chips.includes('Weekend feasts')) {
@@ -533,16 +605,8 @@ export function compileStructuredProfile(
 
   // --- q14: Values (sliders) ---
   const q14Sliders = getSliders(answers.q14);
-  const budgetPriority = q14Sliders['Budget priority'] ?? 40;
   const organicPref = q14Sliders['Organic preference'] ?? 30;
-  const localSourcing = q14Sliders['Local sourcing'] ?? 40;
-
-  // Map budget slider to approximate EUR/meal
-  let homePerMealEur: number | null = null;
-  if (budgetPriority <= 25) homePerMealEur = 4.0;
-  else if (budgetPriority <= 50) homePerMealEur = 7.0;
-  else if (budgetPriority <= 75) homePerMealEur = 12.0;
-  else homePerMealEur = 18.0;
+  const localSourcing = q14Sliders['Local & seasonal'] ?? 40;
 
   const sustainabilityScore = Math.round(((organicPref + localSourcing) / 200) * 10 * 10) / 10;
   const seasonalScore = Math.round((localSourcing / 100) * 10 * 10) / 10;
@@ -550,12 +614,20 @@ export function compileStructuredProfile(
   // --- q15: Food interests ---
   const q15Chips = getChips(answers.q15);
   const interestNormalise: Record<string, string> = {
-    'Fermentation': 'fermentation', 'Baking & pastry': 'baking',
-    'BBQ & grilling': 'bbq', 'Food science': 'food_science',
-    'Food photography': 'food_photography', 'Foraging': 'foraging',
-    'Wine pairing': 'wine_pairing', 'Coffee & tea': 'coffee_tea',
-    'Cocktails': 'cocktails', 'Meal planning': 'meal_prep',
-    'Zero waste cooking': 'zero_waste', 'Cultural food history': 'food_history',
+    'Fermentation & pickling': 'fermentation',
+    'Baking & pastry': 'baking',
+    'BBQ & grilling': 'bbq',
+    'Food science': 'food_science',
+    'Food photography': 'food_photography',
+    'Foraging': 'foraging',
+    'Wine & pairing': 'wine_pairing',
+    'Coffee & tea': 'coffee_tea',
+    'Cocktails & spirits': 'cocktails',
+    'Meal planning': 'meal_prep',
+    'Zero waste cooking': 'zero_waste',
+    'Cultural food history': 'food_history',
+    'Cheese & charcuterie': 'cheese_charcuterie',
+    'Spice blending': 'spice_blending',
   };
   for (const chip of q15Chips) {
     const norm = interestNormalise[chip] || chip.toLowerCase().replace(/ /g, '_');
@@ -584,14 +656,14 @@ export function compileStructuredProfile(
   let inspirationStyle = 'short_list';
   const identityLabel = Array.isArray(q17Sel) ? q17Sel[0] : q17Sel;
   const identityMap: Record<string, { style: string; adventureBoost?: number; nutritionBoost?: string; socialOverride?: string; budgetOverride?: number }> = {
-    'Home cook': { style: 'short_list' },
-    'Foodie explorer': { style: 'wide_selection', adventureBoost: 8.0 },
-    'Health optimizer': { style: 'short_list', nutritionBoost: 'moderate' },
-    'Busy parent': { style: 'short_list', socialOverride: 'family' },
-    'Student on a budget': { style: 'short_list', budgetOverride: 3.5 },
+    'Confident home cook': { style: 'short_list' },
+    'Curious food explorer': { style: 'wide_selection', adventureBoost: 8.0 },
+    'Health-conscious eater': { style: 'short_list', nutritionBoost: 'moderate' },
+    'Busy but into good food': { style: 'short_list' },
+    'Budget-savvy eater': { style: 'short_list', budgetOverride: 3.5 },
     'Aspiring chef': { style: 'wide_selection', adventureBoost: 8.0 },
-    'Picky eater': { style: 'one_best' },
-    'Social entertainer': { style: 'wide_selection', socialOverride: 'group' },
+    'I know exactly what I like': { style: 'one_best' },
+    'Love feeding people': { style: 'wide_selection', socialOverride: 'group' },
   };
   if (typeof identityLabel === 'string' && identityMap[identityLabel]) {
     const id = identityMap[identityLabel];
@@ -617,7 +689,7 @@ export function compileStructuredProfile(
     dietary: {
       spectrum_label: spectrumLabel,
       hard_stops: hardStops,
-      soft_stops: [],
+      soft_stops: softStops,
       nuance_notes: null,
       meta: meta('core', 0.9),
     },
@@ -636,13 +708,13 @@ export function compileStructuredProfile(
       kitchen_setup: kitchenSetup,
       specific_equipment: specificEquipment,
       weeknight_minutes: Math.round(weeknightMin),
-      weekend_minutes: 90,
+      weekend_minutes: Math.round(weekendMin),
       meta: meta('core', 0.8),
     },
 
     budget: {
       home_per_meal_eur: homePerMealEur,
-      out_per_meal_eur: null,
+      out_per_meal_eur: outPerMealEur,
       meta: meta('important', homePerMealEur !== null ? 0.6 : 0.3),
     },
 
