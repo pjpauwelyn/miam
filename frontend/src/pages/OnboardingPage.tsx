@@ -205,51 +205,55 @@ export default function OnboardingPage({ onComplete }: { onComplete?: () => void
               animate={{ opacity: 1 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4 }}
-              className="flex flex-col items-center justify-center text-center px-8"
-              style={{ height: '100%', paddingTop: 'env(safe-area-inset-top, 0)', paddingBottom: 'env(safe-area-inset-bottom, 0)' }}
+              className="flex flex-col items-center justify-between text-center px-8"
+              style={{ height: '100%', paddingTop: 'max(env(safe-area-inset-top, 48px), 48px)', paddingBottom: 'max(env(safe-area-inset-bottom, 48px), 48px)' }}
             >
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-                className="mb-8"
-              >
-                <MiamLogo size={88} />
-              </motion.div>
+              <div className="flex flex-col items-center">
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.2, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+                  style={{ marginBottom: '2rem' }}
+                >
+                  <MiamLogo size={88} />
+                </motion.div>
 
-              <motion.h1
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.5 }}
-                className="text-2xl font-semibold mb-3"
-                style={{ color: '#F0EDE8' }}
-              >
-                Let's get to know{'\n'}each other.
-              </motion.h1>
+                <motion.h1
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, duration: 0.5 }}
+                  className="text-2xl font-semibold"
+                  style={{ color: '#F0EDE8' }}
+                >
+                  Let's get to know{'\n'}each other.
+                </motion.h1>
+              </div>
 
-              <motion.p
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.55, duration: 0.5 }}
-                className="text-[15px] leading-relaxed max-w-[280px] mb-12"
-                style={{ color: '#9A8E78' }}
-              >
-                A few quick questions so miam can learn your taste.
-                Your answers become your flavour constellation.
-              </motion.p>
+              <div className="flex flex-col items-center gap-8">
+                <motion.p
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.55, duration: 0.5 }}
+                  className="text-[15px] leading-relaxed max-w-[280px]"
+                  style={{ color: '#C4B99A' }}
+                >
+                  A few quick questions so miam can learn your taste.
+                  Your answers become your flavour constellation.
+                </motion.p>
 
-              <motion.button
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7, duration: 0.5 }}
-                onClick={handleIntroStart}
-                className="h-12 px-8 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.97] transition-transform"
-                style={{ background: '#D4A855', color: '#141414' }}
-                data-testid="onboarding-start"
-              >
-                Let's go
-                <ChevronRight size={16} />
-              </motion.button>
+                <motion.button
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.7, duration: 0.5 }}
+                  onClick={handleIntroStart}
+                  className="h-12 px-8 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.97] transition-transform"
+                  style={{ background: '#D4A855', color: '#141414' }}
+                  data-testid="onboarding-start"
+                >
+                  Let's go
+                  <ChevronRight size={16} />
+                </motion.button>
+              </div>
             </motion.div>
           )}
 
