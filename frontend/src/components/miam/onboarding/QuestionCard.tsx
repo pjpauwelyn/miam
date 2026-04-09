@@ -397,34 +397,60 @@ export default function QuestionCard({
     return (
       <div>
         {/* Single/multi select chips from options */}
-        {question.options && (
-          <div className="mb-5">
-            <div className="flex flex-wrap gap-2">
-              {(question.options as string[]).map((opt) => {
-                const isSingleSelect = question.id === 'q6' || question.id === 'q12';
-                const isSelected = isSingleSelect
-                  ? combinedValue.chips === opt
-                  : (combinedValue.chips || []).includes?.(opt);
-                return (
-                  <Chip
-                    key={opt}
-                    label={opt}
-                    selected={isSelected}
-                    onToggle={() => {
-                      if (isSingleSelect) {
-                        updateSelection({ ...combinedValue, chips: combinedValue.chips === opt ? '' : opt });
-                      } else {
-                        const arr = combinedValue.chips || [];
-                        const newChips = arr.includes(opt) ? arr.filter((s: string) => s !== opt) : [...arr, opt];
-                        updateSelection({ ...combinedValue, chips: newChips });
-                      }
-                    }}
-                  />
-                );
-              })}
+        {question.options && (() => {
+          const opts = question.options!;
+          const isSingleSelect = question.id === 'q6' || question.id === 'q12';
+          const isGrouped = opts.length > 0 && typeof opts[0] === 'object' && 'group' in (opts[0] as any);
+
+          const renderChip = (opt: string) => {
+            const isSelected = isSingleSelect
+              ? combinedValue.chips === opt
+              : Array.isArray(combinedValue.chips) && combinedValue.chips.includes(opt);
+            return (
+              <Chip
+                key={opt}
+                label={opt}
+                selected={isSelected}
+                onToggle={() => {
+                  if (isSingleSelect) {
+                    updateSelection({ ...combinedValue, chips: combinedValue.chips === opt ? '' : opt });
+                  } else {
+                    const arr = Array.isArray(combinedValue.chips) ? combinedValue.chips : [];
+                    const newChips = arr.includes(opt) ? arr.filter((s: string) => s !== opt) : [...arr, opt];
+                    updateSelection({ ...combinedValue, chips: newChips });
+                  }
+                }}
+              />
+            );
+          };
+
+          if (isGrouped) {
+            const groups = opts as { group: string; items: string[] }[];
+            return (
+              <div className="mb-5">
+                {groups.map((group) => (
+                  <div key={group.group} className="mb-4">
+                    <h3 className="text-sm font-medium uppercase tracking-wider mb-2" style={{ color: '#A5A29A' }}>
+                      {group.group}
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {group.items.map((item) => renderChip(item))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            );
+          }
+
+          const flatOpts = opts as string[];
+          return (
+            <div className="mb-5">
+              <div className="flex flex-wrap gap-2">
+                {flatOpts.map((opt) => renderChip(opt))}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Sliders */}
         {question.sliders && question.sliders.length > 0 && (
