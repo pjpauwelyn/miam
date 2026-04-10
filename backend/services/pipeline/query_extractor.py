@@ -84,7 +84,7 @@ def _build_profile_snapshot(profile: UserProfile) -> str:
     if disliked:
         lines.append(f"Disliked/never cuisines: {', '.join(disliked)}")
 
-    # Flavor extremes (only those with strong signal, score ≤2 or ≥8)
+    # Flavor extremes (only those with strong signal, score <=2 or >=8)
     flavor = profile.flavor
     flavor_notes: list[str] = []
     flavor_map = {
@@ -106,8 +106,8 @@ def _build_profile_snapshot(profile: UserProfile) -> str:
 
     # Time budget
     lines.append(
-        f"Time budget: weeknight ≤{profile.cooking.weeknight_minutes} min, "
-        f"weekend ≤{profile.cooking.weekend_minutes} min"
+        f"Time budget: weeknight <={profile.cooking.weeknight_minutes} min, "
+        f"weekend <={profile.cooking.weekend_minutes} min"
     )
 
     return "\n".join(lines)
@@ -156,7 +156,7 @@ OUTPUT FORMAT (respond with ONLY valid JSON, no markdown, no prose):
       "attribute": <string>,
       "value": <any>,
       "value_type": <"numeric"|"categorical"|"temporal"|"spatial"|"boolean"|"list">,
-      "centrality": <float 0–1>,
+      "centrality": <float 0-1>,
       "description": <string or null>,
       "source_span": <string or null>
     }
@@ -175,9 +175,19 @@ OUTPUT FORMAT (respond with ONLY valid JSON, no markdown, no prose):
   ],
   "inferred_mood": <string or null>,
   "inferred_urgency": <"quick"|"relaxed"|null>,
-  "query_complexity": <float 0–1>,
-  "ambiguity_score": <float 0–1>
+  "query_complexity": <float 0-1>,
+  "ambiguity_score": <float 0-1>
 }
+
+EXAMPLES:
+Input: "quick pasta dinner"
+Output: {"mode": "eat_in", "eat_in_attributes": {"desired_cuisine": "Italian", "desired_ingredients": ["pasta"], "time_constraint_minutes": 30, "difficulty_constraint": "easy", ...}, "inferred_urgency": "quick", "query_complexity": 0.2, "ambiguity_score": 0.1, "conflicts": [], ...}
+
+Input: "gluten-free Thai curry, no shrimp, under 30 minutes"
+Output: {"mode": "eat_in", "eat_in_attributes": {"desired_cuisine": "Thai", "desired_ingredients": ["curry paste"], "excluded_ingredients": ["shrimp"], "dietary_requirements": ["gluten_free"], "time_constraint_minutes": 30, ...}, "inferred_urgency": "quick", "query_complexity": 0.6, "ambiguity_score": 0.05, "conflicts": [], ...}
+
+Input: "I want a steak" (user profile: vegetarian)
+Output: {"mode": "eat_in", "eat_in_attributes": {"desired_ingredients": ["steak"], ...}, "conflicts": [{"conflict_type": "dietary_violation", "query_attribute": "desired_ingredients", "profile_path": "dietary.spectrum_label", "query_value": "steak", "profile_value": "vegetarian", "description": "User's profile indicates vegetarian but query requests steak", "resolution_strategy": "honor_profile", "warning_text": "Steak has been excluded due to your vegetarian profile."}], "query_complexity": 0.2, "ambiguity_score": 0.0, ...}
 """
 
 
@@ -197,7 +207,7 @@ def _apply_logical_relationships(ontology: QueryOntology, profile: UserProfile) 
     if ea is None:
         return ontology
 
-    # Rule 1: time_constraint_minutes present → urgency = "quick"
+    # Rule 1: time_constraint_minutes present -> urgency = "quick"
     if ea.time_constraint_minutes is not None and ea.time_constraint_minutes <= 30:
         if ontology.inferred_urgency != "quick":
             ontology.inferred_urgency = "quick"
@@ -210,7 +220,7 @@ def _apply_logical_relationships(ontology: QueryOntology, profile: UserProfile) 
             source_attribute="occasion",
             target_attribute="mood",
             relationship_type=RelationshipType.IMPLIES,
-            logical_constraint="occasion=date night → mood ∈ {romantic, special, indulgent}",
+            logical_constraint="occasion=date night -> mood in {romantic, special, indulgent}",
             confidence=0.85,
         ))
 
@@ -220,11 +230,11 @@ def _apply_logical_relationships(ontology: QueryOntology, profile: UserProfile) 
             source_attribute="difficulty_constraint",
             target_attribute="time_constraint_minutes",
             relationship_type=RelationshipType.ATTENUATES,
-            logical_constraint="difficulty=easy → time constraint weight reduced",
+            logical_constraint="difficulty=easy -> time constraint weight reduced",
             confidence=0.7,
         ))
 
-    # Rule 4: high-spice cuisines with profile spicy ≤ 2 → flavor_mismatch warning
+    # Rule 4: high-spice cuisines with profile spicy <= 2 -> flavor_mismatch warning
     high_spice = {"thai", "sichuan", "korean", "indian", "ethiopian", "mexican"}
     if ea.desired_cuisine and ea.desired_cuisine.lower() in high_spice:
         if profile.flavor.spicy is not None and profile.flavor.spicy <= 2.0:
@@ -250,7 +260,7 @@ def _apply_logical_relationships(ontology: QueryOntology, profile: UserProfile) 
                     ),
                 ))
 
-    # Rule 5: skill_mismatch — query implies "challenging" but skill is beginner/home_cook
+    # Rule 5: skill_mismatch - query implies "challenging" but skill is beginner/home_cook
     beginner_skills = {CookingSkill.BEGINNER, CookingSkill.HOME_COOK}
     if ea.difficulty_constraint == "challenging" and profile.cooking.skill in beginner_skills:
         already_flagged = any(
@@ -271,8 +281,8 @@ def _apply_logical_relationships(ontology: QueryOntology, profile: UserProfile) 
                 warning_text="This recipe may be more challenging than your usual comfort zone.",
             ))
 
-    # Rule 6: time_exceeded — query time_constraint exceeds profile weeknight budget
-    # (only applies if query has a long time constraint — signals a weekend cook)
+    # Rule 6: time_exceeded - query time_constraint exceeds profile weeknight budget
+    # (only applies if query has a long time constraint - signals a weekend cook)
     if ea.time_constraint_minutes is not None:
         is_weekday = True  # conservative assumption
         profile_limit = profile.cooking.weeknight_minutes if is_weekday else profile.cooking.weekend_minutes
@@ -300,18 +310,58 @@ def _apply_logical_relationships(ontology: QueryOntology, profile: UserProfile) 
 
 
 # ---------------------------------------------------------------------------
-# JSON extraction helper
+# JSON extraction helpers
 # ---------------------------------------------------------------------------
 
+def _bracket_count_json(text: str) -> str | None:
+    """Extract the first complete JSON object from text using bracket counting.
+
+    More robust than greedy regex when LLM outputs multiple JSON blocks or
+    has prose before/after the object.
+    """
+    start = text.find('{')
+    if start == -1:
+        return None
+    depth = 0
+    in_string = False
+    escape_next = False
+    for i, ch in enumerate(text[start:], start):
+        if escape_next:
+            escape_next = False
+            continue
+        if ch == '\\' and in_string:
+            escape_next = True
+            continue
+        if ch == '"' and not escape_next:
+            in_string = not in_string
+            continue
+        if in_string:
+            continue
+        if ch == '{':
+            depth += 1
+        elif ch == '}':
+            depth -= 1
+            if depth == 0:
+                return text[start:i + 1]
+    return None
+
+
 def _extract_json_from_text(text: str) -> dict:
-    """Try to extract a JSON object from LLM response text."""
+    """Try to extract a JSON object from LLM response text.
+
+    Strategy:
+    1. Direct parse
+    2. Markdown fence strip
+    3. Bracket-counting extraction (primary)
+    4. Greedy regex fallback
+    """
     # Try direct parse first
     try:
         return json.loads(text)
     except json.JSONDecodeError:
         pass
 
-    # Try to find JSON block in markdown code fences
+    # Strip markdown fences
     fence_match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
     if fence_match:
         try:
@@ -319,7 +369,15 @@ def _extract_json_from_text(text: str) -> dict:
         except json.JSONDecodeError:
             pass
 
-    # Try to find the first { ... } block
+    # Bracket-counting extraction (handles multiple JSON blocks correctly)
+    bracket_result = _bracket_count_json(text)
+    if bracket_result is not None:
+        try:
+            return json.loads(bracket_result)
+        except json.JSONDecodeError:
+            pass
+
+    # Greedy regex fallback
     brace_match = re.search(r"\{.*\}", text, re.DOTALL)
     if brace_match:
         try:
@@ -488,6 +546,7 @@ def _build_ontology_from_parsed(parsed: dict, raw_query: str, profile: UserProfi
             logger.debug("Skipping malformed conflict: %s", c_raw)
 
     # --- Also check hard stops not caught by LLM ---
+    # Use word-boundary regex to avoid false positives like "nuts" matching "doughnuts".
     all_query_ingredients = (
         eat_in.desired_ingredients
         + [eat_in.desired_cuisine or ""]
@@ -496,10 +555,16 @@ def _build_ontology_from_parsed(parsed: dict, raw_query: str, profile: UserProfi
     query_text_lower = " ".join(all_query_ingredients).lower()
 
     for restriction in profile.dietary.hard_stops:
-        if restriction.is_hard_stop and restriction.label.lower() in query_text_lower:
+        if restriction.is_hard_stop and re.search(
+            r"\b" + re.escape(restriction.label.lower()) + r"\b",
+            query_text_lower,
+        ):
             already = any(
                 c.conflict_type == ConflictType.DIETARY_VIOLATION
-                and restriction.label.lower() in str(c.query_value or "").lower()
+                and re.search(
+                    r"\b" + re.escape(restriction.label.lower()) + r"\b",
+                    str(c.query_value or "").lower(),
+                )
                 for c in conflicts
             )
             if not already:
