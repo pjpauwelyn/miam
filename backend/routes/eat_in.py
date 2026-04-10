@@ -14,6 +14,7 @@ from typing import Any
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
+from config import settings
 from services.pipeline.eat_in_pipeline import run_eat_in_pipeline
 from services.session_manager import (
     add_message,
@@ -78,10 +79,10 @@ async def eat_in_query(body: EatInQueryRequest) -> dict[str, Any]:
                 body.user_id,
             )
         except Exception as exc:
-            logger.error("Failed to create session: %s", exc)
+            logger.error("Failed to create session: %s", exc, exc_info=True)
             raise HTTPException(
                 status_code=503,
-                detail=f"Could not create session: {exc}",
+                detail="Could not create session. Please try again.",
             )
 
     # ------------------------------------------------------------------
@@ -116,10 +117,11 @@ async def eat_in_query(body: EatInQueryRequest) -> dict[str, Any]:
             body.user_id,
             session_id,
             exc,
+            exc_info=True,
         )
         raise HTTPException(
             status_code=500,
-            detail=f"Pipeline execution failed: {exc}",
+            detail="Pipeline execution failed. Please try again.",
         )
 
     generated_text: str = pipeline_result.get("generated_text", "")
@@ -163,32 +165,23 @@ async def eat_in_query(body: EatInQueryRequest) -> dict[str, Any]:
         )
 
     # ------------------------------------------------------------------
-    # 6. Assemble response
+    # 6. Build response
     # ------------------------------------------------------------------
-    latency_ms = round((time.monotonic() - request_start) * 1000, 2)
+    elapsed_ms = round((time.monotonic() - request_start) * 1000)
 
-    # Collect completed stage names from pipeline timings
-    stages_completed = [
-        stage
-        for stage in pipeline_debug.get("stage_timings", {}).keys()
-        if stage not in pipeline_debug.get("stage_errors", {})
-    ]
-
-    # Collect any warnings from retrieval context
-    warnings: list[str] = pipeline_debug.get("warnings", [])
-
-    return {
+    response_data: dict[str, Any] = {
         "session_id": session_id,
         "message_id": message_id,
-        "response": {
-            "generated_text": generated_text,
-            "results": results,
-            "warnings": warnings,
-        },
-        "debug": {
-            "latency_ms": latency_ms,
-            "stages_completed": stages_completed,
-            "pipeline_status": pipeline_status,
-            "pipeline_debug": pipeline_debug,
-        },
+        "generated_text": generated_text,
+        "results": results,
+        "pipeline_status": pipeline_status,
+        "elapsed_ms": elapsed_ms,
     }
+
+    if settings.ENV == "development":
+        response_data["debug"] = {
+            "stages": pipeline_debug.get("stages", []),
+            "timing": pipeline_debug.get("timing", {}),
+        }
+
+    return response_data

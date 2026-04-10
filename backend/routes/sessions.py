@@ -53,8 +53,8 @@ async def create_session(body: CreateSessionRequest) -> dict[str, Any]:
         )
         return session
     except Exception as exc:
-        logger.error("Failed to create session for user_id=%s: %s", body.user_id, exc)
-        raise HTTPException(status_code=503, detail=f"Session creation failed: {exc}")
+        logger.error("Failed to create session for user_id=%s: %s", body.user_id, exc, exc_info=True)
+        raise HTTPException(status_code=503, detail="Could not create session. Please try again.")
 
 
 @router.get("/{session_id}", summary="Get session details")
@@ -120,8 +120,8 @@ async def end_session(session_id: str) -> dict[str, Any]:
         logger.info("Session ended: session_id=%s", session_id)
         return {"session_id": session_id, "status": "ended"}
     except Exception as exc:
-        logger.error("Failed to end session_id=%s: %s", session_id, exc)
+        logger.error("Failed to end session_id=%s: %s", session_id, exc, exc_info=True)
         raise HTTPException(
             status_code=503,
-            detail=f"Failed to end session: {exc}",
+            detail="Could not end session. Please try again.",
         )

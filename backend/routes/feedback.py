@@ -86,11 +86,11 @@ async def record_feedback(body: RecordFeedbackRequest) -> dict[str, Any]:
         return {"status": "recorded", "feedback": row}
     except Exception as exc:
         logger.error(
-            "Failed to record feedback for user_id=%s: %s", body.user_id, exc
+            "Failed to record feedback for user_id=%s: %s", body.user_id, exc, exc_info=True
         )
         raise HTTPException(
             status_code=503,
-            detail=f"Failed to record feedback: {exc}",
+            detail="Could not record feedback. Please try again.",
         )
 
 
@@ -117,9 +117,9 @@ async def get_user_feedback(
         }
     except Exception as exc:
         logger.error(
-            "Failed to retrieve feedback for user_id=%s: %s", user_id, exc
+            "Failed to retrieve feedback for user_id=%s: %s", user_id, exc, exc_info=True
         )
         raise HTTPException(
             status_code=503,
-            detail=f"Failed to retrieve feedback: {exc}",
+            detail="Could not retrieve feedback. Please try again.",
         )
