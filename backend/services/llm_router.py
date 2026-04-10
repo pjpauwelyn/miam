@@ -5,7 +5,8 @@ Every LLM call in the miam backend goes through call_llm().
 Model selection is driven by the LLMOperation enum — never hardcoded
 in route handlers or service modules.
 
-SDK note: uses mistralai <1.0 (MistralClient, sync chat.complete).
+SDK note: uses mistralai <1.0 (MistralClient, synchronous chat()).
+Messages are passed as plain dicts {"role": ..., "content": ...}.
 """
 from __future__ import annotations
 
@@ -17,7 +18,6 @@ from functools import lru_cache
 from typing import Any
 
 from mistralai.client import MistralClient
-from mistralai.models.chat_completion import ChatMessage
 
 from config import settings
 
@@ -67,11 +67,6 @@ def _get_client() -> MistralClient:
     return MistralClient(api_key=settings.MISTRAL_API_KEY)
 
 
-def _to_chat_messages(messages: list[dict[str, str]]) -> list[ChatMessage]:
-    """Convert plain dicts to ChatMessage objects required by old SDK."""
-    return [ChatMessage(role=m["role"], content=m["content"]) for m in messages]
-
-
 async def call_llm(
     operation: LLMOperation,
     messages: list[dict[str, str]],
@@ -83,44 +78,34 @@ async def call_llm(
     """
     Central LLM call function. All Mistral API calls go through here.
 
-    Runs the synchronous MistralClient call in a thread pool so callers
+    Runs the synchronous MistralClient.chat() in a thread pool so callers
     can await it without blocking the event loop.
 
     Args:
         operation: Which pipeline stage is calling. Determines the model.
-        messages: Chat messages in OpenAI-compatible format.
+        messages: Chat messages as plain dicts {"role": ..., "content": ...}.
         temperature: Optional override.
         max_tokens: Optional max output tokens.
         response_format: Ignored for old SDK (kept for API compatibility).
 
     Returns:
         The assistant's response content as a string.
-
-    Raises:
-        asyncio.TimeoutError: If the call exceeds the configured timeout.
-        Exception: Any Mistral SDK error is logged and re-raised.
     """
     model = MODEL_ROUTING[operation]
     timeout = TIMEOUT_SECONDS.get(model, 30.0)
     client = _get_client()
-    chat_messages = _to_chat_messages(messages)
 
-    kwargs: dict[str, Any] = {
-        "model": model,
-        "messages": chat_messages,
-    }
+    kwargs: dict[str, Any] = {}
     if temperature is not None:
         kwargs["temperature"] = temperature
     if max_tokens is not None:
         kwargs["max_tokens"] = max_tokens
 
-    loop = asyncio.get_event_loop()
-
     def _sync_call() -> str:
         response = client.chat(
-            model=kwargs["model"],
-            messages=kwargs["messages"],
-            **{k: v for k, v in kwargs.items() if k not in ("model", "messages")},
+            model=model,
+            messages=messages,
+            **kwargs,
         )
         content = response.choices[0].message.content
         logger.debug(
@@ -130,6 +115,7 @@ async def call_llm(
         )
         return content.strip() if content else ""
 
+    loop = asyncio.get_event_loop()
     try:
         return await asyncio.wait_for(
             loop.run_in_executor(None, _sync_call),
@@ -138,16 +124,13 @@ async def call_llm(
     except asyncio.TimeoutError:
         logger.error(
             "LLM call timed out after %.1fs: operation=%s model=%s",
-            timeout,
-            operation.value,
-            model,
+            timeout, operation.value, model,
         )
         raise
     except Exception:
         logger.exception(
             "LLM call failed: operation=%s model=%s",
-            operation.value,
-            model,
+            operation.value, model,
         )
         raise
 
