@@ -122,8 +122,8 @@ Data quality:
 - {notes on missing or inferred data — flag with [INFERRED] if a value was estimated}
 
 Generation guidance:
-- Emphasise: {2–3 specific things Stage 6 should focus on}
-- Caveat: {1–2 things Stage 6 should qualify or hedge}
+- Emphasise: {2-3 specific things Stage 6 should focus on}
+- Caveat: {1-2 things Stage 6 should qualify or hedge}
 - Approach: {1 sentence framing for the answer — e.g. "Lead with the fastest recipe, mention the dairy-free adaptation upfront"}
 """
 
@@ -227,8 +227,8 @@ def _build_profile_summary(profile: UserProfile) -> str:
     # --- Budget ---
     lines.append("")
     lines.append("=== BUDGET ===")
-    home_budget = f"€{profile.budget.home_per_meal_eur:.0f}" if profile.budget.home_per_meal_eur is not None else "not set"
-    out_budget = f"€{profile.budget.out_per_meal_eur:.0f}" if profile.budget.out_per_meal_eur is not None else "not set"
+    home_budget = f"\u20ac{profile.budget.home_per_meal_eur:.0f}" if profile.budget.home_per_meal_eur is not None else "not set"
+    out_budget = f"\u20ac{profile.budget.out_per_meal_eur:.0f}" if profile.budget.out_per_meal_eur is not None else "not set"
     lines.append(f"Home per meal: {home_budget}")
     lines.append(f"Dining out per meal: {out_budget}")
 
@@ -445,7 +445,7 @@ def _build_fallback_context(
     profile: UserProfile,
     retrieval_context: RetrievalContext,
 ) -> str:
-    """Build a structured context deterministically when the LLM call fails."""
+    """Build a structured context deterministically when both LLM calls fail."""
     hard_stops = [r.label for r in profile.dietary.hard_stops if r.is_hard_stop]
     hard_stops_str = ", ".join(hard_stops) if hard_stops else "none"
     spectrum = profile.dietary.spectrum_label or "not specified"
@@ -577,28 +577,48 @@ async def refine_results(
         {"role": "user", "content": user_message},
     ]
 
+    # First LLM attempt
     try:
         refined_context = await call_llm(
             LLMOperation.REFINEMENT_AGENT,
             messages,
             max_tokens=2048,
         )
+
+        if "[ONTOLOGY SUMMARY]" not in refined_context:
+            logger.warning(
+                "Refinement agent output missing [ONTOLOGY SUMMARY] — retrying with temperature=0"
+            )
+            raise ValueError("Missing expected section header in LLM output")
+
         logger.info(
             "Stage 5 complete: refined context length=%d chars",
             len(refined_context),
         )
-
-        # Validate output has expected structure
-        if "[ONTOLOGY SUMMARY]" not in refined_context:
-            logger.warning(
-                "Refinement agent output missing [ONTOLOGY SUMMARY] — falling back to deterministic"
-            )
-            return _build_fallback_context(ranked_recipes, query, profile, retrieval_context)
-
         return refined_context
 
     except Exception as exc:
-        logger.error(
-            "Stage 5 LLM call failed (%s) — falling back to deterministic context", exc
-        )
-        return _build_fallback_context(ranked_recipes, query, profile, retrieval_context)
+        logger.warning("Refinement LLM call failed (%s), retrying with temperature=0", exc)
+
+        try:
+            refined_context = await call_llm(
+                LLMOperation.REFINEMENT_AGENT,
+                messages,
+                temperature=0,
+                max_tokens=2048,
+            )
+
+            if "[ONTOLOGY SUMMARY]" not in refined_context:
+                raise ValueError("Missing expected section header in retry output")
+
+            logger.info(
+                "Stage 5 complete (retry): refined context length=%d chars",
+                len(refined_context),
+            )
+            return refined_context
+
+        except Exception as exc2:
+            logger.error(
+                "Refinement retry also failed (%s) — falling back to deterministic context", exc2
+            )
+            return _build_fallback_context(ranked_recipes, query, profile, retrieval_context)
