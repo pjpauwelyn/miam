@@ -21,6 +21,7 @@ from __future__ import annotations
 import json
 import logging
 import math
+import time
 from typing import Any
 
 import httpx
@@ -36,8 +37,8 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 SUPABASE_REST_BASE = f"{settings.SUPABASE_URL}/rest/v1"
 DEFAULT_TOP_K = 20
-# Maximum number of embeddings to fetch in one REST call
-_EMBEDDINGS_PAGE_LIMIT = 1000
+# Raise ceiling as corpus grows. TODO: switch to pgvector RPC for server-side similarity.
+_EMBEDDINGS_PAGE_LIMIT = 5000
 
 # Table mapping by DATA_SOURCE config
 _TABLE_CONFIG = {
@@ -54,6 +55,12 @@ _TABLE_CONFIG = {
         "embeddings": ["embeddings", "embeddings_open"],
     },
 }
+
+# ---------------------------------------------------------------------------
+# Embedding cache (in-memory TTL)
+# ---------------------------------------------------------------------------
+_embedding_cache: dict[str, tuple[float, list[dict]]] = {}  # key -> (timestamp, data)
+_CACHE_TTL = 300  # 5 minutes
 
 
 def _get_tables() -> dict[str, list[str]]:
@@ -79,7 +86,23 @@ async def _fetch_all_embeddings() -> list[dict]:
     Fetch all recipe embeddings from the configured Supabase embeddings table(s).
     Supports DATA_SOURCE=mock|open|combined.
     Returns list of dicts with keys: id, entity_id, embedding (list[float])
+
+    Results are cached in memory for _CACHE_TTL seconds to avoid redundant
+    REST calls on every query. The cache key encodes the DATA_SOURCE so that
+    switching sources invalidates the cache automatically.
     """
+    source = getattr(settings, "DATA_SOURCE", "mock").lower()
+    cache_key = f"all_embeddings:{source}"
+    now = time.time()
+
+    if cache_key in _embedding_cache:
+        ts, data = _embedding_cache[cache_key]
+        if now - ts < _CACHE_TTL:
+            logger.debug(
+                "Embedding cache hit (%d records, %.0fs old)", len(data), now - ts
+            )
+            return data
+
     tables = _get_tables()
     embedding_tables = tables["embeddings"]
     all_rows: list[dict] = []
@@ -107,6 +130,7 @@ async def _fetch_all_embeddings() -> list[dict]:
             logger.debug("Fetched %d embeddings from %s", len(rows), table_name)
 
     logger.debug("Total embeddings fetched: %d", len(all_rows))
+    _embedding_cache[cache_key] = (now, all_rows)
     return all_rows
 
 
@@ -255,7 +279,7 @@ async def retrieve_recipes(
 
     Steps:
     1. Generate embedding for query_text
-    2. Fetch all recipe embeddings from Supabase REST API
+    2. Fetch all recipe embeddings from Supabase REST API (cached)
     3. Compute cosine similarity locally
     4. Take top candidates (3x top_k for filtering headroom)
     5. Fetch recipe documents for top candidates
@@ -281,7 +305,7 @@ async def retrieve_recipes(
         logger.error("Failed to generate query embedding: %s", exc)
         raise
 
-    # Step 2: Fetch all embeddings
+    # Step 2: Fetch all embeddings (served from cache after first call)
     try:
         all_embeddings = await _fetch_all_embeddings()
     except Exception as exc:
