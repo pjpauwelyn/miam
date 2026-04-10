@@ -47,6 +47,16 @@ MIN_SCORE_THRESHOLD = 2
 # Pass 1 — Title keyword map
 # Maps lowercase title substrings / dish names to a CUISINE_VOCABULARY entry.
 # Longer / more specific phrases are checked before shorter ones (see _match_title).
+#
+# SHADOWING RULE: whenever a short phrase X already maps to cuisine C, any compound
+# dish that contains X but belongs to a different cuisine MUST be listed here as a
+# longer entry so the length-descending sort picks it up first.
+# Examples of guarded compounds:
+#   "fried rice" → Chinese, so "kimchi fried rice", "thai fried rice",
+#                  "pineapple fried rice" are listed explicitly.
+#   "curry"      → Indian, so "thai green curry" / "thai red curry" are listed.
+#   "miso"       → Japanese, "ramen" → Japanese, so "miso ramen" is redundant but
+#                  explicit for clarity.
 # ---------------------------------------------------------------------------
 
 TITLE_KEYWORDS: dict[str, str] = {
@@ -133,6 +143,8 @@ TITLE_KEYWORDS: dict[str, str] = {
     "profiterole": "French",
     "pot au feu": "French",
     "pot-au-feu": "French",
+    # Compound guard: "french" already catches "french onion soup", but explicit is safer
+    "french onion soup": "French",
     # Spanish
     "paella": "Spanish",
     "gazpacho": "Spanish",
@@ -148,6 +160,7 @@ TITLE_KEYWORDS: dict[str, str] = {
     "pisto": "Spanish",
     "romesco": "Spanish",
     "catalan": "Spanish",
+    "arroz con leche": "Spanish",
     # Greek
     "moussaka": "Greek",
     "spanakopita": "Greek",
@@ -193,9 +206,11 @@ TITLE_KEYWORDS: dict[str, str] = {
     "iskender": "Turkish",
     "menemen": "Turkish",
     # Indian
-    "curry": "Indian",
+    # Compound guard: "chicken tikka masala" listed explicitly (tikka masala already present)
+    "chicken tikka masala": "Indian",
     "tikka masala": "Indian",
     "tikka": "Indian",
+    "curry": "Indian",
     "biryani": "Indian",
     "dal": "Indian",
     "dahl": "Indian",
@@ -228,6 +243,10 @@ TITLE_KEYWORDS: dict[str, str] = {
     "dim sum": "Chinese",
     "wonton": "Chinese",
     "dumpling": "Chinese",
+    # Compound guard: "fried rice" → Chinese, but kimchi/thai/pineapple variants belong elsewhere
+    "kimchi fried rice": "Korean",
+    "thai fried rice": "Thai",
+    "pineapple fried rice": "Thai",
     "fried rice": "Chinese",
     "chow mein": "Chinese",
     "lo mein": "Chinese",
@@ -252,6 +271,8 @@ TITLE_KEYWORDS: dict[str, str] = {
     # Japanese
     "sushi": "Japanese",
     "ramen": "Japanese",
+    # Compound guard: "miso ramen" is unambiguous; listed explicitly for clarity
+    "miso ramen": "Japanese",
     "udon": "Japanese",
     "soba": "Japanese",
     "tempura": "Japanese",
@@ -271,6 +292,8 @@ TITLE_KEYWORDS: dict[str, str] = {
     "edamame": "Japanese",
     "matcha": "Japanese",
     "wagashi": "Japanese",
+    # Compound guard: "japanese fried chicken" → Japanese (not Chinese via "fried")
+    "japanese fried chicken": "Japanese",
     # Korean
     "bibimbap": "Korean",
     "kimchi": "Korean",
@@ -285,9 +308,14 @@ TITLE_KEYWORDS: dict[str, str] = {
     "kimbap": "Korean",
     "pajeon": "Korean",
     "samgyeopsal": "Korean",
+    # Compound guard: "korean fried chicken" → Korean (not Chinese via "fried")
+    "korean fried chicken": "Korean",
     # Thai
     "pad thai": "Thai",
     "pad see ew": "Thai",
+    # Compound guard: "thai green/red curry" listed before bare "green/red curry" and "curry"
+    "thai green curry": "Thai",
+    "thai red curry": "Thai",
     "green curry": "Thai",
     "red curry": "Thai",
     "yellow curry": "Thai",
@@ -308,7 +336,6 @@ TITLE_KEYWORDS: dict[str, str] = {
     "bánh mì": "Vietnamese",
     "bun bo hue": "Vietnamese",
     "goi cuon": "Vietnamese",
-    "spring roll": "Vietnamese",  # also Chinese but Vietnamese gets priority via ordering
     "com tam": "Vietnamese",
     "bun cha": "Vietnamese",
     "cao lau": "Vietnamese",
@@ -413,7 +440,6 @@ TITLE_KEYWORDS: dict[str, str] = {
     "rice and peas": "Caribbean",
     "ackee": "Caribbean",
     "doubles": "Caribbean",
-    "roti": "Caribbean",  # also Indian but Caribbean context common
     "callaloo": "Caribbean",
     "escovitch": "Caribbean",
     "pepperpot": "Caribbean",
@@ -429,9 +455,6 @@ TITLE_KEYWORDS: dict[str, str] = {
     "piri piri": "African",
     "bunny chow": "African",
     # Middle Eastern
-    "falafel": "Middle Eastern",
-    "shawarma": "Middle Eastern",
-    "fattoush": "Middle Eastern",
     "mansaf": "Middle Eastern",
     "maqluba": "Middle Eastern",
     "musakhan": "Middle Eastern",
