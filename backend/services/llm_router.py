@@ -5,8 +5,8 @@ Every LLM call in the miam backend goes through call_llm().
 Model selection is driven by the LLMOperation enum — never hardcoded
 in route handlers or service modules.
 
-SDK note: uses mistralai <1.0 (MistralClient, synchronous chat()).
-Messages are passed as plain dicts {"role": ..., "content": ...}.
+SDK note: uses mistralai >=1.0 (Mistral client, synchronous chat.complete(),
+wrapped in run_in_executor for async compatibility).
 """
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ from enum import Enum
 from functools import lru_cache
 from typing import Any
 
-from mistralai.client import MistralClient
+from mistralai import Mistral
 
 from config import settings
 
@@ -62,9 +62,9 @@ TIMEOUT_SECONDS: dict[str, float] = {
 
 
 @lru_cache(maxsize=1)
-def _get_client() -> MistralClient:
-    """Lazy singleton client (old SDK)."""
-    return MistralClient(api_key=settings.MISTRAL_API_KEY)
+def _get_client() -> Mistral:
+    """Lazy singleton client (new SDK >=1.0)."""
+    return Mistral(api_key=settings.MISTRAL_API_KEY)
 
 
 async def call_llm(
@@ -78,7 +78,7 @@ async def call_llm(
     """
     Central LLM call function. All Mistral API calls go through here.
 
-    Runs the synchronous MistralClient.chat() in a thread pool so callers
+    Runs synchronous chat.complete() in a thread pool so callers
     can await it without blocking the event loop.
 
     Args:
@@ -86,7 +86,7 @@ async def call_llm(
         messages: Chat messages as plain dicts {"role": ..., "content": ...}.
         temperature: Optional override.
         max_tokens: Optional max output tokens.
-        response_format: Ignored for old SDK (kept for API compatibility).
+        response_format: Optional response format (ignored in this SDK version).
 
     Returns:
         The assistant's response content as a string.
@@ -102,7 +102,7 @@ async def call_llm(
         kwargs["max_tokens"] = max_tokens
 
     def _sync_call() -> str:
-        response = client.chat(
+        response = client.chat.complete(
             model=model,
             messages=messages,
             **kwargs,
