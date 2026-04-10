@@ -50,6 +50,22 @@ _VALID_MATCH_TIERS = frozenset({
     "adapted",     # existing recipe modified for the user
 })
 
+
+def _strip_exclamations(text: str) -> str:
+    """Replace '!' at sentence boundaries with '.'.
+
+    Uses a lookahead so only '!' followed by whitespace or end-of-string is
+    replaced, preserving '?!' sequences correctly:
+        'Great dish!'   -> 'Great dish.'
+        'What?!'        -> 'What?.'
+        'Hello! World!' -> 'Hello. World.'
+
+    The naive .replace('!', '.') would turn 'What?!' into 'What?.', which
+    is why this regex helper is used instead.
+    """
+    return re.sub(r'!(?=\s|$)', '.', text)
+
+
 # ---------------------------------------------------------------------------
 # System prompt
 # ---------------------------------------------------------------------------
@@ -83,11 +99,11 @@ AUTHORITY HIERARCHY:
 STYLE RULES (non-negotiable):
 1. Follow the framing set by [ONTOLOGY DIRECTIVES] Address and Shape.
 2. Lead with the most relevant or best-fitting recommendation.
-3. Adapt to the user's skill level — do not describe advanced techniques to a beginner
+3. Adapt to the user's skill level -- do not describe advanced techniques to a beginner
    without simplifying them.
 4. Include approximate timing and difficulty for each recipe suggested.
 5. Include a nutrition snapshot per recipe when the data is present in the context;
-   if absent, omit — do not invent numbers.
+   if absent, omit -- do not invent numbers.
 6. State any WARN compliance issues from the context explicitly and suggest the
    adaptation noted.
 7. State pantry gaps (ingredients the user likely needs to buy) explicitly.
@@ -98,9 +114,9 @@ STYLE RULES (non-negotiable):
 10. All measurements metric. Temperatures in Celsius.
 11. Warm, knowledgeable, concise. Target 200-400 words for generated_text.
 
-OUTPUT FORMAT — respond with ONLY valid JSON, no markdown fences, no prose outside JSON:
+OUTPUT FORMAT -- respond with ONLY valid JSON, no markdown fences, no prose outside JSON:
 {
-  "generated_text": "<single string — the full user-facing response>",
+  "generated_text": "<single string -- the full user-facing response>",
   "results": [
     {
       "recipe_id": "<entity_id from context, or 'generated' for new recipes>",
@@ -110,7 +126,7 @@ OUTPUT FORMAT — respond with ONLY valid JSON, no markdown fences, no prose out
       "time_total_min": <int or null>,
       "difficulty": <int 1-5 or null>,
       "serves": <int or null>,
-      "nutrition_summary": "<e.g. '~420 kcal, 28g protein per serving' — only if in context, else null>",
+      "nutrition_summary": "<e.g. '~420 kcal, 28g protein per serving' -- only if in context, else null>",
       "key_technique": "<one practical, actionable cooking note>",
       "missing_ingredients": ["<ingredient>", ...],
       "substitutions": ["<substitution note>", ...],
@@ -216,15 +232,15 @@ def _validate_and_normalise_response(parsed: dict, ranked_recipes: list[dict]) -
             recipe_meta_lookup[eid] = r
 
     generated_text = str(parsed.get("generated_text") or "").strip()
-    # Enforce no exclamation marks
-    generated_text = generated_text.replace("!", ".")
+    # Enforce no exclamation marks -- regex preserves 'What?!' -> 'What?.'
+    generated_text = _strip_exclamations(generated_text)
 
     results_raw = parsed.get("results") or []
     results: list[dict] = []
 
     for i, item in enumerate(results_raw):
         recipe_id = str(item.get("recipe_id") or "")
-        # For generated/adapted recipes recipe_id may be "generated" — no metadata to look up
+        # For generated/adapted recipes recipe_id may be "generated" -- no metadata to look up
         meta = recipe_meta_lookup.get(recipe_id) or {}
 
         title = item.get("title") or meta.get("title_en") or meta.get("title") or f"Recipe {i + 1}"
@@ -242,14 +258,13 @@ def _validate_and_normalise_response(parsed: dict, ranked_recipes: list[dict]) -
 
         nutrition_summary = item.get("nutrition_summary")
         if isinstance(nutrition_summary, str) and nutrition_summary.strip():
-            # Remove exclamation marks
-            nutrition_summary = nutrition_summary.replace("!", ".")
+            nutrition_summary = _strip_exclamations(nutrition_summary)
         else:
             nutrition_summary = None
 
         key_technique = item.get("key_technique")
         if isinstance(key_technique, str):
-            key_technique = key_technique.replace("!", ".").strip() or None
+            key_technique = _strip_exclamations(key_technique).strip() or None
         else:
             key_technique = None
 
@@ -264,7 +279,7 @@ def _validate_and_normalise_response(parsed: dict, ranked_recipes: list[dict]) -
         warnings = item.get("warnings") or []
         if not isinstance(warnings, list):
             warnings = [str(warnings)]
-        warnings = [w.replace("!", ".") for w in warnings]
+        warnings = [_strip_exclamations(w) for w in warnings]
 
         results.append({
             "recipe_id":           recipe_id,
@@ -347,7 +362,7 @@ async def generate_response(
         return result
 
     except Exception as exc:
-        logger.warning("Stage 6 LLM call failed (%s) — retrying with temperature=0", exc)
+        logger.warning("Stage 6 LLM call failed (%s) -- retrying with temperature=0", exc)
 
         try:
             raw = await call_llm(
@@ -362,6 +377,6 @@ async def generate_response(
 
         except Exception as exc2:
             logger.error(
-                "Stage 6 failed after retry (%s) — using deterministic fallback", exc2
+                "Stage 6 failed after retry (%s) -- using deterministic fallback", exc2
             )
             return _build_fallback_response(refined_context, query, ranked_recipes)
