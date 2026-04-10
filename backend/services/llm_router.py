@@ -13,6 +13,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import re
 from enum import Enum
 from functools import lru_cache
 from typing import Any
@@ -59,6 +60,16 @@ TIMEOUT_SECONDS: dict[str, float] = {
     "mistral-small-latest": 30.0,
     "mistral-large-latest": 60.0,
 }
+
+# Regex to strip markdown code fences: ```json ... ``` or ``` ... ```
+_FENCE_RE = re.compile(r"^```(?:json)?\s*\n?(.*?)\n?```\s*$", re.DOTALL)
+
+
+def _strip_fences(raw: str) -> str:
+    """Remove markdown code fences that LLMs sometimes wrap JSON in."""
+    raw = raw.strip()
+    m = _FENCE_RE.match(raw)
+    return m.group(1).strip() if m else raw
 
 
 @lru_cache(maxsize=1)
@@ -143,8 +154,10 @@ async def call_llm_json(
     max_tokens: int | None = None,
 ) -> dict | list:
     """
-    Convenience wrapper: calls call_llm and parses the response as JSON.
-    Retries once with temperature=0 on parse failure.
+    Convenience wrapper: calls call_llm, strips markdown fences, and parses
+    the response as JSON.  Retries once with temperature=0 on parse failure.
+    Returns an empty dict on second failure instead of raising, so callers
+    can handle it gracefully rather than crashing.
     """
     raw = await call_llm(
         operation,
@@ -154,16 +167,25 @@ async def call_llm_json(
     )
 
     try:
-        return json.loads(raw)
+        return json.loads(_strip_fences(raw))
     except json.JSONDecodeError:
         logger.warning(
             "JSON parse failed for operation=%s, retrying with temperature=0",
             operation.value,
         )
-        raw = await call_llm(
-            operation,
-            messages,
-            temperature=0,
-            max_tokens=max_tokens,
+
+    raw = await call_llm(
+        operation,
+        messages,
+        temperature=0,
+        max_tokens=max_tokens,
+    )
+
+    try:
+        return json.loads(_strip_fences(raw))
+    except json.JSONDecodeError:
+        logger.error(
+            "JSON parse failed on retry for operation=%s — returning empty result",
+            operation.value,
         )
-        return json.loads(raw)
+        return {}
