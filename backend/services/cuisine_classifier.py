@@ -61,6 +61,8 @@ _VOCAB_SET: set[str] = set(CUISINE_VOCABULARY)
 
 TITLE_KEYWORDS: dict[str, str] = {
     # ── Compound / shadowing guards (must come before their substrings) ──────
+    "japanese curry rice":      "Japanese",   # guard: shadows 'curry' → Indian
+    "japanese curry":           "Japanese",   # guard: shadows 'curry' → Indian
     "kimchi fried rice":        "Korean",
     "thai fried rice":          "Thai",
     "pineapple fried rice":     "Thai",
@@ -428,7 +430,7 @@ TITLE_KEYWORDS: dict[str, str] = {
     "eisbein":          "German",
     "flammkuchen":      "German",
 
-    # ── Dutch ────────────────────────────────────────────────────────────────
+    # ── Dutch (incl. Belgian Low Countries dishes) ────────────────────────────
     "stroopwafel":      "Dutch",
     "stamppot":         "Dutch",
     "bitterballen":     "Dutch",
@@ -445,6 +447,12 @@ TITLE_KEYWORDS: dict[str, str] = {
     "appeltaart":       "Dutch",
     "speculaas":        "Dutch",
     "drop":             "Dutch",
+    "waterzooi":        "Dutch",   # Belgian/Ghent fish or chicken stew
+    "stoemp":           "Dutch",   # Belgian mashed potato dish
+    "stoofvlees":       "Dutch",   # Belgian beef stew
+    "carbonnade":       "Dutch",   # carbonnade flamande (Belgian beer stew)
+    "vlaamse":          "Dutch",   # Flemish (à la flamande dishes)
+    "gentse":           "Dutch",   # Ghent-style dishes
 
     # ── Scandinavian ─────────────────────────────────────────────────────────
     "gravlax":          "Scandinavian",
@@ -780,7 +788,7 @@ class CuisineClassifier:
     Usage:
         classifier = CuisineClassifier()
         results = await classifier.classify_batch(recipes)
-        # [{\"index\": 0, \"cuisine\": \"Italian\"}, ...]
+        # [{"index": 0, "cuisine": "Italian"}, ...]
     """
 
     async def classify_batch(self, recipes: Sequence[dict]) -> list[dict]:
