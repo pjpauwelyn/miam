@@ -190,7 +190,12 @@ export interface SessionSummary {
 // Supabase direct reads — Recipes
 // ---------------------------------------------------------------------------
 
-export async function fetchRecipes(limit = 50): Promise<RecipeDocument[]> {
+/**
+ * Fetch up to `limit` recipes ordered deterministically by recipe_id.
+ * Default cap is 1000 (Supabase REST hard ceiling per request) so callers
+ * like fetchSeasonalRecipes and fetchRecipesByCuisine see the whole table.
+ */
+export async function fetchRecipes(limit = 1000): Promise<RecipeDocument[]> {
   const url = `${SUPABASE_REST}/recipes_open?select=recipe_id,data&limit=${limit}&order=recipe_id`;
   const resp = await fetch(url, { headers: supaHeaders() });
   if (!resp.ok) throw new Error(`Failed to fetch recipes: ${resp.status}`);
@@ -200,7 +205,7 @@ export async function fetchRecipes(limit = 50): Promise<RecipeDocument[]> {
 
 export async function fetchRecipesByCuisine(cuisine: string, limit = 10): Promise<RecipeDocument[]> {
   try {
-    const all = await fetchRecipes(500);
+    const all = await fetchRecipes(1000);
     return all.filter(r => r.cuisine_tags.some(c => c.toLowerCase().includes(cuisine.toLowerCase()))).slice(0, limit);
   } catch {
     return [];
@@ -223,22 +228,63 @@ export async function fetchRecipeById(recipeId: string): Promise<RecipeDocument 
   return normaliseRecipe(rows[0]);
 }
 
+/**
+ * Fetch `limit` recipes for the For-You feed using a randomised offset strategy:
+ *
+ * 1. Query the total row count via `Prefer: count=exact`.
+ * 2. Pick a random offset so the fetch window lands anywhere in the table.
+ * 3. Fetch `sampleSize` (≥ limit * 10) rows from that offset, ordered by
+ *    recipe_id for intra-window determinism.
+ * 4. Shuffle client-side and return the first `limit` results.
+ *
+ * This gives every recipe in a large table a fair chance of appearing on
+ * each load without fetching the entire table.
+ */
 export async function fetchForYouRecipes(limit = 8): Promise<RecipeDocument[]> {
-  // Fetch a larger deterministic sample and shuffle client-side so every
-  // recipe in the table has a fair chance of appearing.
-  const url = `${SUPABASE_REST}/recipes_open?select=recipe_id,data&limit=${limit * 10}&order=recipe_id`;
+  const sampleSize = limit * 10; // minimum window size
+
+  // --- Step 1: get total count ---
+  let totalCount = sampleSize; // safe fallback if count query fails
+  try {
+    const countResp = await fetch(
+      `${SUPABASE_REST}/recipes_open?select=recipe_id&limit=1`,
+      {
+        headers: supaHeaders({ Prefer: 'count=exact' }),
+      },
+    );
+    if (countResp.ok) {
+      // Supabase returns: Content-Range: 0-0/342
+      const contentRange = countResp.headers.get('content-range');
+      if (contentRange) {
+        const total = parseInt(contentRange.split('/')[1] ?? '0', 10);
+        if (!isNaN(total) && total > 0) totalCount = total;
+      }
+    }
+  } catch { /* fall back to sampleSize */ }
+
+  // --- Step 2: random offset so the window covers different parts of the table ---
+  const maxOffset = Math.max(0, totalCount - sampleSize);
+  const offset = Math.floor(Math.random() * (maxOffset + 1));
+
+  // --- Step 3: fetch the window ---
+  const url =
+    `${SUPABASE_REST}/recipes_open?select=recipe_id,data` +
+    `&order=recipe_id&limit=${sampleSize}&offset=${offset}`;
+
   const resp = await fetch(url, { headers: supaHeaders() });
   if (!resp.ok) return [];
+
   const rows: { recipe_id: string; data: any }[] = await resp.json();
   const recipes = rows.map(normaliseRecipe);
-  const shuffled = recipes.sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, limit);
+
+  // --- Step 4: client-side shuffle and trim ---
+  return recipes.sort(() => Math.random() - 0.5).slice(0, limit);
 }
 
 export async function fetchSeasonalRecipes(limit = 8): Promise<RecipeDocument[]> {
   const month = new Date().getMonth();
   const season = month >= 2 && month <= 4 ? 'spring' : month >= 5 && month <= 7 ? 'summer' : month >= 8 && month <= 10 ? 'autumn' : 'winter';
-  const all = await fetchRecipes(500);
+  const all = await fetchRecipes(1000);
   const seasonal = all.filter(r =>
     r.season_tags?.some(t => t.toLowerCase().includes(season))
   );
@@ -460,6 +506,12 @@ export async function queryPipeline(
 /**
  * Parse a plain-string ingredient like "200g flour" or "1 tbsp olive oil"
  * into a structured { name, amount, unit } object.
+ *
+ * Handles:
+ *  - integer, decimal, fractional ("1/2"), mixed-number ("1 1/2") quantities
+ *  - a broad unit allow-list (metric, imperial, culinary)
+ *  - bare number prefix with no unit ("3 eggs")
+ *  - no quantity at all ("salt to taste", "fresh herbs")
  */
 function parseIngredientString(raw: string): RecipeIngredient {
   const trimmed = raw.trim();
@@ -478,8 +530,8 @@ function parseIngredientString(raw: string): RecipeIngredient {
 
   if (match) {
     const rawAmount = match[1]?.trim() ?? '';
-    // Normalise mixed fractions like "1 1/2" → keep as-is; simple fractions → decimal
-    const amount = rawAmount.replace(/(\d)\s+(\d)/, '$1 $2'); // keep mixed as-is
+    // Keep mixed fractions like "1 1/2" as-is — natural for display
+    const amount = rawAmount.replace(/(\d)\s+(\d)/, '$1 $2');
     return {
       name: match[3].trim(),
       amount,
