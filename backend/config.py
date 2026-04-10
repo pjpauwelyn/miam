@@ -28,7 +28,7 @@ class Settings(BaseSettings):
 
     # App config
     ENV: str = "development"
-    LOG_LEVEL: str = "debug"
+    LOG_LEVEL: str = "info"
 
     # Data tier
     DATA_TIER: int = 0
