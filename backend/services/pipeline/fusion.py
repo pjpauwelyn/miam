@@ -3,7 +3,7 @@ Stage 2b: Ontology Fusion
 
 Pure Python, no LLM. Fuses the persistent UserProfile (PersonalOntology)
 with the ephemeral QueryOntology to produce a RetrievalContext that drives
-Stages 3–6.
+Stages 3-6.
 
 Function signature:
     def fuse_ontologies(profile: UserProfile, query: QueryOntology) -> RetrievalContext
@@ -21,7 +21,8 @@ Function signature:
 from __future__ import annotations
 
 import logging
-from datetime import datetime
+import zoneinfo
+from datetime import datetime, timezone
 from typing import Any
 
 from models.fused_ontology import RetrievalContext
@@ -41,7 +42,7 @@ from models.query_ontology import (
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
-# Weight map: DimensionWeight → base retrieval multiplier
+# Weight map: DimensionWeight -> base retrieval multiplier
 # ---------------------------------------------------------------------------
 WEIGHT_MAP: dict[DimensionWeight, float] = {
     DimensionWeight.CORE:        1.0,
@@ -50,7 +51,7 @@ WEIGHT_MAP: dict[DimensionWeight, float] = {
     DimensionWeight.CONTEXTUAL:  0.15,
 }
 
-# Skill → numeric difficulty ceiling (recipe difficulty 1–5)
+# Skill -> numeric difficulty ceiling (recipe difficulty 1-5)
 SKILL_DIFFICULTY_MAP: dict[CookingSkill, int] = {
     CookingSkill.BEGINNER:     1,
     CookingSkill.HOME_COOK:    2,
@@ -61,12 +62,34 @@ SKILL_DIFFICULTY_MAP: dict[CookingSkill, int] = {
 
 
 # ---------------------------------------------------------------------------
+# Context time helpers
+# ---------------------------------------------------------------------------
+
+def _now_in_tz(user_timezone: str = "UTC") -> datetime:
+    """Return the current datetime in the given IANA timezone.
+
+    Falls back to UTC if the timezone string is invalid.
+    """
+    try:
+        tz = zoneinfo.ZoneInfo(user_timezone)
+    except (zoneinfo.ZoneInfoNotFoundError, KeyError):
+        logger.warning("Unknown timezone '%s', falling back to UTC", user_timezone)
+        tz = zoneinfo.ZoneInfo("UTC")
+    return datetime.now(tz)
+
+
+def _is_weekend(user_timezone: str = "UTC") -> bool:
+    """Return True if it is currently Saturday or Sunday in the user's timezone."""
+    return _now_in_tz(user_timezone).weekday() >= 5  # 5=Saturday, 6=Sunday
+
+
+# ---------------------------------------------------------------------------
 # Main fusion function
 # ---------------------------------------------------------------------------
 
 def fuse_ontologies(profile: UserProfile, query: QueryOntology) -> RetrievalContext:
     """
-    Fuse PersonalOntology + QueryOntology → RetrievalContext.
+    Fuse PersonalOntology + QueryOntology -> RetrievalContext.
 
     The RetrievalContext is the canonical input to Stage 3 (retriever)
     and Stage 4 (ranker). It encodes:
@@ -94,18 +117,18 @@ def fuse_ontologies(profile: UserProfile, query: QueryOntology) -> RetrievalCont
             "value": label,
             "reason": "dietary_hard_stop",
         })
-        debug_trace.append(f"Step0: hard stop → exclude '{label}'")
+        debug_trace.append(f"Step0: hard stop -> exclude '{label}'")
 
     # Also add profile-level dietary flags from DietaryProfile.spectrum_label
     spectrum = (profile.dietary.spectrum_label or "").lower()
     if "vegan" in spectrum and "flexitarian" not in spectrum:
         hard_filters.append({"type": "dietary_flag", "value": "is_vegan", "required": True})
-        debug_trace.append("Step0: vegan spectrum → require is_vegan flag")
+        debug_trace.append("Step0: vegan spectrum -> require is_vegan flag")
     elif "vegetarian" in spectrum:
         hard_filters.append({"type": "dietary_flag", "value": "is_vegetarian", "required": True})
-        debug_trace.append("Step0: vegetarian spectrum → require is_vegetarian flag")
+        debug_trace.append("Step0: vegetarian spectrum -> require is_vegetarian flag")
 
-    # Soft stops → soft filter
+    # Soft stops -> soft filter
     for restriction in profile.dietary.soft_stops:
         if not restriction.is_hard_stop:
             soft_filters.append({
@@ -113,7 +136,7 @@ def fuse_ontologies(profile: UserProfile, query: QueryOntology) -> RetrievalCont
                 "value": restriction.label,
                 "penalty": 0.4,
             })
-            debug_trace.append(f"Step0: soft stop → prefer-exclude '{restriction.label}'")
+            debug_trace.append(f"Step0: soft stop -> prefer-exclude '{restriction.label}'")
 
     # -----------------------------------------------------------------------
     # Step 1: Build base weight vector from DimensionMeta
@@ -144,7 +167,7 @@ def fuse_ontologies(profile: UserProfile, query: QueryOntology) -> RetrievalCont
         if ea.desired_cuisine:
             value_targets["cuisine"] = ea.desired_cuisine
             scoring_vector["cuisine"] = min(2.0, scoring_vector["cuisine"] * complexity_boost * 1.5)
-            debug_trace.append(f"Step2: cuisine target='{ea.desired_cuisine}' → weight boosted")
+            debug_trace.append(f"Step2: cuisine target='{ea.desired_cuisine}' -> weight boosted")
 
         if ea.desired_ingredients:
             value_targets["desired_ingredients"] = ea.desired_ingredients
@@ -171,7 +194,7 @@ def fuse_ontologies(profile: UserProfile, query: QueryOntology) -> RetrievalCont
                 "type": "max_time_min",
                 "value": ea.time_constraint_minutes,
             })
-            debug_trace.append(f"Step2: time constraint → max_time_min={ea.time_constraint_minutes}")
+            debug_trace.append(f"Step2: time constraint -> max_time_min={ea.time_constraint_minutes}")
         else:
             # Use profile time budget as soft filter
             soft_filters.append({
@@ -179,7 +202,7 @@ def fuse_ontologies(profile: UserProfile, query: QueryOntology) -> RetrievalCont
                 "value": profile.cooking.weeknight_minutes,
                 "penalty": 0.2,
             })
-            debug_trace.append(f"Step2: profile weeknight budget → soft max_time_min={profile.cooking.weeknight_minutes}")
+            debug_trace.append(f"Step2: profile weeknight budget -> soft max_time_min={profile.cooking.weeknight_minutes}")
 
         if ea.difficulty_constraint:
             value_targets["difficulty_constraint"] = ea.difficulty_constraint
@@ -195,7 +218,7 @@ def fuse_ontologies(profile: UserProfile, query: QueryOntology) -> RetrievalCont
                 "penalty": 0.3,
             })
             value_targets["profile_max_difficulty"] = max_diff
-            debug_trace.append(f"Step2: profile skill → soft max_difficulty={max_diff}")
+            debug_trace.append(f"Step2: profile skill -> soft max_difficulty={max_diff}")
 
         if ea.occasion:
             value_targets["occasion"] = ea.occasion
@@ -204,9 +227,9 @@ def fuse_ontologies(profile: UserProfile, query: QueryOntology) -> RetrievalCont
         if ea.nutritional_goal:
             value_targets["nutritional_goal"] = ea.nutritional_goal
             scoring_vector["nutrition"] = min(2.0, scoring_vector["nutrition"] * 2.0)
-            debug_trace.append(f"Step2: nutritional_goal='{ea.nutritional_goal}' → nutrition weight boosted")
+            debug_trace.append(f"Step2: nutritional_goal='{ea.nutritional_goal}' -> nutrition weight boosted")
 
-    # For generic extracted_attributes — add to value_targets
+    # For generic extracted_attributes - add to value_targets
     for attr in query.extracted_attributes:
         if attr.centrality >= 0.7 and attr.attribute not in value_targets:
             value_targets[f"query_{attr.attribute}"] = attr.value
@@ -232,20 +255,50 @@ def fuse_ontologies(profile: UserProfile, query: QueryOntology) -> RetrievalCont
         value_targets["cuisine_affinities"] = cuisine_affinity_map
         debug_trace.append(f"Step3: cuisine_affinities blended ({len(cuisine_affinity_map)} entries)")
 
-    # Never cuisines → hard filter
+    # Never cuisines -> hard filter, UNLESS the query explicitly requests that cuisine.
+    # If the user says "I want Korean food" but Korean is in their never list,
+    # we downgrade the hard filter to a soft filter (warning) and honor the query.
+    # This only applies when the SPECIFIC cuisine name appears in query.cuisine_tags
+    # (not for vague requests like "something Asian").
+    query_cuisine_tags_lower: set[str] = set()
+    if ea and ea.desired_cuisine:
+        query_cuisine_tags_lower.add(ea.desired_cuisine.lower())
+    # Also support explicit cuisine_tags field if present on the query model
+    if hasattr(query, "cuisine_tags") and query.cuisine_tags:
+        for ct in query.cuisine_tags:
+            query_cuisine_tags_lower.add(ct.lower())
+
     never_cuisines = [
         aff.cuisine for aff in profile.cuisine_affinities.affinities
         if aff.level == PreferenceLevel.NEVER
     ]
     for cuisine in never_cuisines:
-        hard_filters.append({
-            "type": "exclude_cuisine",
-            "value": cuisine,
-            "reason": "cuisine_never",
-        })
-        debug_trace.append(f"Step3: never cuisine → exclude '{cuisine}'")
+        cuisine_lower = cuisine.lower()
+        if cuisine_lower in query_cuisine_tags_lower:
+            # Query explicitly requests this cuisine -> downgrade hard filter to warning
+            soft_filters.append({
+                "type": "prefer_exclude_cuisine",
+                "value": cuisine,
+                "penalty": 0.2,
+                "reason": "cuisine_never_overridden_by_query",
+            })
+            warnings.append(
+                f"'{cuisine}' is in your never list, but you explicitly requested it. "
+                f"Showing results with a caution note."
+            )
+            debug_trace.append(
+                f"Step3: never cuisine '{cuisine}' overridden by explicit query request "
+                f"-> downgraded to soft filter (strategy: honor_query)"
+            )
+        else:
+            hard_filters.append({
+                "type": "exclude_cuisine",
+                "value": cuisine,
+                "reason": "cuisine_never",
+            })
+            debug_trace.append(f"Step3: never cuisine -> exclude '{cuisine}'")
 
-    # Disliked cuisines → soft filter (unless query explicitly requests them)
+    # Disliked cuisines -> soft filter (unless query explicitly requests them)
     disliked_cuisines = [
         aff.cuisine for aff in profile.cuisine_affinities.affinities
         if aff.level == PreferenceLevel.DISLIKE
@@ -274,7 +327,7 @@ def fuse_ontologies(profile: UserProfile, query: QueryOntology) -> RetrievalCont
     }
     for dim, val in flavor_map.items():
         if val is not None:
-            flavor_prefs[dim] = val / 10.0  # normalize to 0–1
+            flavor_prefs[dim] = val / 10.0  # normalize to 0-1
     if flavor_prefs:
         value_targets["flavor_preferences"] = flavor_prefs
         debug_trace.append(f"Step3: flavor_preferences blended ({len(flavor_prefs)} dims)")
@@ -285,43 +338,46 @@ def fuse_ontologies(profile: UserProfile, query: QueryOntology) -> RetrievalCont
     for rel in query.logical_relationships:
         if rel.relationship_type == RelationshipType.REQUIRES:
             debug_trace.append(
-                f"Step4: REQUIRES {rel.source_attribute} → {rel.target_attribute}"
+                f"Step4: REQUIRES {rel.source_attribute} -> {rel.target_attribute}"
             )
         elif rel.relationship_type == RelationshipType.EXCLUDES:
             # Add to hard filters if not already present
             debug_trace.append(
-                f"Step4: EXCLUDES {rel.source_attribute} → {rel.target_attribute}"
+                f"Step4: EXCLUDES {rel.source_attribute} -> {rel.target_attribute}"
             )
         elif rel.relationship_type == RelationshipType.AMPLIFIES:
             dim = rel.target_attribute
             if dim in scoring_vector:
                 scoring_vector[dim] = min(2.0, scoring_vector[dim] * (1.0 + 0.3 * rel.confidence))
-                debug_trace.append(f"Step4: AMPLIFIES {rel.target_attribute} → weight={scoring_vector[dim]:.2f}")
+                debug_trace.append(f"Step4: AMPLIFIES {rel.target_attribute} -> weight={scoring_vector[dim]:.2f}")
         elif rel.relationship_type == RelationshipType.ATTENUATES:
             dim = rel.target_attribute
             if dim in scoring_vector:
                 scoring_vector[dim] = max(0.0, scoring_vector[dim] * (1.0 - 0.2 * rel.confidence))
-                debug_trace.append(f"Step4: ATTENUATES {rel.target_attribute} → weight={scoring_vector[dim]:.2f}")
+                debug_trace.append(f"Step4: ATTENUATES {rel.target_attribute} -> weight={scoring_vector[dim]:.2f}")
 
     # -----------------------------------------------------------------------
     # Step 5: Context modulation (time of day, day of week, energy signal)
+    # user_timezone: not yet threaded through pipeline — defaulting to UTC.
+    # TODO: wire user_timezone from profile.location or session context.
     # -----------------------------------------------------------------------
+    user_timezone = "UTC"  # TODO: derive from profile.location.timezone when available
     session_ctx = query.session_context
     if session_ctx:
         tod = session_ctx.time_of_day
         dow = session_ctx.day_of_week
         energy = session_ctx.energy_signal
 
-        # Morning / breakfast context → boost light/quick recipes
+        # Morning / breakfast context -> boost light/quick recipes
         if tod in ("morning", "breakfast"):
             soft_filters.append({
                 "type": "prefer_occasion_tag",
                 "value": "breakfast",
                 "boost": 0.3,
             })
-            debug_trace.append("Step5: morning context → boost breakfast occasions")
+            debug_trace.append("Step5: morning context -> boost breakfast occasions")
 
-        # Dinner context → standard
+        # Dinner context -> standard
         if tod == "dinner":
             soft_filters.append({
                 "type": "prefer_occasion_tag",
@@ -329,16 +385,16 @@ def fuse_ontologies(profile: UserProfile, query: QueryOntology) -> RetrievalCont
                 "boost": 0.2,
             })
 
-        # Weekend → relax time constraint
+        # Weekend -> relax time constraint
         if dow == "weekend" and "prefer_max_time_min" in [f["type"] for f in soft_filters]:
             for sf in soft_filters:
                 if sf["type"] == "prefer_max_time_min":
                     sf["value"] = profile.cooking.weekend_minutes
                     debug_trace.append(
-                        f"Step5: weekend → relaxed time to {profile.cooking.weekend_minutes} min"
+                        f"Step5: weekend -> relaxed time to {profile.cooking.weekend_minutes} min"
                     )
 
-        # Tired / low energy → boost quick and easy
+        # Tired / low energy -> boost quick and easy
         if energy == "tired":
             if "max_time_min" not in value_targets:
                 soft_filters.append({
@@ -346,11 +402,11 @@ def fuse_ontologies(profile: UserProfile, query: QueryOntology) -> RetrievalCont
                     "value": 30,
                     "penalty": 0.3,
                 })
-                debug_trace.append("Step5: tired energy → boost quick/easy recipes")
+                debug_trace.append("Step5: tired energy -> boost quick/easy recipes")
 
     else:
-        # Infer from current UTC time if no session context
-        now = datetime.utcnow()
+        # Infer from current time in the user's timezone
+        now = datetime.now(timezone.utc)
         hour = now.hour
         if 5 <= hour < 10:
             soft_filters.append({"type": "prefer_occasion_tag", "value": "breakfast", "boost": 0.2})
@@ -362,12 +418,11 @@ def fuse_ontologies(profile: UserProfile, query: QueryOntology) -> RetrievalCont
             soft_filters.append({"type": "prefer_occasion_tag", "value": "dinner", "boost": 0.2})
             debug_trace.append("Step5: inferred dinner from UTC time")
 
-        dow_num = now.weekday()  # 0=Monday, 6=Sunday
-        if dow_num >= 5:  # weekend
+        if _is_weekend(user_timezone):
             for sf in soft_filters:
                 if sf["type"] == "prefer_max_time_min":
                     sf["value"] = profile.cooking.weekend_minutes
-                    debug_trace.append(f"Step5: inferred weekend → relaxed time budget")
+                    debug_trace.append(f"Step5: inferred weekend -> relaxed time budget")
 
     # -----------------------------------------------------------------------
     # Step 6: Conflict resolution pass
@@ -385,20 +440,20 @@ def fuse_ontologies(profile: UserProfile, query: QueryOntology) -> RetrievalCont
                     f"Dietary restriction applied: {conflict.description}"
                 )
             debug_trace.append(
-                f"Step6: HONOR_PROFILE conflict → hard filter enforced: {conflict.description}"
+                f"Step6: HONOR_PROFILE conflict -> hard filter enforced: {conflict.description}"
             )
 
         elif rs == ConflictResolution.HONOR_QUERY:
             # Remove any soft filter that contradicts the query intent
             debug_trace.append(
-                f"Step6: HONOR_QUERY conflict → profile preference overridden: {conflict.description}"
+                f"Step6: HONOR_QUERY conflict -> profile preference overridden: {conflict.description}"
             )
 
         elif rs == ConflictResolution.SHOW_WARNING:
             if conflict.warning_text:
                 warnings.append(conflict.warning_text)
             debug_trace.append(
-                f"Step6: SHOW_WARNING → added warning: {conflict.warning_text}"
+                f"Step6: SHOW_WARNING -> added warning: {conflict.warning_text}"
             )
 
         elif rs == ConflictResolution.ASK_USER:
@@ -408,10 +463,10 @@ def fuse_ontologies(profile: UserProfile, query: QueryOntology) -> RetrievalCont
                 f"How would you like me to handle it?"
             )
             debug_trace.append(
-                f"Step6: ASK_USER → clarification requested: {conflict.description}"
+                f"Step6: ASK_USER -> clarification requested: {conflict.description}"
             )
 
-    # Profile tensions → warnings
+    # Profile tensions -> warnings
     for tension in profile.tensions:
         if not tension.resolved:
             warnings.append(f"Profile note: {tension.description}")
