@@ -224,7 +224,9 @@ export async function fetchRecipeById(recipeId: string): Promise<RecipeDocument 
 }
 
 export async function fetchForYouRecipes(limit = 8): Promise<RecipeDocument[]> {
-  const url = `${SUPABASE_REST}/recipes_open?select=recipe_id,data&limit=${limit * 3}`;
+  // Fetch a larger deterministic sample and shuffle client-side so every
+  // recipe in the table has a fair chance of appearing.
+  const url = `${SUPABASE_REST}/recipes_open?select=recipe_id,data&limit=${limit * 10}&order=recipe_id`;
   const resp = await fetch(url, { headers: supaHeaders() });
   if (!resp.ok) return [];
   const rows: { recipe_id: string; data: any }[] = await resp.json();
@@ -455,6 +457,50 @@ export async function queryPipeline(
 // Helpers
 // ---------------------------------------------------------------------------
 
+/**
+ * Parse a plain-string ingredient like "200g flour" or "1 tbsp olive oil"
+ * into a structured { name, amount, unit } object.
+ */
+function parseIngredientString(raw: string): RecipeIngredient {
+  const trimmed = raw.trim();
+
+  // Regex: optional quantity (int, decimal, fraction, or mixed) + optional unit + rest as name
+  const UNIT_PATTERN =
+    'g|kg|ml|l|tsp|tbsp|cup|cups|oz|lb|lbs|clove|cloves|slice|slices|' +
+    'handful|handfuls|pinch|pinches|bunch|bunches|sprig|sprigs|' +
+    'piece|pieces|sheet|sheets|can|cans|jar|jars|pack|packs|stalk|stalks';
+
+  const rx = new RegExp(
+    `^(\\d[\\d\\s./]*)?\\s*(${UNIT_PATTERN})\\.?\\s+(.+)$`,
+    'i',
+  );
+  const match = trimmed.match(rx);
+
+  if (match) {
+    const rawAmount = match[1]?.trim() ?? '';
+    // Normalise mixed fractions like "1 1/2" → keep as-is; simple fractions → decimal
+    const amount = rawAmount.replace(/(\d)\s+(\d)/, '$1 $2'); // keep mixed as-is
+    return {
+      name: match[3].trim(),
+      amount,
+      unit: match[2].toLowerCase(),
+    };
+  }
+
+  // No unit found — try a bare number prefix (e.g. "3 eggs")
+  const bareNum = trimmed.match(/^(\d[\d./]*)\s+(.+)$/);
+  if (bareNum) {
+    return {
+      name: bareNum[2].trim(),
+      amount: bareNum[1],
+      unit: '',
+    };
+  }
+
+  // No quantity at all (e.g. "salt to taste", "fresh herbs")
+  return { name: trimmed, amount: '', unit: '' };
+}
+
 function normaliseRecipe(row: { recipe_id: string; data: any }): RecipeDocument {
   const d = typeof row.data === 'string' ? JSON.parse(row.data) : row.data;
   return {
@@ -465,7 +511,7 @@ function normaliseRecipe(row: { recipe_id: string; data: any }): RecipeDocument 
     region_tag: d.region_tag,
     description: d.description || '',
     ingredients: (d.ingredients || []).map((i: any) =>
-      typeof i === 'string' ? { name: i } : i
+      typeof i === 'string' ? parseIngredientString(i) : i
     ),
     steps: (d.steps || []).map((s: any, idx: number) =>
       typeof s === 'string'
@@ -492,8 +538,9 @@ function normaliseRecipe(row: { recipe_id: string; data: any }): RecipeDocument 
   };
 }
 
-// Helper: convert RecipeDocument to the shape the existing UI components expect
-export function recipeToUiFormat(r: RecipeDocument) {
+// Helper: convert RecipeDocument to the shape the existing UI components expect.
+// Pass an explicit matchScore (0–100) from the scoring engine; defaults to 0.
+export function recipeToUiFormat(r: RecipeDocument, matchScore = 0) {
   return {
     id: r.recipe_id,
     title: r.title,
@@ -501,12 +548,13 @@ export function recipeToUiFormat(r: RecipeDocument) {
     dietary: r.dietary_tags,
     time: r.time_total_min || 0,
     difficulty: r.difficulty || 1,
-    matchScore: 0,
+    matchScore,
+    imageUrl: r.image_placeholder || null,
     description: r.description,
     servings: r.serves || 2,
     ingredients: r.ingredients.map(i => ({
       name: i.name,
-      amount: i.amount || '',
+      amount: i.amount ?? '',
       unit: i.unit || '',
       substitution: i.substitutions?.[0],
     })),
