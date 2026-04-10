@@ -7,7 +7,8 @@ local enrichment (dietary inference + cuisine classification via the existing
 service layer), and writes recipenlg_enriched.jsonl — the format expected by
 ingest_open_data.py.
 
-No API calls are made; all enrichment is deterministic / rule-based.
+No external API calls are made for dietary inference (rule-based).
+Cuisine classification uses Mistral Small via the LLM router (batched, 20/call).
 
 Usage (from repo root):
     python backend/scripts/enrich_recipenlg.py \\
@@ -21,6 +22,7 @@ already expected by ingest_open_data.py (recipenlg_enriched_2000.jsonl for
 from __future__ import annotations
 
 import argparse
+import asyncio
 import json
 import logging
 import os
@@ -38,7 +40,7 @@ from dotenv import load_dotenv
 load_dotenv(BACKEND_DIR / ".env")
 
 from services.adapters.recipe_nlg import RecipeNLGAdapter
-from services.dietary_inference import DietaryInferenceService
+from services.dietary_inference import DietaryInferenceEngine
 from services.cuisine_classifier import CuisineClassifier
 from services.embeddings import build_recipe_embedding_text
 
@@ -53,8 +55,20 @@ DATA_DIR = BACKEND_DIR / "data" / "open"
 DEFAULT_INPUT = DATA_DIR / "recipenlg_extracted.jsonl"
 DEFAULT_OUTPUT = DATA_DIR / "recipenlg_enriched_2000.jsonl"
 
+# ── module-level singletons ───────────────────────────────────────────────────
+_dietary_engine = DietaryInferenceEngine()
+_cuisine_classifier = CuisineClassifier()
+
 
 # ── enrichment ────────────────────────────────────────────────────────────────
+
+def _get_ingredient_names(doc) -> list[str]:
+    """Extract plain ingredient name strings from a RecipeDocument."""
+    return [
+        i.name if hasattr(i, "name") else i.get("name", "")
+        for i in doc.ingredients
+    ]
+
 
 def enrich_record(raw: dict, adapter: RecipeNLGAdapter) -> dict:
     """
@@ -62,30 +76,20 @@ def enrich_record(raw: dict, adapter: RecipeNLGAdapter) -> dict:
     expected by OpenDataAdapter / ingest_open_data.py.
 
     Pipeline:
-        1. RecipeNLGAdapter.adapt()  → RecipeDocument (dataclass)
-        2. DietaryInferenceService   → dietary_flags + dietary_tags
-        3. CuisineClassifier         → cuisine_tags
+        1. RecipeNLGAdapter.adapt()   → RecipeDocument (dataclass)
+        2. DietaryInferenceEngine     → dietary_flags + dietary_tags
+        3. cuisine_tags               → filled in bulk by enrich() after batching
         4. build_recipe_embedding_text → embedding_text
     """
     doc = adapter.adapt(raw)
     doc_dict = doc.__dict__ if hasattr(doc, "__dict__") else dict(doc)
 
-    # ── dietary inference ─────────────────────────────────────────────────────
+    ingredient_names = _get_ingredient_names(doc)
+
+    # ── dietary inference (rule-based, synchronous) ───────────────────────────
     try:
-        dietary_svc = DietaryInferenceService()
-        ingredient_names = [i.name if hasattr(i, "name") else i.get("name", "") for i in doc.ingredients]
-        flags = dietary_svc.infer(ingredient_names)
-        dietary_tags: list[str] = []
-        if flags.is_vegan:
-            dietary_tags.append("vegan")
-        elif flags.is_vegetarian:
-            dietary_tags.append("vegetarian")
-        if flags.is_gluten_free:
-            dietary_tags.append("gluten_free")
-        if flags.is_dairy_free:
-            dietary_tags.append("dairy_free")
-        if flags.is_nut_free:
-            dietary_tags.append("nut_free")
+        flags = _dietary_engine.infer_flags(ingredient_names)
+        dietary_tags = _dietary_engine.dietary_tags_from_flags(flags)
         doc_dict["dietary_flags"] = flags.__dict__ if hasattr(flags, "__dict__") else dict(flags)
         doc_dict["dietary_tags"] = dietary_tags
     except Exception as exc:
@@ -93,25 +97,12 @@ def enrich_record(raw: dict, adapter: RecipeNLGAdapter) -> dict:
         doc_dict.setdefault("dietary_flags", {})
         doc_dict.setdefault("dietary_tags", [])
 
-    # ── cuisine classification ────────────────────────────────────────────────
-    try:
-        classifier = CuisineClassifier()
-        cuisine = classifier.classify(
-            title=doc.title,
-            ingredient_names=[i.name if hasattr(i, "name") else i.get("name", "") for i in doc.ingredients],
-        )
-        doc_dict["cuisine_tags"] = [cuisine] if cuisine else []
-    except Exception as exc:
-        logger.debug("Cuisine classification failed for '%s': %s", doc.title, exc)
-        doc_dict.setdefault("cuisine_tags", [])
+    # cuisine_tags filled later via bulk classify (see enrich())
+    doc_dict.setdefault("cuisine_tags", [])
 
     # ── embedding text ────────────────────────────────────────────────────────
-    # Temporarily serialise ingredient list for build_recipe_embedding_text
     tmp = dict(doc_dict)
-    tmp["ingredients"] = [
-        {"name": (i.name if hasattr(i, "name") else i.get("name", ""))}
-        for i in doc.ingredients
-    ]
+    tmp["ingredients"] = [{"name": n} for n in ingredient_names]
     doc_dict["embedding_text"] = build_recipe_embedding_text(tmp)
 
     # ── serialise nested dataclasses ─────────────────────────────────────────
@@ -140,6 +131,30 @@ def enrich_record(raw: dict, adapter: RecipeNLGAdapter) -> dict:
     return doc_dict
 
 
+async def _classify_all(records: list[dict]) -> list[str]:
+    """
+    Run CuisineClassifier.classify_batch() over all records in batches.
+    Returns a list of cuisine strings aligned to records by index.
+    """
+    # Build slim recipe dicts expected by classify_batch
+    slim = [
+        {
+            "title": r.get("title", ""),
+            "NER": [
+                i.get("name", "") if isinstance(i, dict) else getattr(i, "name", "")
+                for i in r.get("ingredients", [])
+            ],
+        }
+        for r in records
+    ]
+
+    results = await _cuisine_classifier.classify_batch(slim)
+
+    # results is [{index: int, cuisine: str}, ...] sorted by index
+    cuisine_map: dict[int, str] = {item["index"]: item["cuisine"] for item in results}
+    return [cuisine_map.get(i, "Other") for i in range(len(records))]
+
+
 # ── main ──────────────────────────────────────────────────────────────────────
 
 def enrich(
@@ -153,15 +168,11 @@ def enrich(
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     adapter = RecipeNLGAdapter()
-    written = 0
+    records: list[dict] = []
     errors = 0
 
-    logger.info("Enriching %s → %s", input_path, output_path)
-
-    with (
-        open(input_path, "r", encoding="utf-8") as in_file,
-        open(output_path, "w", encoding="utf-8") as out_file,
-    ):
+    logger.info("Reading %s …", input_path)
+    with open(input_path, "r", encoding="utf-8") as in_file:
         for line_no, line in enumerate(in_file, 1):
             line = line.strip()
             if not line:
@@ -169,19 +180,32 @@ def enrich(
             try:
                 raw = json.loads(line)
                 enriched = enrich_record(raw, adapter)
-                out_file.write(json.dumps(enriched, ensure_ascii=False) + "\n")
-                written += 1
+                records.append(enriched)
             except Exception as exc:
                 errors += 1
-                logger.warning("Line %d failed: %s", line_no, exc)
-                continue
+                logger.warning("Line %d failed (dietary/embed): %s", line_no, exc)
 
+    logger.info("Enriched %d records (dietary+embed). Running cuisine classification …", len(records))
+
+    # ── bulk cuisine classification (async, batched 20/call) ──────────────────
+    try:
+        cuisines = asyncio.run(_classify_all(records))
+        for rec, cuisine in zip(records, cuisines):
+            rec["cuisine_tags"] = [cuisine] if cuisine else []
+        logger.info("Cuisine classification complete.")
+    except Exception as exc:
+        logger.warning("Cuisine classification failed entirely, leaving cuisine_tags=[]: %s", exc)
+
+    # ── write output ──────────────────────────────────────────────────────────
+    written = 0
+    with open(output_path, "w", encoding="utf-8") as out_file:
+        for rec in records:
+            out_file.write(json.dumps(rec, ensure_ascii=False) + "\n")
+            written += 1
             if written % 500 == 0:
-                logger.info("  … %d enriched", written)
+                logger.info("  … %d written", written)
 
-    logger.info(
-        "Done. Written: %d | Errors: %d", written, errors
-    )
+    logger.info("Done. Written: %d | Errors: %d", written, errors)
     logger.info("Output: %s", output_path.resolve())
     return written
 
