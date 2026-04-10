@@ -177,18 +177,20 @@ async def write_cuisine(
     recipe_id: str,
     cuisine: str,
 ) -> None:
+    """Call Postgres RPC to merge cuisine into data JSONB without overwriting other fields.
+
+    Uses set_recipe_cuisine(p_id, p_cuisine) which executes:
+        UPDATE recipes
+        SET data = data || jsonb_build_object('cuisine', p_cuisine)
+        WHERE recipe_id = p_id;
+    This safely merges only the cuisine key, leaving title, NER, and all
+    other fields in the JSONB blob completely intact.
     """
-    PATCH data->>'cuisine' for a single recipe.
-    Uses Supabase JSONB merge: PATCH /recipes?recipe_id=eq.<id>
-    with body {"data": {"cuisine": "..."}}
-    """
-    url = f"{_base_url()}/recipes?recipe_id=eq.{recipe_id}"
-    # Supabase merges JSONB on PATCH when using jsonb_set internally;
-    # simplest safe approach: send only the cuisine key in data
-    resp = await client.patch(
+    url = f"{_base_url()}/rpc/set_recipe_cuisine"
+    resp = await client.post(
         url,
         headers=_headers(),
-        content=json.dumps({"data": json.dumps({"cuisine": cuisine})}),
+        content=json.dumps({"p_id": recipe_id, "p_cuisine": cuisine}),
         timeout=30.0,
     )
     if resp.status_code not in (200, 204):
