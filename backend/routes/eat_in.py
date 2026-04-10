@@ -11,10 +11,12 @@ import logging
 import time
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+from typing import Optional
 
 from config import settings
+from middleware.auth import get_current_user_id
 from services.pipeline.eat_in_pipeline import run_eat_in_pipeline
 from services.session_manager import (
     add_message,
@@ -45,7 +47,7 @@ class EatInQueryRequest(BaseModel):
 
 
 @router.post("/query", summary="Recipe discovery query")
-async def eat_in_query(body: EatInQueryRequest) -> dict[str, Any]:
+async def eat_in_query(body: EatInQueryRequest, auth_user_id: Optional[str] = Depends(get_current_user_id)) -> dict[str, Any]:
     """
     Processes a natural-language query for recipe recommendations.
 
@@ -62,6 +64,10 @@ async def eat_in_query(body: EatInQueryRequest) -> dict[str, Any]:
     User and assistant messages are persisted to Supabase.
     """
     request_start = time.monotonic()
+
+    # Use JWT-derived user_id when available, otherwise keep body value
+    if auth_user_id:
+        body.user_id = auth_user_id
 
     # ------------------------------------------------------------------
     # 1. Resolve or create session

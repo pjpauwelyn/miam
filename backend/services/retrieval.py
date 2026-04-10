@@ -18,6 +18,12 @@ logger = logging.getLogger(__name__)
 # Default retrieval parameters
 DEFAULT_TOP_K = 20
 
+ALLOWED_DIETARY_FLAGS = frozenset({
+    "is_vegan", "is_vegetarian", "is_gluten_free", "is_dairy_free",
+    "is_nut_free", "is_halal", "is_kosher", "contains_pork",
+    "is_pescatarian", "is_sugar_free", "is_low_carb",
+})
+
 
 async def search_recipes(
     query_embedding: list[float],
@@ -55,9 +61,13 @@ async def search_recipes(
     params: list[Any] = [str(query_embedding)]
     param_idx = 2
 
-    # Add dietary hard-stop filters
+    # Add dietary hard-stop filters (whitelist to prevent SQL injection)
     if dietary_filters:
-        for flag_name, required_value in dietary_filters.items():
+        rejected = {k for k in dietary_filters if k not in ALLOWED_DIETARY_FLAGS}
+        if rejected:
+            logger.warning("Rejected unknown dietary filter keys: %s", rejected)
+        safe_filters = {k: v for k, v in dietary_filters.items() if k in ALLOWED_DIETARY_FLAGS}
+        for flag_name, required_value in safe_filters.items():
             query += f" AND (r.data->'dietary_flags'->>'{flag_name}')::boolean = ${param_idx}"
             params.append(required_value)
             param_idx += 1

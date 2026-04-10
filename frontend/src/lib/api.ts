@@ -19,8 +19,7 @@
 // Config
 // ---------------------------------------------------------------------------
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://rscviujiflpsujukwgts.supabase.co';
-const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_KEY || '';
+import { supabase, SUPABASE_URL, SUPABASE_KEY } from './supabase';
 
 const SUPABASE_REST = `${SUPABASE_URL}/rest/v1`;
 
@@ -31,9 +30,6 @@ const supaHeaders = (extra?: Record<string, string>): Record<string, string> => 
   Prefer: 'return=representation',
   ...extra,
 });
-
-// Auth-aware user ID — falls back to Lena for unauthenticated access
-import { supabase } from './supabase';
 
 export function getCurrentUserId(): string {
   const session = (supabase as any).auth?.session?.();

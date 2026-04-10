@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
-import { supabase, SUPABASE_URL, SUPABASE_KEY } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 import type { User, Session } from '@supabase/supabase-js';
 
 interface AuthState {
@@ -45,36 +45,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signUp = useCallback(async (email: string, password: string, displayName?: string) => {
     try {
-      // Create user via admin API to bypass email rate limits entirely.
-      // This skips the confirmation email flow — suitable for early-access testing.
-      const adminRes = await fetch(`${SUPABASE_URL}/auth/v1/admin/users`, {
-        method: 'POST',
-        headers: {
-          'apikey': SUPABASE_KEY,
-          'Authorization': `Bearer ${SUPABASE_KEY}`,
-          'Content-Type': 'application/json',
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { display_name: displayName || email.split('@')[0] },
         },
-        body: JSON.stringify({
-          email,
-          password,
-          email_confirm: true,
-          user_metadata: { display_name: displayName || email.split('@')[0] },
-        }),
       });
 
-      if (!adminRes.ok) {
-        const err = await adminRes.json().catch(() => null);
-        const msg = err?.msg || err?.message || err?.error_description || 'Could not create account';
-        // Friendly messages for common errors
+      if (error) {
+        const msg = error.message || 'Could not create account';
         if (msg.toLowerCase().includes('already been registered') || msg.toLowerCase().includes('already exists')) {
           return { error: 'An account with this email already exists. Try signing in instead.' };
         }
         return { error: msg };
       }
 
-      // Immediately sign in with the new credentials
-      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-      if (signInError) return { error: signInError.message };
+      // If user exists but session is null, email confirmation is required
+      if (data.user && !data.session) {
+        // Auto-confirm is enabled in Supabase dashboard, so this shouldn't happen.
+        // If it does, the user needs to confirm their email first.
+        return { error: 'Please check your email to confirm your account.' };
+      }
 
       return { error: null };
     } catch (err: any) {

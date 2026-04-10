@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import logging
 from typing import Any
+from urllib.parse import quote
 from uuid import uuid4
 
 import httpx
@@ -153,7 +154,7 @@ async def get_session_history(session_id: str, limit: int = 10) -> list[dict]:
     """
     url = (
         f"{SUPABASE_REST_BASE}/messages"
-        f"?session_id=eq.{session_id}"
+        f"?session_id=eq.{quote(str(session_id), safe='')}"
         f"&order=created_at.asc"
         f"&limit={limit}"
         f"&select=message_id,session_id,role,content,structured,created_at"
@@ -195,7 +196,7 @@ async def increment_query_count(session_id: str) -> None:
     # Fetch current count
     get_url = (
         f"{SUPABASE_REST_BASE}/sessions"
-        f"?session_id=eq.{session_id}"
+        f"?session_id=eq.{quote(str(session_id), safe='')}"
         f"&select=query_count"
         f"&limit=1"
     )
@@ -217,7 +218,7 @@ async def increment_query_count(session_id: str) -> None:
 
             patch_url = (
                 f"{SUPABASE_REST_BASE}/sessions"
-                f"?session_id=eq.{session_id}"
+                f"?session_id=eq.{quote(str(session_id), safe='')}"
             )
             patch_headers = {**_rest_headers(), "Prefer": "return=minimal"}
             patch_resp = await client.patch(
@@ -258,7 +259,7 @@ async def end_session(session_id: str) -> None:
 
     patch_url = (
         f"{SUPABASE_REST_BASE}/sessions"
-        f"?session_id=eq.{session_id}"
+        f"?session_id=eq.{quote(str(session_id), safe='')}"
     )
     patch_headers = {**_rest_headers(), "Prefer": "return=minimal"}
     try:
@@ -292,7 +293,7 @@ async def get_session(session_id: str) -> dict | None:
     """
     url = (
         f"{SUPABASE_REST_BASE}/sessions"
-        f"?session_id=eq.{session_id}"
+        f"?session_id=eq.{quote(str(session_id), safe='')}"
         f"&select=session_id,user_id,mode,started_at,ended_at,query_count"
         f"&limit=1"
     )

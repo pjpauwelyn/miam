@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+from config import settings
 from routes import auth, onboarding, profile, eat_in, eat_out, sessions, discover, feedback
 
 
@@ -18,9 +19,12 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Development default: open. Set ALLOWED_ORIGINS=https://miam-app-umber.vercel.app in production.
+_origins = ["*"] if settings.ALLOWED_ORIGINS == "*" else [o.strip() for o in settings.ALLOWED_ORIGINS.split(",")]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

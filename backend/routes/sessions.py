@@ -8,9 +8,11 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+from typing import Optional
 
+from middleware.auth import get_current_user_id
 from services import session_manager
 
 logger = logging.getLogger(__name__)
@@ -35,11 +37,13 @@ class CreateSessionRequest(BaseModel):
 
 
 @router.post("/", summary="Create a new session")
-async def create_session(body: CreateSessionRequest) -> dict[str, Any]:
+async def create_session(body: CreateSessionRequest, auth_user_id: Optional[str] = Depends(get_current_user_id)) -> dict[str, Any]:
     """
     Creates a new recommendation session and returns its ID.
     Sessions maintain conversation context across multiple queries.
     """
+    if auth_user_id:
+        body.user_id = auth_user_id
     try:
         session = await session_manager.create_session(
             user_id=body.user_id,
@@ -58,7 +62,7 @@ async def create_session(body: CreateSessionRequest) -> dict[str, Any]:
 
 
 @router.get("/{session_id}", summary="Get session details")
-async def get_session(session_id: str) -> dict[str, Any]:
+async def get_session(session_id: str, auth_user_id: Optional[str] = Depends(get_current_user_id)) -> dict[str, Any]:
     """
     Returns the full session record (metadata, timing, query count) for the given session ID.
     """

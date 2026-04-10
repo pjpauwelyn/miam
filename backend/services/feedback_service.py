@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import logging
 from typing import Any
+from urllib.parse import quote
 from uuid import uuid4
 
 import httpx
@@ -111,7 +112,7 @@ async def get_user_feedback(user_id: str, limit: int = 50) -> list[dict]:
     """
     url = (
         f"{SUPABASE_REST_BASE}/feedback_events"
-        f"?user_id=eq.{user_id}"
+        f"?user_id=eq.{quote(str(user_id), safe='')}"
         f"&order=created_at.desc"
         f"&limit={limit}"
         f"&select=feedback_id,user_id,session_id,result_type,result_reference,"

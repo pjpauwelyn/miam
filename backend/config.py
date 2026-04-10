@@ -26,6 +26,12 @@ class Settings(BaseSettings):
     # PostgreSQL direct connection (used when available; Supabase REST fallback otherwise)
     DATABASE_URL: str = ""
 
+    # JWT secret for verifying Supabase tokens
+    SUPABASE_JWT_SECRET: str = ""
+
+    # CORS — Development default: open. Set ALLOWED_ORIGINS=https://miam-app-umber.vercel.app in production.
+    ALLOWED_ORIGINS: str = "*"
+
     # App config
     ENV: str = "development"
     LOG_LEVEL: str = "info"

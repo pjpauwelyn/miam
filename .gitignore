@@ -39,3 +39,7 @@ backend/data/recipes/progress/
 
 # Vercel
 .vercel
+
+# Agent/tool config (may contain tokens)
+.mcp.json
+.claude/

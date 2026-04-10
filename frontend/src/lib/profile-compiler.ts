@@ -17,9 +17,7 @@
 // Config
 // ---------------------------------------------------------------------------
 
-const MISTRAL_API_URL = 'https://api.mistral.ai/v1/chat/completions';
-const MISTRAL_API_KEY = import.meta.env.VITE_MISTRAL_API_KEY || '';
-const MISTRAL_MODEL = 'mistral-small-latest'; // never hardcode elsewhere
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '';
 
 // ---------------------------------------------------------------------------
 // Types matching backend personal_ontology.py
@@ -872,36 +870,29 @@ ${Object.entries(freeTexts).map(([q, text]) => `${q}: "${text}"`).join('\n')}
 Compile the free-text into structured enrichments. Return ONLY JSON.`;
 
   try {
-    const resp = await fetch(MISTRAL_API_URL, {
+    if (!BACKEND_URL) {
+      console.error('VITE_BACKEND_URL not configured — cannot compile profile');
+      return {};
+    }
+    const resp = await fetch(`${BACKEND_URL}/api/profile/compile`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${MISTRAL_API_KEY}`,
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: MISTRAL_MODEL,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt },
-        ],
-        temperature: 0.3,
-        max_tokens: 2000,
-        response_format: { type: 'json_object' },
+        user_id: structuredProfile.user_id,
+        answers: {},
+        system_prompt: systemPrompt,
+        user_prompt: userPrompt,
       }),
     });
 
     if (!resp.ok) {
-      console.error('Mistral API error:', resp.status, await resp.text());
+      console.error('Profile compile API error:', resp.status, await resp.text());
       return {};
     }
 
-    const data = await resp.json();
-    const content = data.choices?.[0]?.message?.content;
-    if (!content) return {};
-
-    return JSON.parse(content);
+    return await resp.json();
   } catch (err) {
-    console.error('Mistral compilation failed:', err);
+    console.error('Profile compilation failed:', err);
     return {};
   }
 }

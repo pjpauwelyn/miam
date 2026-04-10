@@ -9,9 +9,11 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from typing import Optional
 
+from middleware.auth import get_current_user_id
 from services import feedback_service
 
 logger = logging.getLogger(__name__)
@@ -59,7 +61,7 @@ class RecordFeedbackRequest(BaseModel):
 
 
 @router.post("/", summary="Record a feedback event")
-async def record_feedback(body: RecordFeedbackRequest) -> dict[str, Any]:
+async def record_feedback(body: RecordFeedbackRequest, auth_user_id: Optional[str] = Depends(get_current_user_id)) -> dict[str, Any]:
     """
     Records a feedback event (like, dislike, save, cook, skip, etc.) for a
     recipe or restaurant result.
@@ -67,6 +69,8 @@ async def record_feedback(body: RecordFeedbackRequest) -> dict[str, Any]:
     Feedback events power the behavioral signal loop used to refine
     the user's personal profile over time.
     """
+    if auth_user_id:
+        body.user_id = auth_user_id
     try:
         row = await feedback_service.record_feedback(
             user_id=body.user_id,

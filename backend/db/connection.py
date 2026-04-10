@@ -13,6 +13,7 @@ from __future__ import annotations
 import json
 import logging
 from typing import Any, Optional
+from urllib.parse import quote
 from uuid import UUID
 
 import httpx
@@ -70,7 +71,7 @@ class SupabaseREST:
         filter_params = ""
         if filters:
             for key, value in filters.items():
-                filter_params += f"&{key}=eq.{value}"
+                filter_params += f"&{key}=eq.{quote(str(value), safe='')}"
 
         url = f"{self.base_url}/{table}?select={columns}{filter_params}"
         if limit:
@@ -89,7 +90,7 @@ class SupabaseREST:
         self, table: str, data: dict, filters: dict[str, Any]
     ) -> list[dict]:
         """Update rows matching filters."""
-        filter_params = "&".join(f"{k}=eq.{v}" for k, v in filters.items())
+        filter_params = "&".join(f"{k}=eq.{quote(str(v), safe='')}" for k, v in filters.items())
         url = f"{self.base_url}/{table}?{filter_params}"
 
         async with httpx.AsyncClient() as client:
@@ -103,7 +104,7 @@ class SupabaseREST:
 
     async def delete(self, table: str, filters: dict[str, Any]) -> None:
         """Delete rows matching filters."""
-        filter_params = "&".join(f"{k}=eq.{v}" for k, v in filters.items())
+        filter_params = "&".join(f"{k}=eq.{quote(str(v), safe='')}" for k, v in filters.items())
         url = f"{self.base_url}/{table}?{filter_params}"
 
         async with httpx.AsyncClient() as client:
@@ -131,7 +132,7 @@ class SupabaseREST:
         headers = {**self.headers, "Prefer": "count=exact"}
         filter_params = ""
         if filters:
-            filter_params = "&".join(f"{k}=eq.{v}" for k, v in filters.items())
+            filter_params = "&".join(f"{k}=eq.{quote(str(v), safe='')}" for k, v in filters.items())
 
         url = f"{self.base_url}/{table}?select=count"
         if filter_params:

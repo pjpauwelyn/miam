@@ -1,11 +1,10 @@
 /**
  * Supabase client for authentication + data access.
- * Uses service role key since the anon key is not configured.
- * For a 10-person testing group this is acceptable.
- * TODO: Switch to anon key + RLS when scaling beyond testers.
+ * Uses anon key — all data access respects Row Level Security.
  */
 import { createClient } from '@supabase/supabase-js';
 
+// Fallback for local dev — production should always set VITE_SUPABASE_URL
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://rscviujiflpsujukwgts.supabase.co';
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_KEY || '';
 
