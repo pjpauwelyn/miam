@@ -23,8 +23,8 @@ Function signature:
 
 Match tier labels:
   full_match   >= 0.80
-  close_match  0.50 – 0.79
-  stretch_pick 0.30 – 0.49
+  close_match  0.50 - 0.79
+  stretch_pick 0.30 - 0.49
   (below 0.30: still returned if needed, labelled stretch_pick)
 """
 from __future__ import annotations
@@ -39,6 +39,7 @@ from models.personal_ontology import (
     UserProfile,
 )
 from models.query_ontology import QueryOntology
+from services.synonym_resolver import normalize_ingredient as _resolve_synonym
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +63,7 @@ TIER_FULL_MATCH    = 0.80
 TIER_CLOSE_MATCH   = 0.50
 TIER_STRETCH_PICK  = 0.30
 
-# Cooking skill → difficulty ceiling (recipe difficulty 1–5)
+# Cooking skill -> difficulty ceiling (recipe difficulty 1-5)
 SKILL_DIFFICULTY_MAP: dict[CookingSkill, int] = {
     CookingSkill.BEGINNER:     1,
     CookingSkill.HOME_COOK:    2,
@@ -80,11 +81,24 @@ _COMMON_CUISINES = {
 
 
 # ---------------------------------------------------------------------------
+# Helper: normalize ingredient name through EU/US synonym resolver
+# ---------------------------------------------------------------------------
+
+def _normalize_ingredient(name: str) -> str:
+    """
+    Normalize an ingredient name to its EU/British English canonical form
+    via the synonym resolver, so that e.g. "eggplant" and "aubergine"
+    are treated as the same ingredient during overlap scoring.
+    """
+    return _resolve_synonym(name.lower().strip())
+
+
+# ---------------------------------------------------------------------------
 # Helper: extract ingredient names from a recipe
 # ---------------------------------------------------------------------------
 
 def _get_recipe_ingredient_names(recipe: dict) -> set[str]:
-    """Extract ingredient names from a recipe dict as a lowercase set."""
+    """Extract and normalize ingredient names from a recipe dict."""
     names: set[str] = set()
     for ing in (recipe.get("ingredients") or []):
         if isinstance(ing, dict):
@@ -94,13 +108,8 @@ def _get_recipe_ingredient_names(recipe: dict) -> set[str]:
         else:
             continue
         if name:
-            names.add(name)
+            names.add(_normalize_ingredient(name))
     return names
-
-
-def _normalize_ingredient(name: str) -> str:
-    """Basic normalization: lowercase, strip, remove common quantifiers."""
-    return name.lower().strip()
 
 
 # ---------------------------------------------------------------------------
@@ -114,17 +123,20 @@ def _score_ingredient_overlap(
 ) -> float:
     """
     Measures how well the recipe's ingredients match the desired ingredients.
-    Returns 0.0–1.0.
+    Returns 0.0-1.0.
 
     If desired_ingredients is empty, returns 0.5 (neutral).
     Excluded ingredients create a penalty.
+
+    Both query ingredients and recipe ingredients are normalized through the
+    synonym resolver before comparison, so "eggplant" matches "aubergine" etc.
     """
     if not desired_ingredients:
-        return 0.5  # no preference expressed → neutral
+        return 0.5  # no preference expressed -> neutral
 
     recipe_ings = _get_recipe_ingredient_names(recipe)
     if not recipe_ings:
-        return 0.3  # recipe has no ingredients data → below neutral
+        return 0.3  # recipe has no ingredients data -> below neutral
 
     desired_set = {_normalize_ingredient(i) for i in desired_ingredients}
 
@@ -164,7 +176,7 @@ def _score_dietary_compliance(recipe: dict, profile: UserProfile) -> float:
     recipe_ings = _get_recipe_ingredient_names(recipe)
     dietary_flags = recipe.get("dietary_flags") or {}
     if not isinstance(dietary_flags, dict):
-        # Pydantic model — convert to dict
+        # Pydantic model -- convert to dict
         try:
             dietary_flags = dietary_flags.model_dump()
         except AttributeError:
@@ -172,14 +184,14 @@ def _score_dietary_compliance(recipe: dict, profile: UserProfile) -> float:
 
     score = 1.0
 
-    # Hard stops — any violation → 0.0
+    # Hard stops -- any violation -> 0.0
     for restriction in profile.dietary.hard_stops:
         if not restriction.is_hard_stop:
             continue
-        label = restriction.label.lower()
+        label = _normalize_ingredient(restriction.label)
 
-        # Check dietary flags (e.g. "pork" → contains_pork)
-        flag_key = f"contains_{label}"
+        # Check dietary flags (e.g. "pork" -> contains_pork)
+        flag_key = f"contains_{restriction.label.lower()}"
         if dietary_flags.get(flag_key) is True:
             return 0.0
 
@@ -197,9 +209,9 @@ def _score_dietary_compliance(recipe: dict, profile: UserProfile) -> float:
         if not dietary_flags.get("is_vegetarian", False):
             return 0.0
 
-    # Soft stops — penalty
+    # Soft stops -- penalty
     for restriction in profile.dietary.soft_stops:
-        label = restriction.label.lower()
+        label = _normalize_ingredient(restriction.label)
         for ing_name in recipe_ings:
             if label in ing_name:
                 score = max(0.0, score - 0.3)
@@ -215,13 +227,13 @@ def _score_dietary_compliance(recipe: dict, profile: UserProfile) -> float:
 def _score_cuisine_affinity(recipe: dict, profile: UserProfile, query: QueryOntology) -> float:
     """
     Matches the recipe's cuisine_tags against the user's cuisine affinities.
-    Returns 0.0–1.0.
+    Returns 0.0-1.0.
 
     If the query explicitly requested a cuisine, that cuisine gets a 1.0 score.
     """
     recipe_cuisines = [c.lower() for c in (recipe.get("cuisine_tags") or [])]
     if not recipe_cuisines:
-        return 0.5  # no cuisine data → neutral
+        return 0.5  # no cuisine data -> neutral
 
     ea = query.eat_in_attributes
     if ea and ea.desired_cuisine:
@@ -252,7 +264,7 @@ def _score_cuisine_affinity(recipe: dict, profile: UserProfile, query: QueryOnto
                 break
 
     if not matched_scores:
-        return 0.5  # no match found → neutral
+        return 0.5  # no match found -> neutral
 
     return sum(matched_scores) / len(matched_scores)
 
@@ -263,12 +275,12 @@ def _score_cuisine_affinity(recipe: dict, profile: UserProfile, query: QueryOnto
 
 def _score_difficulty_match(recipe: dict, profile: UserProfile, query: QueryOntology) -> float:
     """
-    Compares recipe difficulty (1–5) against user skill level.
+    Compares recipe difficulty (1-5) against user skill level.
     Returns 1.0 if recipe is within the user's comfort zone.
     """
     recipe_difficulty = recipe.get("difficulty")
     if recipe_difficulty is None:
-        return 0.5  # no data → neutral
+        return 0.5  # no data -> neutral
 
     try:
         recipe_difficulty = int(recipe_difficulty)
@@ -289,11 +301,11 @@ def _score_difficulty_match(recipe: dict, profile: UserProfile, query: QueryOnto
     skill_ceiling = SKILL_DIFFICULTY_MAP.get(profile.cooking.skill, 3)
 
     if recipe_difficulty <= skill_ceiling:
-        # Within skill level — score based on how well it matches (not too easy)
+        # Within skill level -- score based on how well it matches (not too easy)
         gap = skill_ceiling - recipe_difficulty
         return 1.0 - (gap * 0.1)  # slight preference for near-ceiling recipes
     else:
-        # Above skill level — penalty scales with how far above
+        # Above skill level -- penalty scales with how far above
         overshoot = recipe_difficulty - skill_ceiling
         return max(0.0, 1.0 - overshoot * 0.35)
 
@@ -323,7 +335,7 @@ def _score_time_fit(recipe: dict, profile: UserProfile, query: QueryOntology) ->
         limit = profile.cooking.weeknight_minutes
 
     if recipe_time <= limit:
-        # Well within budget — proportional score
+        # Well within budget -- proportional score
         ratio = recipe_time / limit if limit > 0 else 1.0
         # Slightly reward recipes that use most of the budget (more interesting)
         return 0.7 + 0.3 * ratio
@@ -339,11 +351,11 @@ def _score_time_fit(recipe: dict, profile: UserProfile, query: QueryOntology) ->
 def _score_flavor_affinity(recipe: dict, profile: UserProfile) -> float:
     """
     Compares recipe flavor_tags against the user's flavor preferences.
-    Returns 0.0–1.0.
+    Returns 0.0-1.0.
     """
     recipe_flavors = [f.lower() for f in (recipe.get("flavor_tags") or [])]
     if not recipe_flavors:
-        return 0.5  # no flavor data → neutral
+        return 0.5  # no flavor data -> neutral
 
     flavor_map = {
         "spicy":     profile.flavor.spicy,
@@ -355,7 +367,7 @@ def _score_flavor_affinity(recipe: dict, profile: UserProfile) -> float:
         "fermented": profile.flavor.fermented,
         "smoky":     profile.flavor.smoky,
         "salty":     profile.flavor.salty,
-        # Common recipe tags → flavor map
+        # Common recipe tags -> flavor map
         "acidic": None,  # maps to sour
         "rich":   None,  # maps to fatty
         "light":  None,
@@ -382,9 +394,9 @@ def _score_flavor_affinity(recipe: dict, profile: UserProfile) -> float:
         # Normalize tag to our flavor dimensions
         flavor_dim = tag if tag in flavor_map else tag_to_flavor.get(tag)
         if flavor_dim and flavor_map.get(flavor_dim) is not None:
-            pref = flavor_map[flavor_dim]  # 0–10
-            # Recipe tag present → the recipe HAS this flavor
-            # Score: 1.0 if pref high (≥7), 0.5 neutral, 0.0 if pref very low (≤2)
+            pref = flavor_map[flavor_dim]  # 0-10
+            # Recipe tag present -> the recipe HAS this flavor
+            # Score: 1.0 if pref high (>=7), 0.5 neutral, 0.0 if pref very low (<=2)
             normalized_pref = pref / 10.0
             if normalized_pref >= 0.7:
                 scores.append(1.0)
@@ -406,7 +418,22 @@ def _score_flavor_affinity(recipe: dict, profile: UserProfile) -> float:
 def _score_novelty_bonus(recipe: dict, profile: UserProfile) -> float:
     """
     Small bonus for less-common cuisines, weighted by the user's adventurousness score.
-    Returns 0.0–1.0.
+    Returns 0.0-1.0.
+
+    Scoring intent:
+    - LOW adventurousness + familiar cuisine  -> high score  (comfort zone = good)
+    - HIGH adventurousness + unfamiliar cuisine -> high score  (exploration = good)
+    - LOW adventurousness + unfamiliar cuisine  -> low score   (too risky)
+    - HIGH adventurousness + familiar cuisine   -> medium score (fine but boring)
+
+    Implementation:
+    - rare cuisine + high adventurousness  -> 0.5 + 0.5 * adv  (peaks at 1.0)
+    - rare cuisine + low adventurousness   -> 0.5 + 0.5 * adv  (bottoms at 0.5)
+    - common cuisine + high adventurousness -> 0.5 + 0.25 * (1 - adv) (medium-low)
+    - common cuisine + low adventurousness  -> 0.5 + 0.25 * (1 - adv) (peaks at 0.75)
+    This correctly rewards conservative users for common cuisines and adventurous
+    users for rare cuisines, while penalizing conservative users for rare cuisines
+    relative to adventurous users.
     """
     recipe_cuisines = {c.lower() for c in (recipe.get("cuisine_tags") or [])}
     if not recipe_cuisines:
@@ -414,13 +441,15 @@ def _score_novelty_bonus(recipe: dict, profile: UserProfile) -> float:
 
     # Is this a "rare" cuisine?
     is_rare = not recipe_cuisines.intersection(_COMMON_CUISINES)
-    adventurousness = profile.adventurousness.cooking_score / 10.0  # normalize 0–1
+    adventurousness = profile.adventurousness.cooking_score / 10.0  # normalize 0-1
 
     if is_rare:
         # Adventurous users get a bonus; conservative users get a slight penalty
+        # relative to adventurous users, but score still floors at 0.5.
         return 0.5 + 0.5 * adventurousness
     else:
-        # Common cuisine: adventurous users slightly penalized (want variety)
+        # Common cuisine: conservative users get a slight comfort bonus;
+        # adventurous users get slightly less (they want variety).
         return 0.5 + 0.25 * (1.0 - adventurousness)
 
 
@@ -462,7 +491,7 @@ def rank_recipes(
 
     for recipe in recipes:
         try:
-            # Compute each factor (0.0–1.0)
+            # Compute each factor (0.0-1.0)
             f_ingredient   = _score_ingredient_overlap(recipe, desired_ingredients, excluded_ingredients)
             f_dietary      = _score_dietary_compliance(recipe, profile)
             f_cuisine      = _score_cuisine_affinity(recipe, profile, query)
@@ -471,7 +500,7 @@ def rank_recipes(
             f_flavor       = _score_flavor_affinity(recipe, profile)
             f_novelty      = _score_novelty_bonus(recipe, profile)
 
-            # Dietary compliance is a gate: 0.0 → still rank but last
+            # Dietary compliance is a gate: 0.0 -> still rank but last
             # (hard filter already removed true violations in Stage 3)
             composite = (
                 FACTOR_WEIGHTS["ingredient_overlap"]  * f_ingredient
@@ -526,7 +555,7 @@ def rank_recipes(
     top = scored_recipes[:top_n]
 
     logger.info(
-        "Stage 4 complete: ranked %d → returning top %d "
+        "Stage 4 complete: ranked %d -> returning top %d "
         "(scores: %s)",
         len(scored_recipes),
         len(top),
