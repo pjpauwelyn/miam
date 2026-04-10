@@ -4,6 +4,8 @@ LLM Router — single entry point for all Mistral AI calls.
 Every LLM call in the miam backend goes through call_llm().
 Model selection is driven by the LLMOperation enum — never hardcoded
 in route handlers or service modules.
+
+SDK note: uses mistralai <1.0 (MistralClient, sync chat.complete).
 """
 from __future__ import annotations
 
@@ -11,9 +13,11 @@ import asyncio
 import json
 import logging
 from enum import Enum
+from functools import lru_cache
 from typing import Any
 
-from mistralai.client import Mistral
+from mistralai.client import MistralClient
+from mistralai.models.chat_completion import ChatMessage
 
 from config import settings
 
@@ -57,9 +61,15 @@ TIMEOUT_SECONDS: dict[str, float] = {
 }
 
 
-def _get_client() -> Mistral:
-    """Lazy singleton client."""
-    return Mistral(api_key=settings.MISTRAL_API_KEY)
+@lru_cache(maxsize=1)
+def _get_client() -> MistralClient:
+    """Lazy singleton client (old SDK)."""
+    return MistralClient(api_key=settings.MISTRAL_API_KEY)
+
+
+def _to_chat_messages(messages: list[dict[str, str]]) -> list[ChatMessage]:
+    """Convert plain dicts to ChatMessage objects required by old SDK."""
+    return [ChatMessage(role=m["role"], content=m["content"]) for m in messages]
 
 
 async def call_llm(
@@ -73,12 +83,15 @@ async def call_llm(
     """
     Central LLM call function. All Mistral API calls go through here.
 
+    Runs the synchronous MistralClient call in a thread pool so callers
+    can await it without blocking the event loop.
+
     Args:
         operation: Which pipeline stage is calling. Determines the model.
         messages: Chat messages in OpenAI-compatible format.
-        temperature: Optional override (default depends on model).
+        temperature: Optional override.
         max_tokens: Optional max output tokens.
-        response_format: Optional response format spec (e.g. {"type": "json_object"}).
+        response_format: Ignored for old SDK (kept for API compatibility).
 
     Returns:
         The assistant's response content as a string.
@@ -88,35 +101,40 @@ async def call_llm(
         Exception: Any Mistral SDK error is logged and re-raised.
     """
     model = MODEL_ROUTING[operation]
-    timeout = TIMEOUT_SECONDS.get(model, 10.0)
+    timeout = TIMEOUT_SECONDS.get(model, 30.0)
+    client = _get_client()
+    chat_messages = _to_chat_messages(messages)
 
     kwargs: dict[str, Any] = {
         "model": model,
-        "messages": messages,
+        "messages": chat_messages,
     }
     if temperature is not None:
         kwargs["temperature"] = temperature
     if max_tokens is not None:
         kwargs["max_tokens"] = max_tokens
-    if response_format is not None:
-        kwargs["response_format"] = response_format
 
-    client = _get_client()
+    loop = asyncio.get_event_loop()
 
-    try:
-        response = await asyncio.wait_for(
-            client.chat.complete_async(**kwargs),
-            timeout=timeout,
+    def _sync_call() -> str:
+        response = client.chat(
+            model=kwargs["model"],
+            messages=kwargs["messages"],
+            **{k: v for k, v in kwargs.items() if k not in ("model", "messages")},
         )
         content = response.choices[0].message.content
         logger.debug(
-            "LLM call completed: operation=%s model=%s tokens_used=%s",
+            "LLM call completed: operation=%s model=%s",
             operation.value,
             model,
-            getattr(response, "usage", None),
         )
         return content.strip() if content else ""
 
+    try:
+        return await asyncio.wait_for(
+            loop.run_in_executor(None, _sync_call),
+            timeout=timeout,
+        )
     except asyncio.TimeoutError:
         logger.error(
             "LLM call timed out after %.1fs: operation=%s model=%s",
@@ -125,7 +143,6 @@ async def call_llm(
             model,
         )
         raise
-
     except Exception:
         logger.exception(
             "LLM call failed: operation=%s model=%s",
