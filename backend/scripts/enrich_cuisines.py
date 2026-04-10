@@ -1,13 +1,18 @@
 """
 enrich_cuisines.py — Batch cuisine enrichment for all recipes in the database.
 
+Actual schema:
+  recipes(recipe_id, data JSONB, source, source_tier, created_at)
+  data JSONB contains at minimum: {"title": "...", "NER": [...]}
+  cuisine is stored as data->>'cuisine' (JSONB field, not a top-level column)
+
 Pipeline:
-  1. Fetch all recipes where cuisine IS NULL (paginated, 500 at a time)
+  1. Fetch all recipes where data->>'cuisine' IS NULL (paginated, 500 at a time)
   2. Pass 1: classify_rule_based(title, ner) — write confident matches directly
   3. Pass 2: LLM fallback via CuisineClassifier.classify_batch() for unresolved rows
   4. Print a distribution report of all cuisine values after enrichment
 
-Usage (from ANY directory):
+Usage (from repo root):
   python backend/scripts/enrich_cuisines.py --dry-run
   python backend/scripts/enrich_cuisines.py --no-llm --limit 100
   python backend/scripts/enrich_cuisines.py
@@ -26,19 +31,17 @@ from collections import Counter
 from pathlib import Path
 from typing import Optional
 
-# ── Path + .env setup (must happen before any local imports) ─────────────────
+# ── Path + .env setup (must happen before any local imports) ─────────────────────
 SCRIPT_DIR = Path(__file__).resolve().parent        # backend/scripts/
 BACKEND_DIR = SCRIPT_DIR.parent                     # backend/
 REPO_DIR = BACKEND_DIR.parent                       # repo root
 
 sys.path.insert(0, str(BACKEND_DIR))
 
-# Load .env explicitly from backend/ so this works regardless of cwd
-from dotenv import load_dotenv  # python-dotenv is already a project dep
+from dotenv import load_dotenv
 
 _env_path = BACKEND_DIR / ".env"
 if not _env_path.exists():
-    # fallback: try repo root
     _env_path = REPO_DIR / ".env"
 
 if _env_path.exists():
@@ -50,11 +53,11 @@ else:
         file=sys.stderr,
     )
 
-# ── Now safe to import local modules ─────────────────────────────────────────
+# ── Now safe to import local modules ─────────────────────────────────────
+from config import settings  # noqa: E402
+
 import httpx  # noqa: E402
 
-from config import settings  # noqa: E402
-from db.connection import SupabaseREST  # noqa: E402
 from services.cuisine_classifier import (  # noqa: E402
     CUISINE_VOCABULARY,
     CuisineClassifier,
@@ -68,8 +71,27 @@ logging.basicConfig(
 )
 logger = logging.getLogger("enrich_cuisines")
 
-PAGE_SIZE = 500       # rows fetched per Supabase REST page
-UPDATE_BATCH = 100    # rows updated per asyncio.gather batch
+PAGE_SIZE = 500
+UPDATE_BATCH = 100
+
+
+def _headers() -> dict:
+    key = (
+        getattr(settings, "SUPABASE_SERVICE_ROLE_KEY", None)
+        or getattr(settings, "SUPABASE_KEY", None)
+        or os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
+        or os.environ.get("SUPABASE_KEY", "")
+    )
+    return {
+        "apikey": key,
+        "Authorization": f"Bearer {key}",
+        "Content-Type": "application/json",
+        "Prefer": "return=minimal",
+    }
+
+
+def _base_url() -> str:
+    return f"{settings.SUPABASE_URL}/rest/v1"
 
 
 # ---------------------------------------------------------------------------
@@ -77,13 +99,17 @@ UPDATE_BATCH = 100    # rows updated per asyncio.gather batch
 # ---------------------------------------------------------------------------
 
 async def fetch_unclassified(
-    db: SupabaseREST,
     client: httpx.AsyncClient,
     limit: Optional[int] = None,
 ) -> list[dict]:
-    """Fetch all recipes where cuisine IS NULL, paginated."""
+    """
+    Fetch recipes where data->>'cuisine' IS NULL, paginated.
+    Returns list of {recipe_id, title, ner} dicts.
+    """
     all_rows: list[dict] = []
     offset = 0
+    base = _base_url()
+    hdrs = _headers()
 
     while True:
         page_limit = PAGE_SIZE
@@ -93,23 +119,36 @@ async def fetch_unclassified(
                 break
             page_limit = min(PAGE_SIZE, remaining)
 
+        # PostgREST: filter on JSONB field using ->> operator
         url = (
-            f"{db.base_url}/recipes"
-            f"?select=id,title,NER"
-            f"&cuisine=is.null"
+            f"{base}/recipes"
+            f"?select=recipe_id,data"
+            f"&data->>cuisine=is.null"
             f"&limit={page_limit}"
             f"&offset={offset}"
-            f"&order=id.asc"
+            f"&order=recipe_id.asc"
         )
-        resp = await client.get(url, headers=db.headers, timeout=60.0)
+        resp = await client.get(url, headers=hdrs, timeout=60.0)
         if resp.status_code != 200:
-            raise RuntimeError(f"Fetch failed {resp.status_code}: {resp.text[:200]}")
+            raise RuntimeError(f"Fetch failed {resp.status_code}: {resp.text[:300]}")
 
         page = resp.json()
         if not page:
             break
 
-        all_rows.extend(page)
+        for row in page:
+            data = row.get("data") or {}
+            if isinstance(data, str):
+                try:
+                    data = json.loads(data)
+                except json.JSONDecodeError:
+                    data = {}
+            all_rows.append({
+                "recipe_id": row["recipe_id"],
+                "title": data.get("title") or "",
+                "ner": _parse_ner(data.get("NER")),
+            })
+
         logger.info("Fetched %d rows (total so far: %d)", len(page), len(all_rows))
 
         if len(page) < page_limit:
@@ -119,8 +158,7 @@ async def fetch_unclassified(
     return all_rows
 
 
-def parse_ner(raw: object) -> list[str]:
-    """NER column may be a JSON string, a list, or None."""
+def _parse_ner(raw: object) -> list[str]:
     if raw is None:
         return []
     if isinstance(raw, list):
@@ -134,42 +172,70 @@ def parse_ner(raw: object) -> list[str]:
     return []
 
 
-async def bulk_update(
-    db: SupabaseREST,
+async def write_cuisine(
+    client: httpx.AsyncClient,
+    recipe_id: str,
+    cuisine: str,
+) -> None:
+    """
+    PATCH data->>'cuisine' for a single recipe.
+    Uses Supabase JSONB merge: PATCH /recipes?recipe_id=eq.<id>
+    with body {"data": {"cuisine": "..."}}
+    """
+    url = f"{_base_url()}/recipes?recipe_id=eq.{recipe_id}"
+    # Supabase merges JSONB on PATCH when using jsonb_set internally;
+    # simplest safe approach: send only the cuisine key in data
+    resp = await client.patch(
+        url,
+        headers=_headers(),
+        content=json.dumps({"data": json.dumps({"cuisine": cuisine})}),
+        timeout=30.0,
+    )
+    if resp.status_code not in (200, 204):
+        logger.warning(
+            "Update failed for %s (%s): %s",
+            recipe_id, cuisine, resp.text[:100],
+        )
+
+
+async def bulk_write(
     client: httpx.AsyncClient,
     updates: list[dict],
     dry_run: bool,
 ) -> int:
-    """PATCH cuisine back to the DB in parallel batches. Returns rows written."""
+    """Write cuisine updates in parallel batches. Returns rows written."""
     if dry_run or not updates:
         return 0
 
     written = 0
     for i in range(0, len(updates), UPDATE_BATCH):
-        batch = updates[i : i + UPDATE_BATCH]
-        tasks = [
-            db.update(
-                "recipes",
-                {"cuisine": row["cuisine"]},
-                {"id": row["id"]},
-                client=client,
-            )
-            for row in batch
-        ]
-        await asyncio.gather(*tasks, return_exceptions=True)
+        batch = updates[i: i + UPDATE_BATCH]
+        await asyncio.gather(
+            *[write_cuisine(client, u["recipe_id"], u["cuisine"]) for u in batch],
+            return_exceptions=True,
+        )
         written += len(batch)
         logger.info("  Written %d / %d rows", written, len(updates))
-
     return written
 
 
-async def fetch_distribution(db: SupabaseREST, client: httpx.AsyncClient) -> Counter:
-    url = f"{db.base_url}/recipes?select=cuisine&limit=100000"
-    resp = await client.get(url, headers=db.headers, timeout=120.0)
+async def fetch_distribution(client: httpx.AsyncClient) -> Counter:
+    """Fetch cuisine values for distribution report."""
+    url = f"{_base_url()}/recipes?select=data&limit=100000"
+    resp = await client.get(url, headers=_headers(), timeout=120.0)
     if resp.status_code != 200:
         logger.warning("Distribution fetch failed: %s", resp.status_code)
         return Counter()
-    return Counter(r.get("cuisine") for r in resp.json())
+    cuisines = []
+    for row in resp.json():
+        data = row.get("data") or {}
+        if isinstance(data, str):
+            try:
+                data = json.loads(data)
+            except json.JSONDecodeError:
+                data = {}
+        cuisines.append(data.get("cuisine"))
+    return Counter(cuisines)
 
 
 def print_distribution(counter: Counter) -> None:
@@ -180,7 +246,7 @@ def print_distribution(counter: Counter) -> None:
     print(f"CUISINE DISTRIBUTION  (total recipes: {total:,})")
     print("=" * 60)
 
-    noise: list[tuple] = []
+    noise = []
     for cuisine, count in sorted(counter.items(), key=lambda x: -x[1]):
         pct = 100 * count / total if total else 0
         flag = ""
@@ -209,7 +275,6 @@ async def run(
     no_llm: bool = False,
     limit: Optional[int] = None,
 ) -> None:
-    db = SupabaseREST()
     classifier = CuisineClassifier()
 
     logger.info(
@@ -219,28 +284,26 @@ async def run(
 
     async with httpx.AsyncClient(timeout=60.0) as client:
 
-        # ── Step 1: Fetch ────────────────────────────────────────────────
+        # ── Step 1: Fetch ──────────────────────────────────────────────────────
         logger.info("Step 1: Fetching unclassified recipes...")
-        rows = await fetch_unclassified(db, client, limit=limit)
+        rows = await fetch_unclassified(client, limit=limit)
         logger.info("Found %d unclassified recipes.", len(rows))
 
         if not rows:
             logger.info("Nothing to do — all recipes already have a cuisine.")
-            dist = await fetch_distribution(db, client)
+            dist = await fetch_distribution(client)
             print_distribution(dist)
             return
 
-        # ── Step 2: Rule-based ───────────────────────────────────────────
+        # ── Step 2: Rule-based ───────────────────────────────────────────────
         logger.info("Step 2: Rule-based classification...")
         rule_updates: list[dict] = []
         unresolved: list[dict] = []
 
         for row in rows:
-            title = row.get("title") or ""
-            ner = parse_ner(row.get("NER"))
-            cuisine = classify_rule_based(title, ner)
+            cuisine = classify_rule_based(row["title"], row["ner"])
             if cuisine:
-                rule_updates.append({"id": row["id"], "cuisine": cuisine})
+                rule_updates.append({"recipe_id": row["recipe_id"], "cuisine": cuisine})
             else:
                 unresolved.append(row)
 
@@ -253,40 +316,44 @@ async def run(
         if dry_run:
             logger.info("[DRY RUN] Sample rule-based results:")
             for r in rule_updates[:10]:
-                print(f"  {r['id']}: {r['cuisine']}")
+                src = next(x for x in rows if x["recipe_id"] == r["recipe_id"])
+                print(f"  {r['recipe_id']} ({src['title'][:40]}): {r['cuisine']}")
             if len(rule_updates) > 10:
                 print(f"  ... and {len(rule_updates) - 10} more")
         else:
-            written = await bulk_update(db, client, rule_updates, dry_run=False)
+            written = await bulk_write(client, rule_updates, dry_run=False)
             logger.info("  ✅ Wrote %d rule-based results.", written)
 
-        # ── Step 3: LLM fallback ─────────────────────────────────────────
+        # ── Step 3: LLM fallback ─────────────────────────────────────────────
         llm_updates: list[dict] = []
 
         if unresolved and not no_llm:
-            logger.info("Step 3: LLM fallback for %d ambiguous recipes...", len(unresolved))
-
+            logger.info(
+                "Step 3: LLM fallback for %d ambiguous recipes...", len(unresolved)
+            )
             llm_input = [
-                {"title": r.get("title") or "", "NER": parse_ner(r.get("NER"))}
-                for r in unresolved
+                {"title": r["title"], "NER": r["ner"]} for r in unresolved
             ]
             llm_results = await classifier.classify_batch(llm_input)
 
             for item in llm_results:
-                original_row = unresolved[item["index"]]
-                llm_updates.append({"id": original_row["id"], "cuisine": item["cuisine"]})
+                original = unresolved[item["index"] % len(unresolved)]
+                llm_updates.append({
+                    "recipe_id": original["recipe_id"],
+                    "cuisine": item["cuisine"],
+                })
 
             logger.info("LLM classified %d recipes.", len(llm_updates))
 
             if dry_run:
                 logger.info("[DRY RUN] Sample LLM results:")
                 for r in llm_updates[:10]:
-                    src = next(x for x in unresolved if x["id"] == r["id"])
-                    print(f"  {r['id']} ({src.get('title', '')[:40]}): {r['cuisine']}")
+                    src = next(x for x in unresolved if x["recipe_id"] == r["recipe_id"])
+                    print(f"  {r['recipe_id']} ({src['title'][:40]}): {r['cuisine']}")
                 if len(llm_updates) > 10:
                     print(f"  ... and {len(llm_updates) - 10} more")
             else:
-                written = await bulk_update(db, client, llm_updates, dry_run=False)
+                written = await bulk_write(client, llm_updates, dry_run=False)
                 logger.info("  ✅ Wrote %d LLM results.", written)
 
         elif unresolved and no_llm:
@@ -295,7 +362,7 @@ async def run(
                 len(unresolved),
             )
 
-        # ── Step 4: Distribution ─────────────────────────────────────────
+        # ── Step 4: Distribution ──────────────────────────────────────────────
         logger.info("Step 4: Distribution report...")
         if dry_run:
             projected = Counter(u["cuisine"] for u in rule_updates + llm_updates)
@@ -303,7 +370,7 @@ async def run(
             for cuisine, count in sorted(projected.items(), key=lambda x: -x[1]):
                 print(f"  {cuisine:<22}  {count:>6,}")
         else:
-            dist = await fetch_distribution(db, client)
+            dist = await fetch_distribution(client)
             print_distribution(dist)
 
     total = len(rule_updates) + len(llm_updates)
