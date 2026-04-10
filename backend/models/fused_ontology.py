@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Any, Optional
 
 
 @dataclass
@@ -20,7 +20,7 @@ class RetrievalContext:
 
     # Explicit value targets: {dimension_name: target_value}
     # Used when query specifies a concrete value (e.g. cuisine="Japanese")
-    value_targets: dict[str, any]   = field(default_factory=dict)
+    value_targets: dict[str, Any]   = field(default_factory=dict)
 
     # User-facing warnings to display alongside results
     warnings: list[str]             = field(default_factory=list)

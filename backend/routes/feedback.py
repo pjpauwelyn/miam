@@ -11,7 +11,7 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Literal, Optional
 
 from middleware.auth import get_current_user_id
 from services import feedback_service
@@ -32,7 +32,7 @@ class RecordFeedbackRequest(BaseModel):
     result_reference: str = Field(
         ..., description="ID or slug of the recipe/restaurant being rated"
     )
-    feedback_type: str = Field(
+    feedback_type: Literal["liked", "disliked", "saved", "cooked", "visited", "skipped", "viewed", "shared"] = Field(
         ...,
         description=(
             "Signal type: 'liked', 'disliked', 'saved', 'cooked', "

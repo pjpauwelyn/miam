@@ -30,8 +30,10 @@ class TestHealthRoute:
         resp = client.get("/health")
         data = resp.json()
         assert "status" in data
+        assert data["status"] in ("ok", "degraded")
         assert "version" in data
-        assert data["status"] == "ok"
+        assert data["version"] == "0.1.0"
+        assert "db" in data
 
 
 # ---------------------------------------------------------------------------

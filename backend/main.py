@@ -1,15 +1,31 @@
+import logging
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from config import settings
 from routes import auth, onboarding, profile, eat_in, eat_out, sessions, discover, feedback
 
+logger = logging.getLogger(__name__)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
+    logger.info("Starting miam backend v%s", "0.1.0")
+    from db.connection import init_pool, close_pool
+    await init_pool()
+
+    # Create shared HTTP client for Supabase REST calls
+    import httpx
+    app.state.http_client = httpx.AsyncClient(timeout=30.0)
+
     yield
+
     # Shutdown
+    await app.state.http_client.aclose()
+    await close_pool()
+    logger.info("Shutdown complete")
 
 
 app = FastAPI(
@@ -42,4 +58,16 @@ app.include_router(feedback.router, prefix="/api/feedback", tags=["feedback"])
 
 @app.get("/health")
 async def health_check():
-    return {"status": "ok", "version": "0.1.0"}
+    db_ok = False
+    try:
+        from db.connection import get_pool
+        pool = await get_pool()
+        if pool and hasattr(pool, "acquire"):
+            async with pool.acquire() as conn:
+                await conn.fetchval("SELECT 1")
+            db_ok = True
+    except Exception:
+        pass
+
+    status = "ok" if db_ok else "degraded"
+    return {"status": status, "version": "0.1.0", "db": "connected" if db_ok else "disconnected"}

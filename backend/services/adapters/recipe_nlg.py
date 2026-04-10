@@ -7,7 +7,7 @@ Activated in Phase 3 when the real RecipeNLG dataset replaces Tier 0 mock data.
 from __future__ import annotations
 
 from uuid import uuid4
-from datetime import datetime
+from datetime import datetime, timezone
 
 from .base import BaseAdapter
 
@@ -100,15 +100,15 @@ class RecipeNLGAdapter(BaseAdapter):
             dietary_tags=[],  # Derived from NER analysis
             dietary_flags=DietaryFlags(),
             nutrition_per_serving=NutritionPerServing(
-                kcal=0, protein_g=0, fat_g=0, saturated_fat_g=0,
-                carbs_g=0, fiber_g=0, sugar_g=0, salt_g=0,
+                kcal=None, protein_g=None, fat_g=None, saturated_fat_g=None,
+                carbs_g=None, fiber_g=None, sugar_g=None, salt_g=None,
             ),
             season_tags=["year-round"],
             occasion_tags=[],
             course_tags=[],
             source_type="recipenlg",
             embedding_text=embedding_text,
-            created_at=datetime.utcnow().isoformat(),
+            created_at=datetime.now(timezone.utc).isoformat(),
             data_quality_score=0.5,  # RecipeNLG records are often incomplete
         )
 

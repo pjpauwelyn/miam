@@ -29,7 +29,7 @@ def _rest_headers() -> dict[str, str]:
 # ---------------------------------------------------------------------------
 
 
-async def create_session(user_id: str, mode: str = "eat_in") -> dict:
+async def create_session(user_id: str, mode: str = "eat_in", *, client: httpx.AsyncClient | None = None) -> dict:
     """
     Creates a new session in Supabase.
 
@@ -45,9 +45,9 @@ async def create_session(user_id: str, mode: str = "eat_in") -> dict:
     }
 
     url = f"{SUPABASE_REST_BASE}/sessions"
+    _client = client or httpx.AsyncClient(timeout=15.0)
     try:
-        async with httpx.AsyncClient(timeout=15.0) as client:
-            resp = await client.post(url, headers=_rest_headers(), json=payload)
+        resp = await _client.post(url, headers=_rest_headers(), json=payload)
 
         if resp.status_code not in (200, 201):
             logger.error(
@@ -75,6 +75,9 @@ async def create_session(user_id: str, mode: str = "eat_in") -> dict:
     except Exception as exc:
         logger.error("Exception creating session for user_id=%s: %s", user_id, exc)
         raise RuntimeError(f"Session creation error: {exc}") from exc
+    finally:
+        if not client:
+            await _client.aclose()
 
 
 async def add_message(
@@ -82,6 +85,8 @@ async def add_message(
     role: str,
     content: str,
     structured: dict | None = None,
+    *,
+    client: httpx.AsyncClient | None = None,
 ) -> dict:
     """
     Adds a message to the given session.
@@ -106,9 +111,9 @@ async def add_message(
         payload["structured"] = structured
 
     url = f"{SUPABASE_REST_BASE}/messages"
+    _client = client or httpx.AsyncClient(timeout=15.0)
     try:
-        async with httpx.AsyncClient(timeout=15.0) as client:
-            resp = await client.post(url, headers=_rest_headers(), json=payload)
+        resp = await _client.post(url, headers=_rest_headers(), json=payload)
 
         if resp.status_code not in (200, 201):
             logger.error(
@@ -139,6 +144,9 @@ async def add_message(
             "Exception adding message to session_id=%s: %s", session_id, exc
         )
         raise RuntimeError(f"Message insert error: {exc}") from exc
+    finally:
+        if not client:
+            await _client.aclose()
 
 
 async def get_session_history(session_id: str, limit: int = 10) -> list[dict]:
@@ -186,6 +194,9 @@ async def get_session_history(session_id: str, limit: int = 10) -> list[dict]:
 
 
 async def increment_query_count(session_id: str) -> None:
+    # TODO: Race condition — concurrent requests can lose increments.
+    # Fix: Use Supabase RPC with `query_count = query_count + 1` for atomic increment.
+    # Low priority while user base is <10.
     """
     Increments the query_count for the given session using a Supabase RPC
     or a read-then-write approach.

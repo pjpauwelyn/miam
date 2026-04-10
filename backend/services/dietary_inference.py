@@ -207,8 +207,19 @@ class DietaryInferenceEngine:
         )
 
         # "gluten-free if substituted" — recipes where gluten comes only from
-        # easily swappable items (flour, pasta, bread, soy sauce)
-        gluten_free_if_substituted = has_gluten and not is_vegan  # rough heuristic
+        # easily swappable items (flour, pasta, bread, soy sauce).
+        # Check that the gluten source is a substitutable ingredient, not a core one.
+        _substitutable_gluten = {"flour", "bread", "pasta", "noodle", "spaghetti",
+            "penne", "fusilli", "lasagne", "lasagna", "macaroni", "fettuccine",
+            "linguine", "tagliatelle", "couscous", "breadcrumb", "crouton",
+            "panko", "tortilla", "wrap", "soy sauce",
+            "plain flour", "self-raising flour", "all-purpose flour",
+            "bread flour", "cake flour", "wholemeal flour", "whole wheat flour"}
+        gluten_sources = [ing for ing in ingredients if _contains_any(ing, GLUTEN_TERMS)]
+        all_substitutable = gluten_sources and all(
+            _contains_any(ing, _substitutable_gluten) for ing in gluten_sources
+        )
+        gluten_free_if_substituted = has_gluten and all_substitutable
 
         is_halal_ok = not has_pork and not has_alcohol
 

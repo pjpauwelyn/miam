@@ -1,3 +1,4 @@
+# Phase 2+ placeholder — Foursquare Places Live API adapter. Not yet implemented.
 """
 FSQLiveAdapter — Tier 2 paid Foursquare live API adapter (DORMANT).
 

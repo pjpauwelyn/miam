@@ -10,7 +10,7 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-from typing import Optional
+from typing import Literal, Optional
 
 from middleware.auth import get_current_user_id
 from services import session_manager
@@ -27,7 +27,7 @@ router = APIRouter()
 
 class CreateSessionRequest(BaseModel):
     user_id: str
-    mode: str = "eat_in"  # "eat_in" | "eat_out"
+    mode: Literal["eat_in", "eat_out"] = "eat_in"
     metadata: dict[str, Any] | None = None
 
 

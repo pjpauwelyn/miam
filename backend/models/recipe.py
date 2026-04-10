@@ -48,14 +48,14 @@ class DietaryFlags(BaseModel):
 
 
 class NutritionPerServing(BaseModel):
-    kcal: int
-    protein_g: float
-    fat_g: float
-    saturated_fat_g: float
-    carbs_g: float
-    fiber_g: float
-    sugar_g: float
-    salt_g: float
+    kcal: int | None = None
+    protein_g: float | None = None
+    fat_g: float | None = None
+    saturated_fat_g: float | None = None
+    carbs_g: float | None = None
+    fiber_g: float | None = None
+    sugar_g: float | None = None
+    salt_g: float | None = None
 
 
 class RecipeDocument(BaseModel):

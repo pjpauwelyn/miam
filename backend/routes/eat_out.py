@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Any
 
@@ -24,4 +24,4 @@ async def eat_out_query(body: EatOutQueryRequest) -> dict[str, Any]:
       3. Retrieve matching restaurants via vector search + geo filter
       4. Rank, explain, and return top results
     """
-    return {"status": "not_implemented"}
+    raise HTTPException(status_code=501, detail="Not implemented")

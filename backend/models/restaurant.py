@@ -8,8 +8,8 @@ from pydantic import BaseModel, Field
 
 
 class RestaurantCoordinates(BaseModel):
-    lat: float = Field(..., description="WGS84 latitude, e.g. 52.3676")
-    lng: float = Field(..., description="WGS84 longitude, e.g. 4.9041")
+    lat: Optional[float] = Field(None, description="WGS84 latitude, e.g. 52.3676")
+    lng: Optional[float] = Field(None, description="WGS84 longitude, e.g. 4.9041")
 
 
 class RestaurantCuisineTags(BaseModel):

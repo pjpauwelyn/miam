@@ -13,7 +13,7 @@ import math
 from pathlib import Path
 from typing import Optional
 from uuid import UUID, uuid4
-from datetime import datetime
+from datetime import datetime, timezone
 
 from .base import BaseAdapter
 
@@ -98,7 +98,7 @@ class FSQOSAdapter(BaseAdapter):
             lat = raw["coordinates"]["lat"]
             lng = raw["coordinates"]["lng"]
         else:
-            lat, lng = 0.0, 0.0
+            lat, lng = None, None
 
         # Extract address from FSQ nested structure or flat structure
         if "location" in raw:
@@ -182,7 +182,7 @@ class FSQOSAdapter(BaseAdapter):
             data_quality_flags=raw.get("data_quality_flags"),
             data_quality_notes=raw.get("data_quality_notes"),
             embedding_text=raw.get("embedding_text", ""),
-            created_at=raw.get("created_at", datetime.utcnow().isoformat()),
+            created_at=raw.get("created_at", datetime.now(timezone.utc).isoformat()),
         )
 
     def _filter(

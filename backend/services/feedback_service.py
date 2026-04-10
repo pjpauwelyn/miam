@@ -32,6 +32,8 @@ async def record_feedback(
     session_id: str | None = None,
     rating_value: float | None = None,
     context: dict | None = None,
+    *,
+    client: httpx.AsyncClient | None = None,
 ) -> dict:
     """
     Records a feedback event for a recipe or restaurant result.
@@ -66,9 +68,9 @@ async def record_feedback(
         payload["feedback_context"] = context
 
     url = f"{SUPABASE_REST_BASE}/feedback_events"
+    _client = client or httpx.AsyncClient(timeout=15.0)
     try:
-        async with httpx.AsyncClient(timeout=15.0) as client:
-            resp = await client.post(url, headers=_rest_headers(), json=payload)
+        resp = await _client.post(url, headers=_rest_headers(), json=payload)
 
         if resp.status_code not in (200, 201):
             logger.error(
@@ -97,6 +99,9 @@ async def record_feedback(
     except Exception as exc:
         logger.error("Exception recording feedback for user_id=%s: %s", user_id, exc)
         raise RuntimeError(f"Feedback record error: {exc}") from exc
+    finally:
+        if not client:
+            await _client.aclose()
 
 
 async def get_user_feedback(user_id: str, limit: int = 50) -> list[dict]:

@@ -61,56 +61,6 @@ class OpenFoodFactsAdapter(BaseAdapter):
             "labels": raw.get("labels_tags", []),
         }
 
-    def enrich_recipe_nutrition(
-        self,
-        ingredients: list[dict],
-        off_products: dict[str, dict],
-    ) -> NutritionPerServing:
-        """
-        Estimate per-serving nutrition by summing ingredient contributions.
-
-        Args:
-            ingredients: List of RecipeIngredient-like dicts with name, amount, unit.
-            off_products: Mapping of ingredient name -> OFF product record.
-
-        Returns:
-            Estimated NutritionPerServing for one serving.
-        """
-        totals = {
-            "kcal": 0, "protein_g": 0, "fat_g": 0, "saturated_fat_g": 0,
-            "carbs_g": 0, "fiber_g": 0, "sugar_g": 0, "salt_g": 0,
-        }
-
-        for ing in ingredients:
-            name = ing.get("name", "").lower()
-            if name not in off_products:
-                continue
-
-            product = off_products[name]
-            nutriments = product.get("nutriments", {})
-            amount_g = self._estimate_grams(ing.get("amount", 0), ing.get("unit", "g"))
-            factor = amount_g / 100.0  # OFF data is per 100g
-
-            totals["kcal"] += int(nutriments.get("energy-kcal_100g", 0) * factor)
-            totals["protein_g"] += nutriments.get("proteins_100g", 0) * factor
-            totals["fat_g"] += nutriments.get("fat_100g", 0) * factor
-            totals["saturated_fat_g"] += nutriments.get("saturated-fat_100g", 0) * factor
-            totals["carbs_g"] += nutriments.get("carbohydrates_100g", 0) * factor
-            totals["fiber_g"] += nutriments.get("fiber_100g", 0) * factor
-            totals["sugar_g"] += nutriments.get("sugars_100g", 0) * factor
-            totals["salt_g"] += nutriments.get("salt_100g", 0) * factor
-
-        return NutritionPerServing(
-            kcal=totals["kcal"],
-            protein_g=round(totals["protein_g"], 1),
-            fat_g=round(totals["fat_g"], 1),
-            saturated_fat_g=round(totals["saturated_fat_g"], 1),
-            carbs_g=round(totals["carbs_g"], 1),
-            fiber_g=round(totals["fiber_g"], 1),
-            sugar_g=round(totals["sugar_g"], 1),
-            salt_g=round(totals["salt_g"], 2),
-        )
-
     @staticmethod
     def _estimate_grams(amount: float, unit: str) -> float:
         """Rough conversion of various units to grams."""

@@ -36,10 +36,11 @@ class SupabaseREST:
         self.base_url = f"{settings.SUPABASE_URL}/rest/v1"
         self.headers = settings.supabase_rest_headers
 
-    async def insert(self, table: str, data: dict | list[dict]) -> list[dict]:
+    async def insert(self, table: str, data: dict | list[dict], *, client: httpx.AsyncClient | None = None) -> list[dict]:
         """Insert one or more rows into a table."""
-        async with httpx.AsyncClient() as client:
-            resp = await client.post(
+        _client = client or httpx.AsyncClient(timeout=30.0)
+        try:
+            resp = await _client.post(
                 f"{self.base_url}/{table}",
                 headers=self.headers,
                 json=data if isinstance(data, list) else [data] if isinstance(data, dict) else data,
@@ -49,6 +50,9 @@ class SupabaseREST:
                 logger.error("Supabase insert failed: %s %s", resp.status_code, resp.text)
                 raise Exception(f"Supabase insert error: {resp.status_code} {resp.text}")
             return resp.json()
+        finally:
+            if not client:
+                await _client.aclose()
 
     async def select(
         self,
@@ -57,14 +61,10 @@ class SupabaseREST:
         filters: dict[str, Any] | None = None,
         limit: int | None = None,
         order: str | None = None,
+        *,
+        client: httpx.AsyncClient | None = None,
     ) -> list[dict]:
         """Select rows from a table with optional filters."""
-        params = {"select": columns}
-        if limit:
-            params["limit"] = str(limit)
-        if order:
-            params["order"] = order
-
         headers = {**self.headers}
 
         # Build filter query params
@@ -79,28 +79,36 @@ class SupabaseREST:
         if order:
             url += f"&order={order}"
 
-        async with httpx.AsyncClient() as client:
-            resp = await client.get(url, headers=headers, timeout=30.0)
+        _client = client or httpx.AsyncClient(timeout=30.0)
+        try:
+            resp = await _client.get(url, headers=headers, timeout=30.0)
             if resp.status_code != 200:
                 logger.error("Supabase select failed: %s %s", resp.status_code, resp.text)
                 raise Exception(f"Supabase select error: {resp.status_code} {resp.text}")
             return resp.json()
+        finally:
+            if not client:
+                await _client.aclose()
 
     async def update(
-        self, table: str, data: dict, filters: dict[str, Any]
+        self, table: str, data: dict, filters: dict[str, Any], *, client: httpx.AsyncClient | None = None,
     ) -> list[dict]:
         """Update rows matching filters."""
         filter_params = "&".join(f"{k}=eq.{quote(str(v), safe='')}" for k, v in filters.items())
         url = f"{self.base_url}/{table}?{filter_params}"
 
-        async with httpx.AsyncClient() as client:
-            resp = await client.patch(
+        _client = client or httpx.AsyncClient(timeout=30.0)
+        try:
+            resp = await _client.patch(
                 url, headers=self.headers, json=data, timeout=30.0,
             )
             if resp.status_code not in (200, 204):
                 logger.error("Supabase update failed: %s %s", resp.status_code, resp.text)
                 raise Exception(f"Supabase update error: {resp.status_code} {resp.text}")
             return resp.json() if resp.status_code == 200 else []
+        finally:
+            if not client:
+                await _client.aclose()
 
     async def delete(self, table: str, filters: dict[str, Any]) -> None:
         """Delete rows matching filters."""
@@ -159,6 +167,11 @@ def get_rest_client() -> SupabaseREST:
     if _rest_client is None:
         _rest_client = SupabaseREST()
     return _rest_client
+
+
+async def init_pool():
+    """Initialize the connection pool at startup."""
+    await get_pool()
 
 
 async def get_pool():

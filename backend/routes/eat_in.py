@@ -12,7 +12,7 @@ import time
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 
 from config import settings
@@ -36,7 +36,7 @@ router = APIRouter()
 
 class EatInQueryRequest(BaseModel):
     user_id: str
-    query: str
+    query: str = Field(..., max_length=5000)
     session_id: str | None = None
     filters: dict[str, Any] | None = None
 
