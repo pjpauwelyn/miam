@@ -25,8 +25,11 @@ class EnrichmentSource(str, Enum):
     """Who/what produced a field value."""
     RECIPENLG_RAW      = "recipenlg_raw"        # verbatim from RecipeNLG dataset
     RULE_DETERMINISTIC = "rule_deterministic"    # regex / lookup-table
+    CIQUAL             = "ciqual"               # CIQUAL French food composition table
     USDA_FDC           = "usda_fdc"             # USDA FoodData Central API
     OPEN_FOOD_FACTS    = "open_food_facts"       # OFF API
+    FLAVORDB           = "flavordb"             # FlavorDB entity descriptors
+    SEASONALITY_TABLE  = "seasonality_table"     # Curated seasonality lookup
     LLM_MISTRAL        = "llm_mistral"           # Mistral inference
     LLM_OPENAI         = "llm_openai"            # OpenAI inference
     MANUAL_CURATED     = "manual_curated"        # human editor
@@ -59,11 +62,12 @@ class FieldProvenance(BaseModel):
 class EnrichmentStatus(str, Enum):
     """Pipeline stage gate for a recipe record."""
     RAW                    = "raw"
-    PARSED                 = "parsed"                # units normalised, steps split
-    DETERMINISTIC_ENRICHED = "deterministic_enriched" # dietary flags, cuisine lookup
-    LLM_ENRICHED           = "llm_enriched"          # description, flavor, occasion
-    VALIDATED              = "validated"              # passed Tier-1 criteria
-    REJECTED               = "rejected"               # blocked from promotion
+    PARSED                 = "parsed"                # Stage 1: units normalised, steps split
+    DETERMINISTIC_ENRICHED = "deterministic_enriched" # Stages 2-5: dietary, cuisine, nutrition, etc.
+    LLM_ENRICHED           = "llm_enriched"          # Stage 6: description, region, tips
+    VALIDATED              = "validated"              # Stage 7: passed validation gate
+    FLAGGED                = "flagged"                # Stage 7: soft violations, needs review
+    REJECTED               = "rejected"               # Stage 7: blocked from promotion
 
 
 class TierLevel(int, Enum):
@@ -97,6 +101,8 @@ class RecipeEnrichmentMeta(BaseModel):
     has_real_description: bool = False    # not a stub like "A recipe for..."
     has_llm_flavor_tags: bool = False
     has_nutrition: bool = False
+    has_allergen_warnings: bool = False
+    has_technique_tags: bool = False
     has_embedding: bool = False
     # rag_embedding_version tracks which model produced the embedding so we
     # can detect staleness when the embedding model is upgraded.
@@ -122,6 +128,9 @@ class RecipeIngredient(BaseModel):
     )
     notes: Optional[str] = None
     is_optional: bool = False
+    category: Optional[str] = Field(default=None,
+        description="protein | vegetable | starch | fat | spice | herb | "
+                    "liquid | condiment | dairy | fruit | sweetener")
     substitutions: list[RecipeSubstitution] = Field(default_factory=list)
 
 
@@ -255,6 +264,23 @@ class RecipeDocument(BaseModel):
     wine_pairing_notes: Optional[str] = None
     tips: list[str] = Field(default_factory=list)
     image_placeholder: Optional[str] = None
+
+    # ---- New fields from orchestrator plan (Phase 4) -----------------------
+    allergen_warnings: list[str] = Field(default_factory=list,
+        description="EU-14 major allergens: celery, cereals, crustaceans, eggs, "
+                    "fish, lupin, milk, molluscs, mustard, nuts, peanuts, "
+                    "sesame, soybeans, sulphites")
+    cultural_notes: Optional[str] = Field(default=None,
+        description="1-2 sentences cultural/historical context. LLM-generated.")
+    pairing_suggestions: list[str] = Field(default_factory=list,
+        description="Sides, accompaniments, drinks. LLM-generated.")
+    storage_instructions: Optional[str] = Field(default=None,
+        description="Freezability, shelf life, storage tips.")
+    scaling_notes: list[str] = Field(default_factory=list,
+        description="Ingredients that don't scale linearly.")
+    provenance_summary: Optional[str] = Field(default=None,
+        description="Human-readable provenance: 'Nutrition from CIQUAL (0.85), "
+                    "cuisine from rule-based classifier'.")
 
     # ---- CAT-C: externally-grounded nutrition ------------------------------
     # Populated by USDA/OFF lookup. Never fabricated by LLM.
