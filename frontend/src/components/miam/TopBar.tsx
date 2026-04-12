@@ -3,9 +3,10 @@ import { MiamLogo, MiamWordmark } from './MiamLogo';
 
 interface TopBarProps {
   onAvatarClick: () => void;
+  userInitials?: string;
 }
 
-export function TopBar({ onAvatarClick }: TopBarProps) {
+export function TopBar({ onAvatarClick, userInitials }: TopBarProps) {
   return (
     <div className="flex items-center justify-between px-5 py-3" data-testid="top-bar">
       <div className="flex items-center gap-2">
@@ -21,7 +22,7 @@ export function TopBar({ onAvatarClick }: TopBarProps) {
         transition={{ type: 'spring', stiffness: 500, damping: 25 }}
         data-testid="avatar-button"
       >
-        LP
+        {userInitials || 'U'}
       </motion.button>
     </div>
   );

@@ -59,7 +59,8 @@ export default function ChatPage() {
     setInputValue('');
 
     try {
-      const pipelineResp = await queryPipeline(query, getCurrentUserId(), sessionId);
+      const uid = await getCurrentUserId();
+      const pipelineResp = await queryPipeline(query, uid, sessionId);
       setSessionId(pipelineResp.session_id);
 
       // Fetch full recipe documents for results
@@ -262,7 +263,8 @@ export default function ChatPage() {
           </div>
         </div>
 
-        {/* Suggestion chips */}
+        {/* Suggestion chips — only before conversation starts */}
+        {messages.length <= 1 && (
         <div className="px-4 py-2">
           <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
             {suggestionChips.map((chip, i) => (
@@ -287,6 +289,7 @@ export default function ChatPage() {
             ))}
           </div>
         </div>
+        )}
 
         {/* Input bar */}
         <motion.div

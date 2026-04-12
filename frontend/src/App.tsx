@@ -1,4 +1,4 @@
-import { useState, useEffect, createContext, useContext } from 'react';
+import { useState, useEffect, createContext, useContext, lazy, Suspense } from 'react';
 import { Switch, Route, Router, useLocation } from 'wouter';
 import { useHashLocation } from 'wouter/use-hash-location';
 import { queryClient } from './lib/queryClient';
@@ -8,12 +8,14 @@ import { TopBar } from './components/miam/TopBar';
 import { BottomNav } from './components/miam/BottomNav';
 import { ProfileSheet } from './components/miam/ProfileSheet';
 import { RecipeDetail } from './components/miam/RecipeDetail';
+// Keep direct imports for critical path
 import ChatPage from './pages/ChatPage';
-import DiscoverPage from './pages/DiscoverPage';
-import LibraryPage from './pages/LibraryPage';
-import OnboardingPage from './pages/OnboardingPage';
-import CreateRecipePage from './pages/CreateRecipePage';
 import LoginPage from './pages/LoginPage';
+// Lazy-load the rest
+const DiscoverPage = lazy(() => import('./pages/DiscoverPage'));
+const LibraryPage = lazy(() => import('./pages/LibraryPage'));
+const OnboardingPage = lazy(() => import('./pages/OnboardingPage'));
+const CreateRecipePage = lazy(() => import('./pages/CreateRecipePage'));
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { fetchUserProfile } from './lib/api';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -53,6 +55,7 @@ function AppShell() {
   const [location, navigate] = useLocation();
   const [hasProfile, setHasProfile] = useState<boolean | null>(null);
   const [checkingProfile, setCheckingProfile] = useState(false);
+  const [userInitials, setUserInitials] = useState<string>('U');
 
   // Check if user has completed onboarding
   useEffect(() => {
@@ -64,6 +67,14 @@ function AppShell() {
     fetchUserProfile(user.id)
       .then((profile) => {
         setHasProfile(profile !== null && profile.profile_status === 'complete');
+        if (profile?.display_name) {
+          const parts = profile.display_name.trim().split(/\s+/);
+          setUserInitials(parts.length >= 2
+            ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+            : parts[0][0].toUpperCase());
+        } else if (user.email) {
+          setUserInitials(user.email[0].toUpperCase());
+        }
       })
       .catch(() => setHasProfile(false))
       .finally(() => setCheckingProfile(false));
@@ -98,7 +109,9 @@ function AppShell() {
     // Auto-redirect to onboarding
     return (
       <div className="phone-frame flex flex-col overflow-hidden">
-        <OnboardingPage onComplete={() => setHasProfile(true)} />
+        <Suspense fallback={<div className="flex items-center justify-center h-full"><Loader2 className="animate-spin" style={{ color: '#D4A855' }} /></div>}>
+          <OnboardingPage onComplete={() => setHasProfile(true)} />
+        </Suspense>
       </div>
     );
   }
@@ -107,7 +120,9 @@ function AppShell() {
   if (location.startsWith('/onboarding')) {
     return (
       <div className="phone-frame flex flex-col overflow-hidden">
-        <OnboardingPage onComplete={() => { setHasProfile(true); navigate('/'); }} />
+        <Suspense fallback={<div className="flex items-center justify-center h-full"><Loader2 className="animate-spin" style={{ color: '#D4A855' }} /></div>}>
+          <OnboardingPage onComplete={() => { setHasProfile(true); navigate('/'); }} />
+        </Suspense>
       </div>
     );
   }
@@ -121,10 +136,11 @@ function AppShell() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.05 }}
         >
-          <TopBar onAvatarClick={() => setProfileOpen(true)} />
+          <TopBar onAvatarClick={() => setProfileOpen(true)} userInitials={userInitials} />
         </motion.div>
 
         {/* Page content with route transitions */}
+        <Suspense fallback={<div className="flex items-center justify-center h-full"><Loader2 className="animate-spin" style={{ color: '#D4A855' }} /></div>}>
         <AnimatePresence mode="wait">
           <Switch>
             <Route path="/">
@@ -154,6 +170,7 @@ function AppShell() {
             </Route>
           </Switch>
         </AnimatePresence>
+        </Suspense>
 
         <BottomNav />
         <ProfileSheet

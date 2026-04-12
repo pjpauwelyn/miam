@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ChevronRight, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { RecipeCard } from '../components/miam/RecipeCard';
 import { useRecipeDetail } from '../App';
@@ -27,6 +27,7 @@ export default function DiscoverPage() {
   const [categoryResults, setCategoryResults] = useState<UiRecipe[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [categoryLoading, setCategoryLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Cache the user profile so we don't re-fetch on every category click
   const profileRef = useRef<UserProfile | null>(null);
@@ -38,7 +39,7 @@ export default function DiscoverPage() {
         const [forYouData, seasonalData, profile] = await Promise.all([
           fetchForYouRecipes(8),
           fetchSeasonalRecipes(8),
-          fetchUserProfile(getCurrentUserId()),
+          getCurrentUserId().then(uid => fetchUserProfile(uid)),
         ]);
         if (!cancelled) {
           profileRef.current = profile;
@@ -49,6 +50,7 @@ export default function DiscoverPage() {
         }
       } catch (err) {
         console.error('Failed to load discover data:', err);
+        if (!cancelled) setError('Couldn\u2019t load recipes. Pull down to retry.');
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -95,12 +97,18 @@ export default function DiscoverPage() {
         <p className="text-xs mt-0.5" style={{ color: '#706D65' }}>Personalised picks from cuisines around the world</p>
       </motion.div>
 
+      {error && (
+        <div className="px-5 py-4">
+          <p className="text-sm" style={{ color: '#A5A29A' }}>{error}</p>
+        </div>
+      )}
+
       {loading ? (
         <div className="flex items-center justify-center py-16">
           <Loader2 size={24} className="animate-spin" style={{ color: '#D4A855' }} />
           <span className="ml-2 text-sm" style={{ color: '#A5A29A' }}>Loading recipes...</span>
         </div>
-      ) : (
+      ) : !error && (
         <>
           {sections.map((section, sIdx) => (
             <motion.div
@@ -112,14 +120,6 @@ export default function DiscoverPage() {
             >
               <div className="flex items-center justify-between px-5 mb-3">
                 <h2 className="text-base font-semibold" style={{ color: '#F0EDE8' }}>{section.title}</h2>
-                <motion.button
-                  className="flex items-center gap-0.5 text-xs"
-                  style={{ color: '#D4A855' }}
-                  whileTap={{ scale: 0.95 }}
-                  data-testid={`see-all-${section.title.replace(/\s/g, '-').toLowerCase()}`}
-                >
-                  See all <ChevronRight size={12} />
-                </motion.button>
               </div>
               <div className="flex gap-3 overflow-x-auto hide-scrollbar px-5">
                 {section.items.length > 0 ? section.items.map((recipe, i) => (

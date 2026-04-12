@@ -78,17 +78,19 @@ export default function LibraryPage() {
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [savedLoaded, setSavedLoaded] = useState(false);
   const [historyLoaded, setHistoryLoaded] = useState(false);
+  const [savedError, setSavedError] = useState<string | null>(null);
+  const [historyError, setHistoryError] = useState<string | null>(null);
 
   // Load saved recipes from user_saved_recipes join
   useEffect(() => {
     if (tab === 'saved' && !savedLoaded) {
       setLoadingSaved(true);
-      fetchSavedRecipes(getCurrentUserId())
+      getCurrentUserId().then(uid => fetchSavedRecipes(uid))
         .then((data) => {
           setSavedRecipes(data.map(recipeToUiFormat));
           setSavedLoaded(true);
         })
-        .catch(console.error)
+        .catch(() => setSavedError('Couldn\u2019t load saved recipes. Try again later.'))
         .finally(() => setLoadingSaved(false));
     }
   }, [tab, savedLoaded]);
@@ -97,12 +99,12 @@ export default function LibraryPage() {
   useEffect(() => {
     if (tab === 'history' && !historyLoaded) {
       setLoadingHistory(true);
-      fetchSessionHistory(getCurrentUserId())
+      getCurrentUserId().then(uid => fetchSessionHistory(uid))
         .then((data) => {
           setSessionHistory(data);
           setHistoryLoaded(true);
         })
-        .catch(console.error)
+        .catch(() => setHistoryError('Couldn\u2019t load history. Try again later.'))
         .finally(() => setLoadingHistory(false));
     }
   }, [tab, historyLoaded]);
@@ -159,7 +161,11 @@ export default function LibraryPage() {
         >
           {tab === 'saved' && (
             <div className="px-5 py-4 space-y-3">
-              {loadingSaved ? (
+              {savedError ? (
+                <div className="flex items-center justify-center min-h-[300px]">
+                  <p className="text-sm" style={{ color: '#A5A29A' }}>{savedError}</p>
+                </div>
+              ) : loadingSaved ? (
                 <div className="flex items-center justify-center min-h-[300px]">
                   <Loader2 size={20} className="animate-spin" style={{ color: '#D4A855' }} />
                   <span className="ml-2 text-sm" style={{ color: '#A5A29A' }}>Loading saved recipes...</span>
@@ -217,7 +223,11 @@ export default function LibraryPage() {
 
           {tab === 'history' && (
             <div className="px-5 py-4 space-y-3">
-              {loadingHistory ? (
+              {historyError ? (
+                <div className="flex items-center justify-center min-h-[300px]">
+                  <p className="text-sm" style={{ color: '#A5A29A' }}>{historyError}</p>
+                </div>
+              ) : loadingHistory ? (
                 <div className="flex items-center justify-center min-h-[300px]">
                   <Loader2 size={20} className="animate-spin" style={{ color: '#D4A855' }} />
                   <span className="ml-2 text-sm" style={{ color: '#A5A29A' }}>Loading history...</span>

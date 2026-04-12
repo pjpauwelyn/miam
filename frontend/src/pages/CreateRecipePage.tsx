@@ -50,6 +50,7 @@ export default function CreateRecipePage() {
   const [notes, setNotes] = useState('');
   const [formSaving, setFormSaving] = useState(false);
   const [formSaved, setFormSaved] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const toggleChip = (list: string[], item: string, setter: (v: string[]) => void) => {
     setter(list.includes(item) ? list.filter((i) => i !== item) : [...list, item]);
@@ -84,9 +85,10 @@ export default function CreateRecipePage() {
     setAiResult(null);
 
     try {
+      const uid = await getCurrentUserId();
       const pipelineResp = await queryPipeline(
         `Create a recipe: ${aiPrompt}`,
-        getCurrentUserId(),
+        uid,
       );
 
       const generatedText = pipelineResp.response.generated_text;
@@ -135,8 +137,9 @@ export default function CreateRecipePage() {
   // Save the AI-generated recipe as an activity event + navigate
   const handleSaveAiRecipe = async () => {
     if (aiResult?.recipe) {
+      const uid = await getCurrentUserId();
       await logActivity(
-        getCurrentUserId(),
+        uid,
         'recipe_created',
         aiResult.recipe.id,
         `AI-created: ${aiResult.recipe.title}`,
@@ -151,8 +154,9 @@ export default function CreateRecipePage() {
     setFormSaving(true);
     try {
       const recipeId = crypto.randomUUID();
+      const uid = await getCurrentUserId();
       await logActivity(
-        getCurrentUserId(),
+        uid,
         'recipe_created',
         recipeId,
         JSON.stringify({
@@ -172,8 +176,8 @@ export default function CreateRecipePage() {
       setFormSaved(true);
       setTimeout(() => navigate('/library'), 800);
     } catch {
-      // Silent fail
-      navigate('/library');
+      setFormError('Failed to save recipe. Please try again.');
+      setTimeout(() => navigate('/library'), 2000);
     } finally {
       setFormSaving(false);
     }
@@ -656,6 +660,11 @@ export default function CreateRecipePage() {
                   />
                 </motion.button>
               </div>
+
+              {/* Form error */}
+              {formError && (
+                <p className="text-xs text-center" style={{ color: '#C45A70' }}>{formError}</p>
+              )}
 
               {/* Save button */}
               <motion.button

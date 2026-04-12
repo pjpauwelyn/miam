@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'wouter';
-import { X, User, Settings, Info, Sparkles, Loader2, LogOut } from 'lucide-react';
+import { X, Sparkles, Loader2, LogOut } from 'lucide-react';
 import { fetchUserProfile, getCurrentUserId } from '../../lib/api';
 import type { UserProfile } from '../../lib/api';
 
@@ -19,18 +19,12 @@ export function ProfileSheet({ isOpen, onClose, onSignOut }: ProfileSheetProps) 
   useEffect(() => {
     if (isOpen && !profile) {
       setLoading(true);
-      fetchUserProfile(getCurrentUserId())
+      getCurrentUserId().then(uid => fetchUserProfile(uid))
         .then((p) => setProfile(p))
         .catch(() => setProfile(null))
         .finally(() => setLoading(false));
     }
   }, [isOpen]);
-
-  const items = [
-    { icon: User, label: 'Profile' },
-    { icon: Settings, label: 'Settings' },
-    { icon: Info, label: 'About' },
-  ];
 
   const initials = profile?.display_name
     ? profile.display_name.slice(0, 2).toUpperCase()
@@ -151,19 +145,7 @@ export function ProfileSheet({ isOpen, onClose, onSignOut }: ProfileSheetProps) 
                   </div>
                 </motion.button>
 
-                <div className="space-y-1">
-                  {items.map((item) => (
-                    <button
-                      key={item.label}
-                      className="flex items-center gap-3 w-full px-3 py-3 rounded-lg transition-colors"
-                      style={{ color: '#F0EDE8' }}
-                      data-testid={`profile-${item.label.toLowerCase()}`}
-                    >
-                      <item.icon size={18} style={{ color: '#A5A29A' }} />
-                      <span className="text-sm">{item.label}</span>
-                    </button>
-                  ))}
-                </div>
+                {/* TODO: Wire these when profile/settings pages exist */}
 
                 {/* Sign out */}
                 {onSignOut && (

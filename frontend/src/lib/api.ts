@@ -31,21 +31,14 @@ const supaHeaders = (extra?: Record<string, string>): Record<string, string> => 
   ...extra,
 });
 
-export function getCurrentUserId(): string {
-  const session = (supabase as any).auth?.session?.();
-  // supabase-js v2 stores session in memory; use synchronous access
-  const stored = localStorage.getItem('sb-rscviujiflpsujukwgts-auth-token');
-  if (stored) {
-    try {
-      const parsed = JSON.parse(stored);
-      if (parsed?.user?.id) return parsed.user.id;
-    } catch { /* ignore */ }
-  }
-  return '050d1112-d2bd-4672-8058-0c10ab75a907'; // Lena fallback
-}
+export async function getCurrentUserId(): Promise<string> {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session?.user?.id) return session.user.id;
 
-/** @deprecated Use getCurrentUserId() instead */
-export const DEFAULT_USER_ID = '050d1112-d2bd-4672-8058-0c10ab75a907';
+  // Development fallback — remove before production
+  console.warn('No auth session found, using fallback user ID');
+  return '050d1112-d2bd-4672-8058-0c10ab75a907';
+}
 
 // ---------------------------------------------------------------------------
 // Types matching backend RecipeDocument + pipeline response
@@ -200,8 +193,9 @@ export async function fetchRecipes(limit = 1000): Promise<RecipeDocument[]> {
 }
 
 export async function fetchRecipesByCuisine(cuisine: string, limit = 10): Promise<RecipeDocument[]> {
+  // TODO: add a DB view or RPC for server-side cuisine filtering
   try {
-    const all = await fetchRecipes(1000);
+    const all = await fetchRecipes(200);
     return all.filter(r => r.cuisine_tags.some(c => c.toLowerCase().includes(cuisine.toLowerCase()))).slice(0, limit);
   } catch {
     return [];
@@ -280,7 +274,7 @@ export async function fetchForYouRecipes(limit = 8): Promise<RecipeDocument[]> {
 export async function fetchSeasonalRecipes(limit = 8): Promise<RecipeDocument[]> {
   const month = new Date().getMonth();
   const season = month >= 2 && month <= 4 ? 'spring' : month >= 5 && month <= 7 ? 'summer' : month >= 8 && month <= 10 ? 'autumn' : 'winter';
-  const all = await fetchRecipes(1000);
+  const all = await fetchRecipes(200);
   const seasonal = all.filter(r =>
     r.season_tags?.some(t => t.toLowerCase().includes(season))
   );
@@ -292,7 +286,8 @@ export async function fetchSeasonalRecipes(limit = 8): Promise<RecipeDocument[]>
 // Supabase — User Profile
 // ---------------------------------------------------------------------------
 
-export async function fetchUserProfile(userId: string = DEFAULT_USER_ID): Promise<UserProfile | null> {
+export async function fetchUserProfile(userId?: string): Promise<UserProfile | null> {
+  if (!userId) userId = await getCurrentUserId();
   const url = `${SUPABASE_REST}/user_profiles?user_id=eq.${userId}&select=*&limit=1`;
   const resp = await fetch(url, { headers: supaHeaders() });
   if (!resp.ok) return null;
@@ -356,7 +351,8 @@ export async function saveOnboardingProfile(
 // Supabase — Saved recipes (bookmarks)
 // ---------------------------------------------------------------------------
 
-export async function fetchSavedRecipeIds(userId: string = DEFAULT_USER_ID): Promise<string[]> {
+export async function fetchSavedRecipeIds(userId?: string): Promise<string[]> {
+  if (!userId) userId = await getCurrentUserId();
   const url = `${SUPABASE_REST}/user_saved_recipes?user_id=eq.${userId}&select=recipe_id&order=saved_at.desc`;
   const resp = await fetch(url, { headers: supaHeaders() });
   if (!resp.ok) return [];
@@ -364,7 +360,8 @@ export async function fetchSavedRecipeIds(userId: string = DEFAULT_USER_ID): Pro
   return rows.map(r => r.recipe_id);
 }
 
-export async function saveRecipe(recipeId: string, userId: string = DEFAULT_USER_ID): Promise<boolean> {
+export async function saveRecipe(recipeId: string, userId?: string): Promise<boolean> {
+  if (!userId) userId = await getCurrentUserId();
   const resp = await fetch(`${SUPABASE_REST}/user_saved_recipes`, {
     method: 'POST',
     headers: supaHeaders({ Prefer: 'resolution=merge-duplicates,return=representation' }),
@@ -377,7 +374,8 @@ export async function saveRecipe(recipeId: string, userId: string = DEFAULT_USER
   return resp.ok;
 }
 
-export async function unsaveRecipe(recipeId: string, userId: string = DEFAULT_USER_ID): Promise<boolean> {
+export async function unsaveRecipe(recipeId: string, userId?: string): Promise<boolean> {
+  if (!userId) userId = await getCurrentUserId();
   const resp = await fetch(
     `${SUPABASE_REST}/user_saved_recipes?user_id=eq.${userId}&recipe_id=eq.${recipeId}`,
     { method: 'DELETE', headers: supaHeaders() },
@@ -385,20 +383,27 @@ export async function unsaveRecipe(recipeId: string, userId: string = DEFAULT_US
   return resp.ok;
 }
 
-export async function fetchSavedRecipes(userId: string = DEFAULT_USER_ID): Promise<RecipeDocument[]> {
-  const ids = await fetchSavedRecipeIds(userId);
+export async function fetchSavedRecipes(userId?: string): Promise<RecipeDocument[]> {
+  const uid = userId || await getCurrentUserId();
+  const ids = await fetchSavedRecipeIds(uid);
   if (ids.length === 0) return [];
-  // Fetch full recipe data for each saved ID
-  const promises = ids.slice(0, 30).map(id => fetchRecipeById(id));
-  const results = await Promise.all(promises);
-  return results.filter(Boolean) as RecipeDocument[];
+
+  // Batch fetch: recipe_id IN (id1, id2, ...)
+  const inFilter = ids.slice(0, 30).map(id => `"${id}"`).join(',');
+  const url = `${SUPABASE_URL}/rest/v1/recipes_open?select=recipe_id,data&recipe_id=in.(${inFilter})`;
+  const resp = await fetch(url, { headers: supaHeaders() });
+  if (!resp.ok) return [];
+  const rows: { recipe_id: string; data: any }[] = await resp.json();
+  return rows.map(normaliseRecipe);
 }
 
 // ---------------------------------------------------------------------------
 // Supabase — Session history
 // ---------------------------------------------------------------------------
 
-export async function fetchSessionHistory(userId: string = DEFAULT_USER_ID): Promise<SessionSummary[]> {
+// TODO: create a DB view for session summaries
+export async function fetchSessionHistory(userId?: string): Promise<SessionSummary[]> {
+  if (!userId) userId = await getCurrentUserId();
   const url = `${SUPABASE_REST}/sessions?user_id=eq.${userId}&select=session_id,mode,started_at,ended_at,query_count&order=started_at.desc&limit=30`;
   const resp = await fetch(url, { headers: supaHeaders() });
   if (!resp.ok) return [];
@@ -467,9 +472,10 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '';
 
 export async function queryPipeline(
   query: string,
-  userId: string = getCurrentUserId(),
+  userId?: string,
   sessionId?: string,
 ): Promise<PipelineResponse> {
+  if (!userId) userId = await getCurrentUserId();
   if (!BACKEND_URL) {
     throw new Error('BACKEND_NOT_CONFIGURED');
   }
