@@ -19,6 +19,7 @@ Tier definitions (canonical source: docs/SCHEMA_CONTRACT.md):
         - description present, not a stub, length >= 80 chars
         - cuisine_tags non-empty (data->>'cuisine_tags' != '[]')
         - course_tags non-empty   ← REQUIRED (added 2026-04-12)
+        - at least one dietary_flag is True  ← REQUIRED
         - enrichment_status IN ('deterministic_enriched','llm_enriched','validated')
 
     Tier 2 — Usable, incomplete:
@@ -33,6 +34,10 @@ Tier definitions (canonical source: docs/SCHEMA_CONTRACT.md):
 
     Tier 0 — Untiered / rejected:
         - no usable title, or enrichment_status = 'rejected'
+
+Fix history:
+    Fix 1 (2026-04-12): _has_dietary_flags() check added to Tier-1 boolean.
+    Fix 2 (2026-04-12): bulk upsert via .upsert(updates) replaces per-row .update() loop.
 """
 from __future__ import annotations
 
@@ -120,6 +125,7 @@ def assign_tier(row: dict) -> tuple[int, dict, str, dict | None]:
     flags = _build_flags(data, row)
 
     # --- Tier 1 ---
+    # Fix 1: _has_dietary_flags(data) is required for Tier 1
     tier1 = (
         len(title) >= 5
         and ingredient_count >= 2
@@ -127,6 +133,7 @@ def assign_tier(row: dict) -> tuple[int, dict, str, dict | None]:
         and not _is_stub_description(description)
         and _non_empty_array(cuisine_tags)
         and _non_empty_array(course_tags)      # required since 2026-04-12
+        and _has_dietary_flags(data)           # Fix 1: dietary flags required
         and status in ("deterministic_enriched", "llm_enriched", "validated")
     )
     if tier1:
@@ -154,6 +161,9 @@ def _build_flags(data: dict, row: dict) -> dict:
 
     Every flag that is a hard Tier-1 criterion must be listed here so the
     pipeline dashboard can show exactly which criterion blocks promotion.
+
+    CRITICAL: has_course_tag must always be present as an explicit key,
+    even when False. The promotion_score generated column depends on it.
     """
     description = data.get("description") or ""
     existing_flags: dict = row.get("enrichment_flags") or {}
@@ -162,7 +172,7 @@ def _build_flags(data: dict, row: dict) -> dict:
         "has_normalised_units": _has_normalised_units(data),
         "has_dietary_flags": _has_dietary_flags(data),
         "has_cuisine_tag": _non_empty_array(data.get("cuisine_tags", [])),
-        "has_course_tag": _non_empty_array(data.get("course_tags", [])),  # Tier-1 criterion
+        "has_course_tag": _non_empty_array(data.get("course_tags", [])),  # CRITICAL: always present
         "has_real_description": not _is_stub_description(description),
         "has_llm_flavor_tags": _non_empty_array(data.get("flavor_tags", [])),
         "has_nutrition": data.get("nutrition_per_serving") is not None,
@@ -182,6 +192,7 @@ def _has_normalised_units(data: dict) -> bool:
 
 
 def _has_dietary_flags(data: dict) -> bool:
+    """Fix 1: Returns True if at least one dietary flag is explicitly True."""
     flags = data.get("dietary_flags") or {}
     # Consider enriched if any flag is explicitly True (not just all-False default)
     return any(bool(v) for v in flags.values())
@@ -290,12 +301,9 @@ def run(batch_size: int = 500, dry_run: bool = False, limit: int | None = None) 
 
         total_processed += len(rows)
 
+        # Fix 2: bulk upsert instead of per-row update loop
         if updates and not dry_run:
-            for upd in updates:
-                patch = {k: v for k, v in upd.items() if k != "recipe_id"}
-                sb.table("recipes_open").update(patch).eq(
-                    "recipe_id", upd["recipe_id"]
-                ).execute()
+            sb.table("recipes_open").upsert(updates).execute()
 
         log.info("Processed %d | this batch: %d | pending writes: %d",
                  total_processed, len(rows), len(updates))
