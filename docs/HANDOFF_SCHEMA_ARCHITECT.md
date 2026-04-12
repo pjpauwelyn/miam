@@ -1,119 +1,163 @@
-# Handoff Note — Schema Architect Agent
+# Handoff Note — Data Architect Agent
 
-**Date:** 2026-04-12
-**Agent role:** Data Architect — provenance schema + tiering
-**Next agent:** Data Profiler / Tiering Agent
-
----
-
-## 1. What was changed and why
-
-### `backend/models/recipe.py` — full rewrite
-
-- Added `EnrichmentSource` enum and `FieldProvenance` model: every enrichable field group now has a typed provenance companion (`source`, `confidence`, `method`, `enriched_at`).
-- Added `EnrichmentStatus` enum (raw → parsed → deterministic_enriched → llm_enriched → validated → rejected).
-- Added `TierLevel` enum (0–3).
-- Added `RecipeEnrichmentMeta` block with all CAT-E pipeline flags.
-- `RecipeDocument` now separates fields into CAT-A (source-preserved), CAT-B (deterministic), CAT-C (externally-grounded), CAT-D (LLM-inferred), CAT-E (pipeline meta).
-- All required fields that can be unknown are now `Optional` with `None` default instead of `...` — this prevents fabrication at ingest time.
-- Legacy `data_quality_score` and `source_type` are now computed properties for backward compat.
-- Added `tier1_eligible()` method that mirrors the DB-side criteria.
-
-**Why:** The old model had fabrication risk (e.g. `description` was required, which forced enrichment scripts to invent stub text). The new model is honest about what is and isn't known.
-
-### `backend/scripts/tier_profile.py` — new script
-
-- Cursor-based, batch-restartable profiler over `recipes_open`.
-- Assigns tier (0–3) and writes `enrichment_flags` based on deterministic criteria.
-- Idempotent: only writes rows that changed.
-- Dry-run mode: `--dry-run` for safe inspection.
-- Run: `python tier_profile.py --dry-run --limit 1000` to preview.
-
-### `backend/db/migrations/001_add_provenance_and_tiering.sql` — new migration
-
-Adds to `recipes_open`:
-- `enrichment_status` TEXT with CHECK constraint
-- `tier` INTEGER (0–3) with CHECK constraint
-- `tier_assigned_at` TIMESTAMPTZ
-- `provenance` JSONB
-- `enrichment_flags` JSONB
-- `title_normalized` TEXT GENERATED (dedup/slug)
-- `ingredient_count` INTEGER GENERATED
-- `step_count` INTEGER GENERATED
-- `promotion_blocked_reason` TEXT
-- Four indexes (enrichment_status, tier, tier+status composite, partial index on raw+untiered)
-
-**Apply it:**
-```bash
-psql $DATABASE_URL -f backend/db/migrations/001_add_provenance_and_tiering.sql
-```
-Or paste the SQL into Supabase SQL Editor. Fully idempotent via `IF NOT EXISTS`.
-
-### `docs/SCHEMA_CONTRACT.md` — new authoritative document
-
-Defines field categories, Tier-1 criteria table, per-stage pipeline contract, DB column map, before/after record comparison, and what RAG retrieval may assert.
+**Agent role:** Data Architect (schema + enrichment pipeline)
+**Handoff date:** 2026-04-12
+**Next agent:** Profiling / Tiering Agent
+**Repo:** `pjpauwelyn/miam`
+**Relevant branches:** `main` (all changes on main; no feature branch)
 
 ---
 
-## 2. What is now authoritative in the database
+## 1. What Was Changed and Why
 
-At the time of this handoff, the **Supabase migration has not yet been applied** due to a transient API error. The SQL file is at `backend/db/migrations/001_add_provenance_and_tiering.sql` and is ready to run.
+### `backend/models/recipe.py`
 
-Once applied, the authoritative columns on `recipes_open` will be:
-- `tier` (typed integer, replaces `source_tier` for pipeline decisions)
-- `enrichment_status` (stage gate)
-- `enrichment_flags` (completion flags)
-- `provenance` (field-level source/confidence)
-- `ingredient_count` / `step_count` (generated, always fresh)
-- `title_normalized` (generated, always fresh)
+**What:** Added two fields to `RecipeEnrichmentMeta`:
+- `has_course_tag: bool = False` — was missing despite being a hard Tier-1 criterion
+  in both `tier1_eligible()` and the contract. Without it, the flags block couldn't
+  be used to answer "why is this recipe not Tier 1?" for course-tag failures.
+- `rag_embedding_version: Optional[str] = None` — tracks which embedding model
+  produced the current vector. Without this, there is no way to detect stale
+  embeddings after a model upgrade without re-querying the embeddings table.
 
-The existing `data` JSONB column remains the primary content store.
+Also added `rag_embedding_version` to the content `RecipeDocument` itself (alongside
+`embedding_text`) so it round-trips correctly through the JSONB data column.
+
+**Why now:** Both gaps were silent — no runtime errors, but they created invisible
+blind spots in the pipeline dashboard and made Tier-1 promotion logic fragile.
+
+### `backend/scripts/tier_profile.py`
+
+**What:**
+1. `_build_flags()` now includes `has_course_tag` — preserves the embedding flags
+   (`has_embedding`, `rag_embedding_version`) from the existing record instead of
+   zeroing them on re-run.
+2. `assign_tier()` now returns a 4-tuple including `provenance_stub_or_none`.
+3. `_maybe_seed_provenance()` new helper — writes a minimal provenance skeleton
+   (`{title, description, cuisine_tags, course_tags, dietary_flags, flavor_tags,
+   nutrition_per_serving}` all as `{source: unknown, confidence: 0.0}`) when a
+   record has `provenance = {}`. This means the provenance column is never an
+   empty object after the first profiling pass, making SQL observability queries
+   reliable (e.g. `WHERE provenance->>'description' IS NOT NULL`).
+4. `course_tags non-empty` added as explicit Tier-1 gate in `assign_tier()`.
+5. Batch write loop updated to: (a) select `provenance` in the read query,
+   (b) include `provenance` in the update payload when a stub was seeded,
+   (c) extract `patch` dict cleanly from the update dict.
+
+**Why now:** `has_course_tag` was the only Tier-1 criterion with no flag, making it
+impossible to use `enrichment_flags` to explain why a recipe isn't Tier 1. The
+provenance seeding makes the column useful for downstream queries immediately.
+
+### `backend/db/migrations/002_promotion_score_and_indexes.sql`
+
+**What:** New migration (idempotent) adding:
+- `promotion_score` — deterministic generated INT column (0–100) computed from
+  `enrichment_flags`. Weights: description=30, cuisine=20, course=20, dietary=15,
+  flavor=10, nutrition=5.
+- `idx_recipes_open_tier1_no_embedding` — hot path for `repair_embeddings_v2.py`.
+- `idx_recipes_open_no_course_tag` — enrichment queue for the course-tag pass.
+- `idx_recipes_open_tier_score` — ranked retrieval within a tier.
+- `idx_recipes_open_no_provenance` — provenance seeding queue.
+- `idx_recipes_open_llm_queue` — LLM enrichment queue.
+
+**Why now:** Without `promotion_score`, ranking within Tier 1 requires runtime JSON
+traversal across 1.2M rows. The generated column makes it a single index scan.
+
+### `docs/SCHEMA_CONTRACT.md`
+
+**What:** Bumped to v2.1. Changes:
+- Added `has_course_tag` to the Tier-1 criteria table and the flags schema table.
+- Added `rag_embedding_version` to the flags table.
+- Added `promotion_score` to the DB column map.
+- Updated the before/after sample records to include `has_course_tag` and
+  `rag_embedding_version` in the flags block.
+- Rewrote the Remaining Gaps section with a concrete owner/blocker per item.
 
 ---
 
-## 3. What remains unresolved
+## 2. What Is Now Authoritative in the Database
 
-| Item | Priority | Notes |
+After running `tier_profile.py` (which is idempotent and safe to run immediately):
+
+- `tier` — set for all records (0–3).
+- `enrichment_flags` — complete set of 10 flags including `has_course_tag`.
+- `provenance` — seeded with skeleton stubs for records that previously had `{}`.
+- `enrichment_status` — promoted to `validated` for any record that passes Tier-1.
+- `tier_assigned_at` — updated timestamp.
+
+After applying migration 002:
+- `promotion_score` — live generated column, always current.
+- All six new indexes — available for query planner.
+
+---
+
+## 3. What Remains Unresolved
+
+| Issue | Priority | Notes |
 |---|---|---|
-| **Apply DB migration** | P0 | Paste SQL from `001_add_provenance_and_tiering.sql` into Supabase SQL Editor |
-| **Run tier_profile.py** | P0 | After migration; use `--dry-run` first |
-| **Extend enrich_recipes_fast.py** | P1 | Write provenance block + confidence back per field |
-| **Nutrition enrichment script** | P1 | USDA FDC API; see gap list in SCHEMA_CONTRACT.md |
-| **Dedup script** | P2 | `title_normalized` column is ready; script not written |
-| **Tier-1 filter on embeddings** | P1 | `repair_embeddings_v2.py` must filter `WHERE tier = 1` |
-| **Description stub classifier** | P2 | Improve beyond simple startswith heuristic |
+| ~90%+ of records have `has_course_tag = false` | CRITICAL | Tier-1 gated on this; need a course-tag rule enrichment pass before LLM stage |
+| `enrich_recipes_fast.py` does not write `provenance->description->confidence` | HIGH | LLM-inferred descriptions silently fail the confidence check in `tier1_eligible()` |
+| No `enrich_nutrition_usda.py` | MEDIUM | Nutrition stays null; RAG must handle gracefully |
+| `repair_embeddings_v2.py` embeds all records, not just Tier-1 | MEDIUM | Wastes embedding budget; add `WHERE tier = 1` |
+| `repair_embeddings_v2.py` does not write `rag_embedding_version` | MEDIUM | Stale-embedding detection is blind until this is added |
+| Deduplication not implemented | LOW | `title_normalized` + `idx` ready; script not written |
+| `_is_stub_description()` heuristic is minimal | LOW | 4 patterns; expand to regex classifier |
 
 ---
 
-## 4. What the next agent should consume
+## 4. What the Next Agent Should Consume
 
-- **Read:** `docs/SCHEMA_CONTRACT.md` — the canonical field contract.
-- **Read:** `backend/models/recipe.py` — `RecipeDocument`, `TierLevel`, `EnrichmentStatus`, `FieldProvenance`.
-- **Run first:** Apply migration, then `python backend/scripts/tier_profile.py --dry-run --limit 5000` to get a tier distribution snapshot.
-- **Query:** `SELECT tier, COUNT(*) FROM recipes_open GROUP BY tier ORDER BY tier;` after profiling to understand the starting tier distribution.
+The **Profiling / Tiering Agent** should:
+
+1. **Run `tier_profile.py --dry-run --limit 1000`** to validate the new flags
+   and provenance seeding logic before a full pass.
+2. **Run `tier_profile.py` (full pass)** to propagate `has_course_tag` and seed
+   provenance stubs across all 1.2M records.
+3. **Query the tier distribution** to establish a baseline:
+   ```sql
+   SELECT tier, COUNT(*) FROM recipes_open GROUP BY tier ORDER BY tier;
+   ```
+4. **Identify the dominant Tier-1 blocker** by running:
+   ```sql
+   SELECT
+     (enrichment_flags->>'has_course_tag')::boolean   AS course_tag,
+     (enrichment_flags->>'has_cuisine_tag')::boolean  AS cuisine_tag,
+     (enrichment_flags->>'has_real_description')::boolean AS description,
+     COUNT(*)
+   FROM recipes_open
+   WHERE tier = 2
+   GROUP BY 1, 2, 3
+   ORDER BY count DESC
+   LIMIT 20;
+   ```
+5. **Apply migration 002** via `supabase db push` or Supabase MCP `apply_migration`
+   with `name = '002_promotion_score_and_indexes'`.
+6. **Report back:** how many records are at each tier, and which single flag is
+   blocking the most Tier-2 records from Tier-1 promotion.
 
 ---
 
-## 5. What should NOT be touched
+## 5. What Should NOT Be Touched
 
-| Item | Reason |
+| Resource | Reason |
 |---|---|
-| `data->>'title'` in any record | CAT-A, immutable post-ingest |
-| `raw_ingredients_text` | Source-preserved, used for re-parsing |
-| `nutrition_per_serving` in data | Only USDA/OFF scripts may write this |
-| `source_tier` column | Legacy — leave in place but ignore for pipeline logic |
-| `embeddings_open` table | Do not re-embed until Tier-1 filter is in place |
-| Any record with `promotion_blocked_reason` set | Human/system override, respect it |
+| `recipes_open.data` JSONB | `tier_profile.py` must never modify content fields |
+| `raw_ingredients_text` inside `data` | Immutable CAT-A source |
+| `enrichment_flags.has_embedding` | Only `repair_embeddings_v2.py` owns this |
+| `enrichment_flags.rag_embedding_version` | Only `repair_embeddings_v2.py` owns this |
+| `provenance` keys that are already non-null | The seeding stub is write-once for empty records |
+| `source_tier` column | Legacy, not used in pipeline decisions |
+| `nutrition_per_serving` in `data` | Only `enrich_nutrition_usda.py` (future) may write this |
+| Migration 001 SQL | Already applied; do not re-run or modify |
 
 ---
 
-## 6. Remaining risks
+## 6. Remaining Risks
 
-| Risk | Severity | Mitigation |
-|---|---|---|
-| Migration not applied | HIGH | SQL file is ready; apply via Supabase SQL Editor |
-| Existing enriched records all have `enrichment_status = 'raw'` after migration | MEDIUM | Run `UPDATE recipes_open SET enrichment_status = 'deterministic_enriched' WHERE data->>'source_type' = 'recipenlg_enriched';` after migration |
-| `dietary_flags` all-False may be misread as unenriched | MEDIUM | tier_profile.py checks this; enrichment scripts should set a `has_dietary_flags` flag explicitly |
-| Stub descriptions ("A recipe for...") will block Tier-1 even on otherwise good records | MEDIUM | Expected — these records need LLM re-enrichment for description |
-| 1.15M records: tier_profile.py will take ~30 min at batch=500 | LOW | Use `--batch-size 2000`; script is restartable |
-| Supabase free-tier row count limits on `recipes_open` | LOW | Monitor; if needed, partition or archive Tier-3 records |
+| Risk | Likelihood | Impact | Mitigation |
+|---|---|---|---|
+| `has_course_tag` blocks nearly all Tier-1 promotion | HIGH | HIGH | Run course-tag rule enrichment pass before expecting any Tier-1 records |
+| LLM descriptions silently fail confidence check | HIGH | MEDIUM | `enrich_recipes_fast.py` must write confidence; add to that script's next PR |
+| `promotion_score` CASE expression references `enrichment_flags` as JSONB — if a record has `enrichment_flags = null` rather than `'{}'`, the generated col will produce 0, not an error | LOW | LOW | Migration 001 sets `DEFAULT '{}'` NOT NULL; existing rows should be safe, but verify with `SELECT COUNT(*) FROM recipes_open WHERE enrichment_flags IS NULL` |
+| Provenance seeding overwrites a legitimately empty `{}` provenance | VERY LOW | LOW | `_maybe_seed_provenance` returns None if `existing` is truthy; first write is a seed, subsequent writes by enrichment scripts overwrite individual keys |
+| `tier_profile.py` update loop uses per-row UPDATE, not batch upsert | MEDIUM | MEDIUM | For 1.2M rows this is slow (~20 min); acceptable for now, but should be batched with `upsert()` in a future performance pass |

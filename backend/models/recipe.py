@@ -23,14 +23,14 @@ from pydantic import BaseModel, Field, model_validator
 
 class EnrichmentSource(str, Enum):
     """Who/what produced a field value."""
-    RECIPENLG_RAW    = "recipenlg_raw"      # verbatim from RecipeNLG dataset
-    RULE_DETERMINISTIC = "rule_deterministic"  # regex / lookup-table
-    USDA_FDC         = "usda_fdc"           # USDA FoodData Central API
-    OPEN_FOOD_FACTS  = "open_food_facts"    # OFF API
-    LLM_MISTRAL      = "llm_mistral"        # Mistral inference
-    LLM_OPENAI       = "llm_openai"         # OpenAI inference
-    MANUAL_CURATED   = "manual_curated"     # human editor
-    UNKNOWN          = "unknown"
+    RECIPENLG_RAW      = "recipenlg_raw"        # verbatim from RecipeNLG dataset
+    RULE_DETERMINISTIC = "rule_deterministic"    # regex / lookup-table
+    USDA_FDC           = "usda_fdc"             # USDA FoodData Central API
+    OPEN_FOOD_FACTS    = "open_food_facts"       # OFF API
+    LLM_MISTRAL        = "llm_mistral"           # Mistral inference
+    LLM_OPENAI         = "llm_openai"            # OpenAI inference
+    MANUAL_CURATED     = "manual_curated"        # human editor
+    UNKNOWN            = "unknown"
 
 
 class FieldProvenance(BaseModel):
@@ -58,12 +58,12 @@ class FieldProvenance(BaseModel):
 
 class EnrichmentStatus(str, Enum):
     """Pipeline stage gate for a recipe record."""
-    RAW                   = "raw"
-    PARSED                = "parsed"               # units normalised, steps split
-    DETERMINISTIC_ENRICHED = "deterministic_enriched"  # dietary flags, cuisine lookup
-    LLM_ENRICHED          = "llm_enriched"         # description, flavor, occasion
-    VALIDATED             = "validated"             # passed Tier-1 criteria
-    REJECTED              = "rejected"              # blocked from promotion
+    RAW                    = "raw"
+    PARSED                 = "parsed"                # units normalised, steps split
+    DETERMINISTIC_ENRICHED = "deterministic_enriched" # dietary flags, cuisine lookup
+    LLM_ENRICHED           = "llm_enriched"          # description, flavor, occasion
+    VALIDATED              = "validated"              # passed Tier-1 criteria
+    REJECTED               = "rejected"               # blocked from promotion
 
 
 class TierLevel(int, Enum):
@@ -75,21 +75,32 @@ class TierLevel(int, Enum):
 
 
 class RecipeEnrichmentMeta(BaseModel):
-    """Pipeline metadata block — CAT-E fields, stored as top-level columns in DB."""
+    """Pipeline metadata block — CAT-E fields, stored as top-level columns in DB.
+
+    Flags map 1:1 with enrichment_flags JSONB column in recipes_open.
+    Every flag that participates in a Tier criterion MUST be listed here.
+    Current Tier-1 flag requirements:
+        has_parsed_ingredients, has_cuisine_tag, has_course_tag,
+        has_real_description, has_dietary_flags.
+    """
     enrichment_status: EnrichmentStatus = EnrichmentStatus.RAW
     tier: TierLevel = TierLevel.UNTIERED
     tier_assigned_at: Optional[datetime] = None
     promotion_blocked_reason: Optional[str] = None
 
-    # Boolean completion flags — fast filter without JSON traversal
+    # --- Boolean completion flags (fast filter without JSON traversal) ---
     has_parsed_ingredients: bool = False
     has_normalised_units: bool = False
     has_dietary_flags: bool = False
     has_cuisine_tag: bool = False
-    has_real_description: bool = False   # not a stub like "A recipe for..."
+    has_course_tag: bool = False          # NEW: required for Tier-1
+    has_real_description: bool = False    # not a stub like "A recipe for..."
     has_llm_flavor_tags: bool = False
     has_nutrition: bool = False
     has_embedding: bool = False
+    # rag_embedding_version tracks which model produced the embedding so we
+    # can detect staleness when the embedding model is upgraded.
+    rag_embedding_version: Optional[str] = None  # e.g. "text-embedding-3-small-v1"
 
 
 # ---------------------------------------------------------------------------
@@ -190,7 +201,7 @@ class RecipeDocument(BaseModel):
     - Every enrichable field group has a parallel *_provenance companion.
     - The pipeline_meta block tracks status/tier/flags without polluting content fields.
     - Fields that are UNKNOWN must be left None / empty-list — never fabricated.
-    - A recipe is Tier-1 eligible iff it passes the criteria in SCHEMA_CONTRACT.md.
+    - A recipe is Tier-1 eligible iff it passes the criteria in docs/SCHEMA_CONTRACT.md.
 
     DB storage: content fields serialised into recipes_open.data (JSONB);
                 pipeline_meta serialised into recipes_open.enrichment_flags;
@@ -255,6 +266,11 @@ class RecipeDocument(BaseModel):
     # ---- Embedding ---------------------------------------------------------
     embedding_text: Optional[str] = Field(default=None,
         description="Pre-computed text for vector embedding. None until validated.")
+    # Version string of the embedding model used to produce the current vector.
+    # Set by repair_embeddings_v2.py. When this diverges from the active model,
+    # the record must be re-embedded before serving as RAG context.
+    rag_embedding_version: Optional[str] = Field(default=None,
+        description="E.g. 'text-embedding-3-small-v1'. None until first embedding run.")
 
     # ---- Provenance companions ---------------------------------------------
     identity_provenance: IdentityProvenance = Field(default_factory=IdentityProvenance)
@@ -296,7 +312,11 @@ class RecipeDocument(BaseModel):
     # Tier-1 eligibility check (mirrors DB tier_profile.py criteria)
     # -----------------------------------------------------------------------
     def tier1_eligible(self) -> tuple[bool, list[str]]:
-        """Returns (eligible, list_of_failed_criteria)."""
+        """Returns (eligible, list_of_failed_criteria).
+
+        This check must stay in sync with assign_tier() in tier_profile.py
+        and the Tier-1 table in docs/SCHEMA_CONTRACT.md.
+        """
         failures: list[str] = []
 
         if not self.title or len(self.title.strip()) < 3:
@@ -310,7 +330,7 @@ class RecipeDocument(BaseModel):
         if not self.cuisine_tags:
             failures.append("cuisine_tags: empty")
         if not self.course_tags:
-            failures.append("course_tags: empty")
+            failures.append("course_tags: empty")  # Tier-1 requires course_tags
         if self.dietary_flags == DietaryFlags():  # all-False default = unenriched
             failures.append("dietary_flags: never enriched (all False may be correct, "
                             "but requires enrichment_status >= deterministic_enriched)")
